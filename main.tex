@@ -318,4 +318,185 @@ attacker could send a heartbeat request, but the length of the
 response is much longer( up to 64KB) than the actual data sent by the
 client. This attack could then allow to leak memory contents.
 
+\subsection{Bleichenbacher attack}
+
+\subsection{Other attacks against SSL/TLS}
+Some other attacks against SSL/TLS are CRIME, BREACH, BEAST and
+POODLE.\\
+Crimes is an attack against the compression algorithm used in SSL/TLS,
+which by injection chosen plaintext in the user requests and then
+measure the size of the encrypted traffic, an attacker could recover
+specific plaintext parts exploiting information leaked from the
+compression, and this is part of the reason why the compression is
+deprecated in TLS 1.3.\\
+BREACH is an attack against the HTTP compression to deduce a secret
+within the HTTP response provided by the server.\\
+POODLE, or Padding Oracle On Downgraded Legacy Encryption, is an 
+attack that exploits the fact that SSL 3.0 uses a padding scheme that
+is vulnerable to a padding oracle attack, by acting as a MITM. This is
+done by exploiting SSL-3 fallbacks to decrypt data.\\
+For all those reasons SSL-3 has been disabled on most browsers, but
+its still needed for some browsers, for example IE6 by Microsoft,
+which is outlasting its expected life.
+
+\subsection{FREAK attack}
+FREAK, or Factoring RSA Export Keys, is an attack that exploits the
+downgrades on TLS to explort-level RSA keys to a factorizable bit
+length(512 bits). It is also possible to carry this out by downgrading
+the symmetric key too and then perform a brute force attack( 40-bit).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.6\textwidth]{img/FREAK attack.png}
+  \caption{FREAK attack.}
+  \label{fig:freak-attack}
+\end{figure}
+
+\section{ALPN extension}
+The ALPN extension, or Application-Layer Protocol Negotiation, is an
+extension that allow to negotiate the application protocol to speed up
+the connection creation, avoiding additional round- trips for
+application negotiation. It is used to negotiate the protocol to be 
+used on top of the TLS connection, such as HTTP/2, SPDY, or QUIC.
+The extension is inserted in the client hello message, by setting the
+ALPN flag to true and providing a list of supported protocols.
+This is also useful for those servers that use different certificates
+for the different application protocols.
+
+\section{TLS False Start}
+TLS False Start is another extension that allows the client can send
+application data together with the ChangeCipherSpec and Finished
+messages, in a single segment, without waiting for the corresponding
+server messages. The biggest advantage of using this is the reduction
+of the latency to 1 RTT. In theory this should work without changes,
+but to use this in Chrome and Firefox they require the ALPN and the 
+Forward Secrecy enabled, while Safari requires forward secrecy.
+
+\section{The TLS downgrade problem}
+In theory, when negotiating the TLS version to be used, the client
+sends (in ClientHello) the highest supported version, while the server
+notifies (in ServerHello) the version to be used (highest in common
+with client)
+
+\subsection{TLS Fallback Signalling Cipher Suite Value (SCSV)}
+The TLS Fallback SCSV is a special value that is used to prevent 
+the protocol downgrade attacks. It do so by sending a new (dummy)
+ciphersuite value(TLS\_FALLBACK\_SCSV) which is sent by the client when
+opening a downgraded connection )as last in the chipersuite list.
+
+\section{TLS session tickets}
+We know that session resumption is possible with TLS, but the server
+needs to keep a cache of session IDs, which may become very large for
+high traffic servers. For this reason, the TLS session tickets were
+introduced, which are an extension allowing the server to send the
+session data to the client encrypted with a server secret key. This
+data is stored by the client, which will send it again when it wants
+to resume a session. This allows to move the cache to the client side.
+
+\section{The Virtual Server Problem}
+Nowadays, virtual servers are very common in web hosting, because they
+allows to have different logical names associated with the same IP
+address( ie: home.myweb.it=10.1.2.3, food.myweb.it=10.1.2.3).
+This is easy to manage in HTTP/1.1 but quite troublesome with HTTPS,
+because TLS is activated before the HTTP request is sent, which makes
+it difficult to know which certificate should be provided in advance.
+The solutions are quire simple:
+\begin{itemize}
+  \item use a wildcard certificate, which is a certificate that is
+    valid for all the subdomains of a domain (ie: *.myweb.it)
+  \item use the SNI (Server Name Indication) extension, which is an
+    extension that allows the client to specify the hostname of the
+    server it is trying to connect to, allowing the server to provide
+    the correct certificate. This is sent in the ClientHello message.
+  \item provide a certificate with a list of servers in subjectAltName
+\end{itemize}
+
+\section{TLS 1.3}
+TLS 1.3 was released in 2018, and it introduced some new features
+while solving some of the most common problems of the previous 
+versions:
+\begin{itemize}
+  \item reduce the handshake latency in general 
+  \item encrypting more of the handshake (for security and privacy)
+  \item improving resiliency to cross-protocol attacks
+  \item removing legacy features
+\end{itemize}
+We will now go over the main changes in TLS 1.3.
+
+\subsection{Key exchange}
+In this version, the support for static RSA and DH key exchange was
+removed for many reasons:
+\begin{itemize}
+  \item it does not implement forward secrecy 
+  \item its difficult to implement correctly
+\end{itemize}
+Now Diffie-Hellman ephemeral (DHE) and Elliptic Curve Diffie-Hellman
+Ephemeral (ECDHE) are the only key exchange methods supported, with
+some required parameters.
+
+\subsection{Message protection}
+
+\subsection{Digital signature}
+
+\subsection{Ciphersuites}
+\begin{itemize}
+  \item TLS\_AES\_128\_GCM\_SHA256
+  \item TLS\_AES\_256\_GCM\_SHA384
+  \item TLS\_CHACHA20\_POLY1305\_SHA256
+  \item TLS\_AES\_128\_CCM\_SHA256
+  \item TLS\_AES\_128\_CCM\_8\_SHA256 (deprecated)
+
+\end{itemize}
+
+\subsection{EdDSA}
+EdDSA, or Edwards-curve Digital Signature Algorithm, is a digital 
+signature scheme using the EdDSA signature scheme. The EdDSA scheme,
+unlike standard DSA doesnt require a PRNG, which could in some cases
+leak the private key if the underlying generation algorithm is broken
+or predictable.\\
+EdDSA picks a nonce based on a hash of the private key and the
+message, which means after the private key is generated there’s no
+more need for random number generators. Another advantage is that the
+EdDSA is faster in signature generation and verification than the
+standard DSA.
+
+
+\subsection{Other improvements}
+
+\subsection{HKDF in TLS 1.3}
+
+\subsection{TLS-1.3 handshake}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.6\textwidth]{img/TLS 1-3 handshake.png}
+  \caption{TLS 1.3 handshake.}
+  \label{fig:tls-1.3-handshake}
+\end{figure}
+
+\subsection{Pre-shared keys}
+In TLS, the pre-shared key (PSK) replaces the session ID and session
+ticket. PSKs are agreed upon during a full handshake and can be reused
+for multiple connections. They can be combined with (EC)DHE to achieve
+forward secrecy, where the PSK is used for authentication and (EC)DHE
+for key agreement. While PSKs can be generated out-of-band (OOB) from
+a passphrase, this is risky due to the potential lack of randomness,
+making brute-force attacks feasible. Therefore, using OOB PSKs is
+generally discouraged.
+
+\subsection{0-RTT connections}
+In TLS 1.3, when using a pre-shared key (PSK), a client can send
+"early data" with its initial message, which is protected by a
+specific key. However, this approach lacks forward secrecy because it
+relies solely on the PSK and could be vulnerable to replay attacks.
+While some complex mitigations exist, they are particularly
+challenging for multi-instance servers.
+
+\subsection{Incorrect share}
+In TLS 1.3, if a client sends a list of (EC)DHE groups that the server
+does not support, the server responds with a HelloRetryRequest,
+prompting the client to restart the handshake with different groups.
+If the new groups are also unacceptable, the handshake will be
+aborted, and the server will send an appropriate alert.
+
 \end{document}
