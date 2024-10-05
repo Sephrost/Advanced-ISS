@@ -1,0 +1,2058 @@
+[00:00:00.000 --> 00:00:12.200]   Okay, most of you I think already know me
+from the previous year. I'm Antonio Lioi and
+[00:00:12.200 --> 00:00:18.340]   I will be the main instructor of this course
+for six credits, while two credits will be
+[00:00:18.340 --> 00:00:24.940]   given by Professor Tipaldo. That is a novelty
+for this year and it will be about the social
+[00:00:24.940 --> 00:00:35.900]   human relationship as affecting social
+engineering attacks. We will have two teaching assistants,
+[00:00:35.900 --> 00:00:43.060]   Andrea Zeni and Silvia Sizzini, that will
+help you in in class and laboratory exercises.
+[00:00:43.060 --> 00:00:50.560]   This is the course schedule, which is
+confirmed as appears on the official timetable. We meet
+[00:00:50.560 --> 00:00:59.060]   twice, Thursday and Friday, half past two,
+half past five, today in classroom 11T and
+[00:00:59.060 --> 00:01:09.460]   tomorrow in classroom 3I. And then we will
+have a laboratory starting on October 14.
+[00:01:09.460 --> 00:01:15.740]   And unfortunately the hours of the laboratory
+are not consecutive, so you have to come twice,
+[00:01:15.740 --> 00:01:24.560]   Monday at half past two and Tuesday at half
+past eleven, always in the lobby. We will
+[00:01:24.560 --> 00:01:30.480]   have alternate groups, we will divide you in
+two groups, one week both days for one
+[00:01:30.480 --> 00:01:39.960]   group, next week for the other group. I
+recommend you to read regularly the Polito email, because
+[00:01:39.960 --> 00:01:46.040]   in case of the need of changing some
+schedule, I will communicate that with the official
+[00:01:46.040 --> 00:01:54.920]   email address that you have at Polito. For
+teaching assistants, there is no fixed times
+[00:01:54.920 --> 00:02:01.880]   locked, so if you need assistance outside the
+lecture hours, you can book that via email.
+[00:02:01.880 --> 00:02:11.440]   These are our addresses, always name.surname,
+and please put your question to the appropriate
+[00:02:11.440 --> 00:02:17.920]   person. If it is something related to
+lectures, strictly cyber security, then you can address
+[00:02:17.920 --> 00:02:26.040]   me. If it is related to social science,
+Professor Tipaldo. For classroom exercises, it will
+[00:02:26.040 --> 00:02:32.540]   be entirely managed by Andrea Azzeni, so you
+can talk with him. For the laboratory exercises,
+[00:02:32.540 --> 00:02:38.000]   you will have two groups, one with Azzeni and
+one with Sizzilli, so you can ask any
+[00:02:38.000 --> 00:02:45.920]   of them. A bit of net etiquette I would
+remind you, because I tell every year but people
+[00:02:45.920 --> 00:02:53.400]   don't remember that, so you must use your
+Polito email address, all the other addresses
+[00:02:53.400 --> 00:02:59.640]   are silently discarded, so if you don't
+receive an answer, think if you have used the correct
+[00:02:59.640 --> 00:03:10.680]   address, and do use A-I-S-S slash as a prefix
+when you start a new thread. On the contrary,
+[00:03:10.680 --> 00:03:18.040]   if you are making a response or you're
+putting a question to a previous communication, then
+[00:03:18.040 --> 00:03:24.920]   hit your reply or respond button, so that for
+example if I publish the results of the
+[00:03:24.920 --> 00:03:32.360]   exam, you push reply and the mail will be
+automatically in reply to my previous subject,
+[00:03:32.360 --> 00:03:41.360]   so I immediately know what is the subject. It
+is your duty to configure your mail user
+[00:03:41.360 --> 00:03:49.200]   agent, so that your mail address contains not
+only your ID, numeric, but also your name
+[00:03:49.200 --> 00:03:54.960]   and surname. If you do that working with
+Winmail or Polito, that is automatic, but if you are
+[00:03:54.960 --> 00:04:01.080]   using other systems for sending email, like
+your smartphone or your laptop, you must configure
+[00:04:01.080 --> 00:04:07.800]   that yourself, because if I just see a
+number, I don't understand who you are, so please
+[00:04:07.800 --> 00:04:13.320]   add name and surname.
+[00:04:13.320 --> 00:04:19.400]   What will be the content of this course?
+First of all, we will start the secure network channels,
+[00:04:19.400 --> 00:04:28.480]   so an in-depth analysis of TLS, SSH and
+similar channels. Then we will move to analyze X.509
+[00:04:28.480 --> 00:04:35.040]   certificates and PKI, as that is the support
+not only for the secure channels, but also
+[00:04:35.040 --> 00:04:41.000]   for secure electronic documents, which is the
+next topic, which is part of information
+[00:04:41.000 --> 00:04:47.040]   security, so we will study secure electronic
+documents, as well as general regulation to
+[00:04:47.040 --> 00:04:53.280]   protect those documents and the personal
+information, the so-called GDPR, General Data Protection
+[00:04:53.280 --> 00:05:00.680]   Regulation. Then we will extend the basic
+authentication that we have studied last year
+[00:05:00.680 --> 00:05:07.600]   with the federated authentication using the
+various protocols, SAML or OpenID Connect,
+[00:05:07.600 --> 00:05:16.120]   and then we will talk about distributed
+authentication and authorization with various architectures.
+[00:05:16.120 --> 00:05:22.080]   Then trusted computing systems, that will be
+a big part of this course. We will go in-depth
+[00:05:22.080 --> 00:05:29.400]   in trusted computing and trusted execution
+environments. And then there will be the 20
+[00:05:29.400 --> 00:05:35.040]   hours by Professor Di Paldo, Social Science
+for Cyber Security, in which he will analyze
+[00:05:35.040 --> 00:05:40.080]   and explain social engineering principles and
+techniques.
+[00:05:40.080 --> 00:05:48.240]   The requisites, compulsory, all the contents
+of the information system security course.
+[00:05:48.240 --> 00:05:53.920]   If you have not yet passed that, I hope at
+least you have knowledge of those things,
+[00:05:53.920 --> 00:05:58.600]   because we are not going to explain them
+again, so I assume that you know very well
+[00:05:58.600 --> 00:06:05.680]   the content of that course. And then, as
+usual, very useful high-level programming language,
+[00:06:05.680 --> 00:06:13.120]   even if we will not write any program.
+Operating systems and TCP/IP networking, and Linux of
+[00:06:13.120 --> 00:06:21.080]   course, because all the laboratories will be
+with Linux. Course plan, we have 36 hours
+[00:06:21.080 --> 00:06:28.400]   of lectures about cybersecurity, scientific,
+technical, that will be given by me. 20 hour
+[00:06:28.400 --> 00:06:36.400]   lectures, CyberSec, Social Science, Professor
+Di Paldo. Then you have nine hours of in-class
+[00:06:36.400 --> 00:06:43.480]   exercises, one group only, so we don't split
+you in groups for in-classroom, because I
+[00:06:43.480 --> 00:06:50.800]   see that even if we have about 120 people
+enrolled, you are much less than that, even
+[00:06:50.800 --> 00:06:59.920]   if I don't understand why. Anyway, and then
+we will have 15 hours of laboratory exercises
+[00:06:59.920 --> 00:07:09.000]   divided into groups, so five exercises each
+of three hours per group. The current plan
+[00:07:09.000 --> 00:07:15.560]   is as follows, but as I said, that is the
+initial planning may change even at short
+[00:07:15.560 --> 00:07:26.280]   notice by email. Social Science lectures will
+be on November 7-8, then on November 20-29,
+[00:07:26.280 --> 00:07:35.240]   then on December 6 and December 19-20, so
+they are towards the end of the course. The
+[00:07:35.240 --> 00:07:43.760]   lab will start on October 14, one week per
+group. In-class exercises are yet to be decided,
+[00:07:43.760 --> 00:07:49.480]   I will announce that via email, and they will
+be after a group of topics, so most likely
+[00:07:49.480 --> 00:07:55.520]   after we have finished the network, secure
+network channels, we will have one. When we
+[00:07:55.520 --> 00:08:04.040]   finish X.509, we will have another one, and
+so on. Always look, not only to the email,
+[00:08:04.040 --> 00:08:09.720]   but also to the official schedule of Polito,
+because I will update that regularly to reflect
+[00:08:09.720 --> 00:08:19.280]   what I am, the decisions about the course
+plan. Exercises. Two groups for the laboratory
+[00:08:19.280 --> 00:08:28.160]   by surname. For the moment, the division is
+AG and HZ, but yet is to be confirmed because
+[00:08:28.160 --> 00:08:35.260]   we are waiting still this week for the final
+enrollment, so I will confirm that via email.
+[00:08:35.260 --> 00:08:40.640]   In the classroom, you solve the problems with
+help from the teaching assistant, so I assume
+[00:08:40.640 --> 00:08:45.880]   that you have studied what is the content of
+the lectures. In the laboratory, you will
+[00:08:45.880 --> 00:08:52.280]   perform practical experiments to understand
+and apply the concept seen during the lectures.
+[00:08:52.280 --> 00:08:59.080]   General notes, of course, if you have not
+studied the lecture's content, then attendance
+[00:08:59.080 --> 00:09:07.400]   of the laboratories or classroom exercises is
+not very useful. Some of you have asked
+[00:09:07.400 --> 00:09:12.520]   about is the laboratory part of the exam? Not
+explicitly, in the sense that you don't
+[00:09:12.520 --> 00:09:18.680]   have to do any practical exercise during the
+exam, but in general it's helpful to understand
+[00:09:18.680 --> 00:09:25.880]   the concepts, and I always put at least one
+question related to the laboratory exercises,
+[00:09:25.880 --> 00:09:32.060]   so if you don't, if you have not performed
+those exercises, you will not get the points
+[00:09:32.060 --> 00:09:38.200]   because you will not be able to answer that
+question. Lectures will be recorded, but exercises
+[00:09:38.200 --> 00:09:44.200]   in classroom and in laboratory are not
+recorded, and the solutions are not provided beyond
+[00:09:44.200 --> 00:09:54.200]   what is discussed directly in the class.
+Course material, as always, at the course homepage
+[00:09:54.200 --> 00:10:00.120]   you will find the lecture handouts and the
+exercise questions, both for the text for
+[00:10:00.120 --> 00:10:06.200]   in class and for the laboratory. And then
+video recording of the lectures. It is best
+[00:10:06.200 --> 00:10:11.880]   effort in the sense that every time I will
+record, but for example, in this week, one
+[00:10:11.880 --> 00:10:17.040]   day the portal was not working, and so I was
+not able to record the lecture for another
+[00:10:17.040 --> 00:10:22.240]   course, so I will do my best, but if there
+are technical problems, maybe that specific
+[00:10:22.240 --> 00:10:30.240]   lecture is missed. Auxiliary material, as
+usual, I will mention a lot of RFCs, I know
+[00:10:30.240 --> 00:10:35.920]   that you never read that, but that's not
+good, and I will suggest several papers during the
+[00:10:35.920 --> 00:10:46.920]   lectures. Course evaluation. The exam is a
+closed book in presence, paper-based. There
+[00:10:46.920 --> 00:10:54.360]   are typically several questions, a maximum of
+10, and you will have 90 minutes to complete
+[00:10:54.360 --> 00:11:00.400]   the test. Mostly they are open questions. You
+must demonstrate to have understood the
+[00:11:00.400 --> 00:11:09.000]   topic and be able to write some meaningful
+sentences about that. There may be some closed
+[00:11:09.000 --> 00:11:15.440]   questions. For closed questions, if you don't
+give any answer, you don't get any penalty,
+[00:11:15.440 --> 00:11:22.000]   but there is a penalty if you give a wrong
+answer. So, plus points if the answer is right,
+[00:11:22.000 --> 00:11:28.920]   minus points if the answer is wrong. So,
+don't just put crosses here and there, hoping for
+[00:11:28.920 --> 00:11:33.800]   the best. The text of all the exams are not
+available, also because this is the first
+[00:11:33.800 --> 00:11:42.280]   year that this exam is available, but I will
+do an exam simulation in the last lecture
+[00:11:42.280 --> 00:11:49.800]   in January. So, if you have studied, you can
+come and try your knowledge. Another thing,
+[00:11:49.800 --> 00:11:57.040]   as I already did in ISS course, I will
+provide the solutions in classroom at the end of each
+[00:11:57.040 --> 00:12:02.240]   exam and I will not repeat that afterwards.
+So, you are strongly encouraged to remain
+[00:12:02.240 --> 00:12:09.040]   in the class and to listen to the solutions,
+because after listening, you have still the
+[00:12:09.040 --> 00:12:14.760]   option to withdraw. I know that you now have
+the right to reject the grade, but if you
+[00:12:14.760 --> 00:12:22.200]   reject the grade, it remains in your history
+and that is not particularly good. So, I strongly
+[00:12:22.200 --> 00:12:27.840]   suggest that if you listen to the solution,
+see that your grade is not very good, not
+[00:12:27.840 --> 00:12:33.840]   what you expect, it's much better to withdraw
+rather than reject the grade. That is the
+[00:12:33.840 --> 00:12:40.400]   case of one student that got 25 last year, he
+rejected the grade and after other five
+[00:12:40.400 --> 00:12:48.040]   attempts finally got 20. So, think very
+carefully before rejecting, it's much better if you
+[00:12:48.040 --> 00:12:58.320]   withdraw. But, you have the possibility to
+earn some bonus points in this course, since
+[00:12:58.320 --> 00:13:05.400]   it is advanced, you can demonstrate your
+capability. If you want some bonus points, then you can
+[00:13:05.400 --> 00:13:13.760]   give a 20-minute presentation about a hot
+topic during the course, so not afterwards.
+[00:13:13.760 --> 00:13:20.520]   I will reserve part of the time for people
+that they want to make a presentation. That
+[00:13:20.520 --> 00:13:30.040]   20 minutes means 10-15 slides, you don't need
+to write 100 slides, you have limited time.
+[00:13:30.040 --> 00:13:36.200]   You can take info from blogs, newsletters,
+RFCs. You have to negotiate with me the topic,
+[00:13:36.200 --> 00:13:41.720]   so something which is of interest of the
+course and it's rather new. And you give the lecture
+[00:13:41.720 --> 00:13:47.200]   to everybody because that is a kind of
+capability which is appreciated when you go to work,
+[00:13:47.200 --> 00:13:54.640]   the ability to explain to your peer some new
+concept or new idea. You will get a minimum
+[00:13:54.640 --> 00:14:01.040]   of zero, if it is really horrible, and up to
+three points, if it is really good, okay.
+[00:14:01.040 --> 00:14:10.800]   Based upon topic interest and presentation,
+of course. Maximum, two talks per student.
+[00:14:10.800 --> 00:14:15.560]   So you cannot do 10 because I want to get 30
+just with the presentations, no. You can
+[00:14:15.560 --> 00:14:20.960]   gain a maximum of six points for them. And
+you have to book in advance, of course, because
+[00:14:20.960 --> 00:14:26.080]   if everybody in the last lecture they want to
+make the presentations, it's of course
+[00:14:26.080 --> 00:14:35.800]   impossible. Pay attention, you know about
+this course in English. Hence, I expect correct
+[00:14:35.800 --> 00:14:45.400]   usage of the language. Frequent errors that
+I've seen and I mark as errors. Reply or reply.
+[00:14:45.400 --> 00:14:50.200]   You clearly know that they are completely
+different things. So a reply attack does not
+[00:14:50.200 --> 00:15:00.600]   exist. A replay attack exists. Relay or rely
+is the same thing. They are different words.
+[00:15:00.600 --> 00:15:08.640]   But not only you must be careful in the
+English that you write, you must also write a text
+[00:15:08.640 --> 00:15:14.720]   which is technically correct because we are
+an engineering school. So for example, frequent
+[00:15:14.720 --> 00:15:20.840]   errors that I mark as errors, the name of the
+network transmission unit. Most of you,
+[00:15:20.840 --> 00:15:26.640]   when they write, they say, oh yeah, a network
+packet. A network packet, really? Are we talking
+[00:15:26.640 --> 00:15:33.440]   about layer three? Because packets exist only
+at layer three. At layer two, we have frames.
+[00:15:33.440 --> 00:15:40.800]   At layer four, we have segments, if it is TCP
+or datagrams. Even worse, if you tell
+[00:15:40.800 --> 00:15:49.200]   me a TLS packet or a mail packet. No, those
+are different things. TLS is using records,
+[00:15:49.200 --> 00:15:57.120]   mail is using messages, TCP is creating a
+stream, HTTP is based on request and response.
+[00:15:57.120 --> 00:16:02.560]   So you have to write the appropriate term.
+Otherwise, I think that you don't know what
+[00:16:02.560 --> 00:16:09.640]   is that technique that you are explaining.
+And the names of techniques. Encryption and
+[00:16:09.640 --> 00:16:16.760]   decryption. You should know what they are.
+Yet, many people write encoding and decoding.
+[00:16:16.760 --> 00:16:23.000]   Wrong. Encoding and decoding, they don't use
+a key, they are reversible, so are completely
+[00:16:23.000 --> 00:16:28.560]   different from encryption and decryption. So
+don't tell me, oh, but I was thinking,
+[00:16:28.560 --> 00:16:38.680]   yeah, yeah, sorry. Next time you will do
+right. Or, even worse, through this protocol, we
+[00:16:38.680 --> 00:16:46.280]   get security. Really? Go back to the IESS
+course, there is a long list of security properties.
+[00:16:46.280 --> 00:16:52.160]   Security means nothing. You have to tell me
+exactly which security properties are provided
+[00:16:52.160 --> 00:16:57.320]   by that solution, such as confidentiality,
+authentication, authorization, blah, blah,
+[00:16:57.320 --> 00:17:06.960]   blah, and so on. Since this is your last
+year, hopefully, you are approaching the time for
+[00:17:06.960 --> 00:17:12.280]   selecting your master thesis, and so there is
+an option. If you are willing to take a
+[00:17:12.280 --> 00:17:19.120]   thesis in cybersecurity, that can be also
+evaluated for this exam. So you don't have
+[00:17:19.120 --> 00:17:26.360]   to give this exam if you do the thesis in
+cybersecurity in my group, because working
+[00:17:26.360 --> 00:17:32.480]   with the researchers in my group, we will
+test your knowledge. So I will be able, at
+[00:17:32.480 --> 00:17:39.160]   the end, to give you a mark, a grade, for the
+course, based on what you have shown in
+[00:17:39.160 --> 00:17:43.760]   the interaction with the researchers, and
+then you will have a separate grade for your
+[00:17:43.760 --> 00:17:49.480]   thesis work. We will present the subject for
+thesis at the beginning of December for those
+[00:17:49.480 --> 00:17:58.840]   that are interested. Exam sessions. Well, as
+usual, we have four sessions. Those are
+[00:17:58.840 --> 00:18:07.840]   the dates, A, B, C, which is just one in
+June, and the last one in September. Okay? Of course,
+[00:18:07.840 --> 00:18:16.000]   you can repeat the exam in any of that.
+Booking is compulsory via the teaching portal. Respect
+[00:18:16.000 --> 00:18:22.160]   the deadline, which is not fixed by me. The
+deadline is inserted by the school, and I
+[00:18:22.160 --> 00:18:32.060]   respect that. If you fail to match the
+deadline, you must take the exam next time. There have
+[00:18:32.060 --> 00:18:37.960]   been problems recently with identifying
+people that attend an exam, because you send your
+[00:18:37.960 --> 00:18:45.100]   friend something similar to you. So I would
+like to remind you that the Polito Guide contains
+[00:18:45.100 --> 00:18:51.140]   during the exam, the professor is a public
+officer, and he or she has the right and the
+[00:18:51.140 --> 00:18:59.180]   obligation to verify the identity of the
+students. And the guide says, in addition to the Polito
+[00:18:59.180 --> 00:19:07.300]   card with photo, he or she may request a
+valid photo ID. When I will request, if for example,
+[00:19:07.300 --> 00:19:14.060]   your Polito card has a photo, which is not
+very easy readable because deteriorated, okay?
+[00:19:14.060 --> 00:19:20.620]   So it means that in order to enter the
+classroom, you need to display your Polito card, the
+[00:19:20.620 --> 00:19:26.020]   physical one, not a paper copy, not the one
+on the smartphone. You must have the physical
+[00:19:26.020 --> 00:19:31.980]   card. You have four months to get it if you
+have lost or if you don't have it. No card,
+[00:19:31.980 --> 00:19:40.120]   no entry. And in case the photo is not easily
+readable on your card, then a photo ID may
+[00:19:40.120 --> 00:19:47.380]   be requested. So you bring one together. If
+you are a European citizen, a European identity
+[00:19:47.380 --> 00:19:52.460]   card is enough. If you are outside Europe,
+then you must show me your passport.
+[00:19:52.460 --> 00:20:00.540]   Okay, I said this is the first time that we
+have this exam. So the statistics cannot be
+[00:20:00.540 --> 00:20:06.140]   related to this course, but I'm giving you
+the statistics about the cyber security course,
+[00:20:06.140 --> 00:20:13.100]   which is the predecessor. It is just six
+credits, not eight, because that course did not contain
+[00:20:13.100 --> 00:20:18.540]   the social engineering part. That course had
+also different content. For example, there
+[00:20:18.540 --> 00:20:25.140]   was forensics, there was wireless security,
+but now are a separate course. So the content
+[00:20:25.140 --> 00:20:31.340]   is not exactly the same. So take these
+results with a bit of care. But anyway, you can be
+[00:20:31.340 --> 00:20:40.820]   interested. There were 154 people enrolled
+and 84 of them passed, so 55%, which is not
+[00:20:40.820 --> 00:20:49.460]   very good. But I checked carefully and 45
+students never attended any session. So those
+[00:20:49.460 --> 00:20:56.060]   students should not be counted, because I
+don't know why, but they never tried the exam.
+[00:20:56.060 --> 00:21:07.740]   So 84 passed out of 109, which is a 77%
+success rate, which for me is not bad. The average
+[00:21:07.740 --> 00:21:17.980]   grade is 22.4, with the variance 3.9. And the
+time distribution is 34 in the first call.
+[00:21:17.980 --> 00:21:25.340]   And then it is going down. There is the
+exception of 21 that passed this September, just because
+[00:21:25.340 --> 00:21:30.460]   the course was closing. There is no more that
+course. And so a lot of people tried in the
+[00:21:30.460 --> 00:21:36.580]   last call to pass the exam. Normally, the
+September has a lower number of students and
+[00:21:36.580 --> 00:21:42.380]   that's normal. The closer you are to the time
+of the lectures and the better you remember
+[00:21:42.380 --> 00:21:51.180]   the content. This is the distribution. You
+see that we have some very good students right
+[00:21:51.180 --> 00:22:02.180]   here. Then the average is here, and then we
+have the desperate people with this 18 finger.
+[00:22:02.180 --> 00:22:18.060]   OK. I would say that this is all. If you have
+any questions, I welcome your questions. No
+[00:22:18.060 --> 00:22:34.060]   questions about the course organization.
+Great. Then we can start
+[00:22:34.060 --> 00:22:44.460]   the regular lecture.
+[00:22:44.460 --> 00:23:12.660]   OK. So, we can start the regular lecture. We
+can start the regular lecture. We can start.
+[00:23:12.660 --> 00:23:41.660]   [Pause for group work]
+[00:23:41.660 --> 00:23:47.660]   Okay, so this is the first topic that we are
+facing.
+[00:23:47.660 --> 00:23:50.660]   The topic is secure network channels.
+[00:23:50.660 --> 00:23:59.660]   And you already know that the most widely
+adopted and used secure network channel is TLS, transport layer security.
+[00:23:59.660 --> 00:24:12.660]   Okay, so in the origin that started as SSL,
+secure socket layer, that was proposed by Netscape in the far away 1995.
+[00:24:12.660 --> 00:24:18.660]   So we are approaching 30 years from the
+original design of this protocol.
+[00:24:18.660 --> 00:24:28.660]   And it was designed to create a secure
+transport channel that someone is saying is nearly placed at a session level.
+[00:24:28.660 --> 00:24:36.660]   Because you know that transport in TCP/IP
+does not have security, sessions might implement security.
+[00:24:36.660 --> 00:24:41.660]   TLS is a level I would say 4.5, just in the
+middle.
+[00:24:41.660 --> 00:24:46.660]   It's on top of the real transport layer and
+it's below the session level.
+[00:24:46.660 --> 00:24:51.660]   And it is providing the following security
+properties.
+[00:24:51.660 --> 00:25:00.660]   Well, it may provide because it depends on
+several factors, some features are optional as we will discuss.
+[00:25:00.660 --> 00:25:03.660]   It can provide the peer authentication.
+[00:25:03.660 --> 00:25:07.660]   Server authentication is compulsory, is
+always present.
+[00:25:07.660 --> 00:25:14.660]   Client authentication is optional and is
+eventually requested by the server.
+[00:25:14.660 --> 00:25:25.660]   In order to implement that, both the server
+and the client authentication are based on an asymmetric challenge response
+authentication.
+[00:25:25.660 --> 00:25:32.660]   And you go back to the ISS course if you
+don't remember what is challenge response authentication.
+[00:25:32.660 --> 00:25:39.660]   In case of the server, the authentication is
+implicit, the answer to the challenge.
+[00:25:39.660 --> 00:25:47.660]   In case of the client, the response to the
+challenge is explicit, as we will discuss.
+[00:25:47.660 --> 00:25:52.660]   Then, TLS may provide message
+confidentiality.
+[00:25:52.660 --> 00:26:01.660]   In that case, with a symmetric encryption
+with appropriate algorithms and keys that are negotiated.
+[00:26:01.660 --> 00:26:16.660]   TLS compulsory always provides message
+authentication and integrity via a MAC, which is computed over the transmitted
+data.
+[00:26:16.660 --> 00:26:27.660]   In addition to that, it is also providing
+protection against replay, filtering and reordering attacks.
+[00:26:27.660 --> 00:26:44.660]   It means that if a man in the middle is
+duplicating a segment, or is cancelling one segment, or is inverting the order
+of two segments, then that will be detected by the receiver.
+[00:26:44.660 --> 00:26:50.660]   That is implemented by using an implicit
+record number.
+[00:26:50.660 --> 00:26:57.660]   So each record which is sent by TLS is
+implicitly numbered.
+[00:26:57.660 --> 00:27:01.660]   You say implicitly? That sounds strange. And
+then how can I keep into account?
+[00:27:01.660 --> 00:27:08.660]   Well, you can keep into account the record
+because TLS works only with TCP.
+[00:27:08.660 --> 00:27:13.660]   And TCP guarantees the correct order of
+transmission.
+[00:27:13.660 --> 00:27:21.660]   So the first record that you receive is
+surely number one, the second is surely number two, number three and so on.
+[00:27:21.660 --> 00:27:27.660]   So you don't need to put an explicit record
+number in TLS.
+[00:27:27.660 --> 00:27:36.660]   The important point is that not only there is
+this implicit record number, but that is used in the MAC computation.
+[00:27:36.660 --> 00:27:45.660]   Because if you have numbering, but you don't
+use that in any secure way, then the number is meaningless.
+[00:27:45.660 --> 00:27:57.660]   Beware because typically when I ask that
+question in the exam, you just tell me that it is based on record numbers and
+forget about to tell that it is included in the computation of the MAC.
+[00:27:57.660 --> 00:28:01.660]   Because it's that part that makes it secure.
+[00:28:01.660 --> 00:28:09.660]   And the other point is that it works because
+it is layered on TCP.
+[00:28:09.660 --> 00:28:14.660]   Okay, this is the general architecture of
+TLS.
+[00:28:14.660 --> 00:28:20.660]   We have one network protocol, typically
+nowadays IP, but that is not compulsory.
+[00:28:20.660 --> 00:28:23.660]   Anything at layer 3 can work.
+[00:28:23.660 --> 00:28:29.660]   But we need to layer on top of a reliable
+transport protocol.
+[00:28:29.660 --> 00:28:32.660]   For example, TCP.
+[00:28:32.660 --> 00:28:40.660]   But if you would have another reliable
+transport protocol, that would be equally good for TLS.
+[00:28:40.660 --> 00:28:45.660]   After that, the TLS record protocol is the
+next level.
+[00:28:45.660 --> 00:28:50.660]   And the TLS record protocol is a generic
+protocol.
+[00:28:50.660 --> 00:28:55.660]   It's just for transporting things between the
+two peers.
+[00:28:55.660 --> 00:29:00.660]   Actually, what is transported can obey two
+different protocols.
+[00:29:00.660 --> 00:29:12.660]   If you are in the initial phase, you use that
+to transport the messages related to the handshake protocol to set up the
+security of the channel.
+[00:29:12.660 --> 00:29:25.660]   When you need to change from one algorithm to
+another, and notably from no protection to protection, you use a specific
+protocol which is named ChangeCypherSpec.
+[00:29:25.660 --> 00:29:35.660]   And when something bad happens, before
+closing the connection, because when there is an attack, you don't try to
+recover, you close the connection.
+[00:29:35.660 --> 00:29:41.660]   But before closing, you send one last
+message, which is part of the alert protocol.
+[00:29:41.660 --> 00:29:47.660]   I give you this information, I've detected
+this problem, goodbye, now I'm closing the channel.
+[00:29:47.660 --> 00:29:57.660]   Or, if everything is going well, the record
+protocol is used to transport some application protocol.
+[00:29:57.660 --> 00:30:02.660]   For example, HTTP, in order to achieve HTTPS.
+[00:30:02.660 --> 00:30:13.660]   I do a brief recap of some points that we
+have seen in the last course, just to remind you.
+[00:30:13.660 --> 00:30:20.660]   One important concept in TLS is sessions and
+connections.
+[00:30:20.660 --> 00:30:25.660]   A session is a logical association between
+client and server.
+[00:30:25.660 --> 00:30:32.660]   And if you want to make a comparison, this is
+very similar to the security association which is in IPsec.
+[00:30:32.660 --> 00:30:39.660]   Given a session, you have all the
+characteristics that are needed, algorithms, keys, and so on.
+[00:30:39.660 --> 00:30:43.660]   A session is created by the handshake
+protocol.
+[00:30:43.660 --> 00:30:58.660]   Every run of the protocol may create a new
+session, define a set of cryptographic parameters, and is shared or is used by
+at least one, but possibly more connections.
+[00:30:58.660 --> 00:31:12.660]   So the session is something that has a long
+lifetime, a connection is more transient, and you may have more connections
+using the same parameters, and so reusing the same session.
+[00:31:12.660 --> 00:31:24.660]   On the contrary, a TLS connection is a
+transient TLS channel between the client and the server, and it is associated
+to one specific TLS session.
+[00:31:24.660 --> 00:31:27.660]   So, one connection, one session.
+[00:31:27.660 --> 00:31:35.660]   One session, n, with n at least equal to one,
+connections.
+[00:31:35.660 --> 00:31:52.660]   So for example, you see here that session
+number one was used only by one connection, while session number two was used
+by three different connections.
+[00:31:52.660 --> 00:32:02.660]   Okay, let's concentrate in detail on the
+handshake protocol because that is the one which is creating security.
+[00:32:02.660 --> 00:32:12.660]   And it's very vulnerable because you are
+passing from a channel which is not protected to a channel that on the contrary
+will have some security features.
+[00:32:12.660 --> 00:32:23.660]   So the purpose of the handshake protocol is
+to agree on a set of algorithms that will be used for confidentiality,
+integrity, no replay, blah, blah, blah, and so on.
+[00:32:23.660 --> 00:32:36.660]   Part of that protocol is the exchange of
+random numbers between the client and the server that will be used for the
+generation of the cryptographic keys.
+[00:32:36.660 --> 00:32:43.660]   Part of the protocol is also to establish a
+symmetric key by means of public key operations.
+[00:32:43.660 --> 00:33:04.660]   Originally it was RSA, Diffie-Hellman, but
+now you have attended the cryptography course and so you know that now the
+modern version is, as a minimum, Elliptic Curve DSA, Elliptic Curve
+Diffie-Hellman, even if even that are deprecated nowadays.
+[00:33:04.660 --> 00:33:07.660]   And we have a new algorithm just published
+this summer.
+[00:33:07.660 --> 00:33:14.660]   Part of the handshake protocol is also the
+negotiation of the session ID.
+[00:33:14.660 --> 00:33:19.660]   We can continue an old session or we can
+create a new session.
+[00:33:19.660 --> 00:33:34.660]   And part of the handshake protocol is also
+the exchange of the public key certificates that are needed to perform the
+asymmetric challenge response for the server always and possibly also for the
+client.
+[00:33:34.660 --> 00:33:58.660]   Once the handshake protocol has created, has
+agreed on the algorithm and has created all the necessary keys, one
+possibility, because we have two, as we will see, two different ways of
+protecting the data in TLS, one possibility is to use
+authenticate-then-encrypt.
+[00:33:58.660 --> 00:34:05.660]   In authenticate-then-encrypt you have the
+data that are coming from the application layer.
+[00:34:05.660 --> 00:34:19.660]   Until TLS 1.2 it was possible to compress
+those data before transmitting and the negotiation also of compression
+algorithm was part of the handshake.
+[00:34:19.660 --> 00:34:21.660]   Anyway, you got some data.
+[00:34:21.660 --> 00:34:27.660]   I don't care if they are the original
+application level or they are a compressed version of them.
+[00:34:27.660 --> 00:34:40.660]   Those data are input to the algorithm for the
+generation of the MAC with a corresponding key and the implicit sequence
+number.
+[00:34:40.660 --> 00:34:44.660]   This is record, TLS record number 25.
+[00:34:44.660 --> 00:34:46.660]   Okay, put 25 here.
+[00:34:46.660 --> 00:34:51.660]   In case you are using a block algorithm, you
+will need also to do some padding.
+[00:34:51.660 --> 00:35:02.660]   The padding is also part of the MAC
+computation to avoid those attacks that change the padding to give you wrong
+information.
+[00:35:02.660 --> 00:35:10.660]   As a result, the MAC is generated, it is
+inserted after the data and before the padding.
+[00:35:10.660 --> 00:35:26.660]   Now we have a multiple of a block and if we
+use block encryption, we can perform symmetric encryption with a suitable
+initialization vector which is also part of the handshake or the computation.
+[00:35:26.660 --> 00:35:33.660]   There is a specific key for encryption and
+now you got the protected data.
+[00:35:33.660 --> 00:35:40.660]   I have not written that explicitly here, but
+if I'm not wrong, I mentioned that last year.
+[00:35:40.660 --> 00:35:46.660]   Remember that the keys are not unique, but
+the keys are directional.
+[00:35:46.660 --> 00:35:56.660]   So for encryption, there is one key for
+encrypting data from client to server and a different key for encrypting data
+from server to client.
+[00:35:56.660 --> 00:35:58.660]   And the same for the MAC.
+[00:35:58.660 --> 00:36:08.660]   That is to avoid those attacks that copy data
+in one direction and insert that in the other direction.
+[00:36:08.660 --> 00:36:18.660]   Think about that because I may ask you to
+explain these things so it's better to understand.
+[00:36:18.660 --> 00:36:34.660]   If we would use just one key, we could have
+here for example, let's say segment record number 32, which is encrypted with
+the key.
+[00:36:34.660 --> 00:36:40.660]   And then we will have number 33 and so on.
+[00:36:40.660 --> 00:36:47.660]   Those cannot be modified because they are
+protected, they cannot be understood.
+[00:36:47.660 --> 00:36:51.660]   And we inserted the record number to avoid
+the replay.
+[00:36:51.660 --> 00:37:00.660]   Now, I am an attacker and I am observing what
+is going in the other direction.
+[00:37:00.660 --> 00:37:12.660]   And in the other direction, I see that the
+other peer is on a different numbering because the record numbers are different
+for the two directions.
+[00:37:12.660 --> 00:37:16.660]   Of course, I may send 100 packets, you may
+send only 10 packets.
+[00:37:16.660 --> 00:37:26.660]   So maybe I see that if this is the client,
+this is the server, the server is just sending number 24.
+[00:37:26.660 --> 00:37:31.660]   Now we say, okay, wait a moment, I make a
+copy of this.
+[00:37:31.660 --> 00:37:43.660]   And when here arrives number 31, I will
+inject number 32 copied from the other direction.
+[00:37:43.660 --> 00:37:54.660]   And that would look like a valid packet
+because it is encrypted and protected with the right keys.
+[00:37:54.660 --> 00:38:02.660]   Okay, this cannot happen if you use different
+keys for the two directions.
+[00:38:02.660 --> 00:38:14.660]   So that is why we have different keys for
+each direction.
+[00:38:14.660 --> 00:38:36.660]   Relationship that exists among the various
+keys and sessions between the server and the client.
+[00:38:36.660 --> 00:38:49.660]   Session, when you create a session with the
+handshake protocol, you establish a pre-master secret, which is established
+with public cryptography.
+[00:38:49.660 --> 00:38:53.660]   We will discuss in which way.
+[00:38:53.660 --> 00:39:01.660]   Then when you start the session, you are
+starting it because you will create a connection inside that session.
+[00:39:01.660 --> 00:39:07.660]   Otherwise, we have no reason. You cannot
+create a session without having one connection associated.
+[00:39:07.660 --> 00:39:13.660]   So as part of the connection, there will be a
+client random and the server random.
+[00:39:13.660 --> 00:39:20.660]   So when you start the first messages, the
+client and the server send each other a random number.
+[00:39:20.660 --> 00:39:29.660]   That random number is used with the
+pre-master secret that is established with public key cryptography.
+[00:39:29.660 --> 00:39:43.660]   And there is a computation, a mixing, a key
+derivation function, go back, KDF, typically it is HHKDF, HMAC based KDF.
+[00:39:43.660 --> 00:39:54.660]   And only for the first connection in that
+session, the random numbers are used with the pre-master secret and they will
+generate the master secret.
+[00:39:54.660 --> 00:40:03.660]   Those things are common to several
+connections, but actually the pre-master secret is no more used.
+[00:40:03.660 --> 00:40:06.660]   The pre-master secret is used only for the
+first connection.
+[00:40:06.660 --> 00:40:13.660]   After you derive in the first connection the
+master secret, the pre-master can be discarded.
+[00:40:13.660 --> 00:40:24.660]   Now you've got the master secret. And again,
+with a key derivation function, mixing that with the client random and server
+random,
+[00:40:24.660 --> 00:40:32.660]   you will generate the keys for MAC, for
+encryption, and you will generate, if needed, the initialization vector.
+[00:40:32.660 --> 00:40:37.660]   And those are different for each connection.
+[00:40:37.660 --> 00:40:48.660]   So what is common to all the connections in
+the same session is the master secret.
+[00:40:48.660 --> 00:40:56.660]   But every time you open a new channel, there
+are new client and server random that are used together with the master secret
+[00:40:56.660 --> 00:41:00.660]   to create the specific keys for that
+connection.
+[00:41:00.660 --> 00:41:12.660]   That is another important feature, because
+since numbering is per connection, so every time you start a new connection,
+[00:41:12.660 --> 00:41:20.660]   if you would reuse the same keys as the old
+connection, it would be easy to do a replay attack.
+[00:41:20.660 --> 00:41:23.660]   Is that clear?
+[00:41:23.660 --> 00:41:30.660]   That's why we need new keys, not only for
+each direction, but new keys for each connection.
+[00:41:30.660 --> 00:41:38.660]   But establishing again pre-master secret with
+a symmetric crypt, which is very slow, would be too costly.
+[00:41:38.660 --> 00:41:50.660]   So we keep a long term symmetric key, the
+master secret, and then we mix that with appropriate values generated for every
+connection,
+[00:41:50.660 --> 00:41:55.660]   the client random and the server random.
+[00:41:55.660 --> 00:42:04.660]   So finally, we have these values that are
+different for each connection.
+[00:42:04.660 --> 00:42:09.660]   OK.
+[00:42:09.660 --> 00:42:20.660]   Since the key material is generated starting
+from a symmetric crypto, we have a problem.
+[00:42:20.660 --> 00:42:32.660]   If the private key used for performing
+encryption and decryption of the pre-master secret is discovered,
+[00:42:32.660 --> 00:42:44.660]   then if someone has made a copy of all the
+past traffic, will now be able to decrypt all the traffic.
+[00:42:44.660 --> 00:42:47.660]   Clear the concept?
+[00:42:47.660 --> 00:42:59.660]   And that is possible only if the key pair
+that is used for encryption is also valid for encryption and for signature.
+[00:42:59.660 --> 00:43:05.660]   So an attacker copies all the encrypted
+traffic, later discovers the long term private key,
+[00:43:05.660 --> 00:43:12.660]   and then the attacker can decrypt all the
+traffic, past, present, future.
+[00:43:12.660 --> 00:43:18.660]   We would like very much to have a specific
+property which is named perfect forward secrecy,
+[00:43:18.660 --> 00:43:28.660]   in which the compromise of the private key
+used for key exchange eventually compromises only the current,
+[00:43:28.660 --> 00:43:34.660]   and possibly future, if it is reused traffic,
+but not the past one.
+[00:43:34.660 --> 00:43:39.660]   This is the definition of perfect forward
+secrecy.
+[00:43:39.660 --> 00:43:44.660]   When you have a key exchange based on
+asymmetric crypto,
+[00:43:44.660 --> 00:43:51.660]   and at some point in the future the private
+key is discovered.
+[00:43:51.660 --> 00:44:00.660]   TLS is offering perfect forward secrecy with
+a specific mechanism which is named ephemeral.
+[00:44:00.660 --> 00:44:11.660]   Ephemeral means that the key pair used for
+key exchange is not a long term key pair,
+[00:44:11.660 --> 00:44:19.660]   but it is a temporary key pair generated on
+the fly when it is needed.
+[00:44:19.660 --> 00:44:27.660]   Of course that is a problem, because if I
+create a key now, that is not associated with the public key certificate.
+[00:44:27.660 --> 00:44:32.660]   So the other peer will receive it and will
+not trust.
+[00:44:32.660 --> 00:44:41.660]   In order to create trust in the key that I
+have created now, I will sign it with the long term private key.
+[00:44:41.660 --> 00:44:50.660]   So the long term private key is used only for
+signature and only for signing the key which is newly generated.
+[00:44:50.660 --> 00:44:55.660]   The generation of an asymmetric key pair is a
+slow operation.
+[00:44:55.660 --> 00:45:00.660]   Well actually for Diffie-Hellman it is quite
+fast.
+[00:45:00.660 --> 00:45:02.660]   RSA is very slow.
+[00:45:02.660 --> 00:45:08.660]   So if you decide to have a key exchange based
+on Diffie-Hellman, no problem.
+[00:45:08.660 --> 00:45:14.660]   You generate your parameters, you sign the
+public parameters and you send it to the peer.
+[00:45:14.660 --> 00:45:18.660]   If you decide to use RSA, that takes more
+time.
+[00:45:18.660 --> 00:45:31.660]   So the compromise is that you reuse the same
+key pair for a certain number of sessions,
+[00:45:31.660 --> 00:45:34.660]   which does not give you really perfect
+forward secrecy.
+[00:45:34.660 --> 00:45:44.660]   Because for as long as you are reusing the
+same key pair, those things don't have perfect forward secrecy.
+[00:45:44.660 --> 00:45:52.660]   We obtain perfect forward secrecy because if
+the temporary or short-lived private key is compromised,
+[00:45:52.660 --> 00:46:02.660]   then the attacker can decrypt only the
+traffic which is encrypted with the key exchanged using that temporary key
+pair.
+[00:46:02.660 --> 00:46:10.660]   On the contrary, if you compromise the long
+term private key, that is not disclosing any secret,
+[00:46:10.660 --> 00:46:13.660]   because that was never used for key exchange.
+[00:46:13.660 --> 00:46:16.660]   It's a problem for server authentication.
+[00:46:16.660 --> 00:46:24.660]   If I discover the private key of the server,
+well, the symmetric challenge response could be mimicked by someone else.
+[00:46:24.660 --> 00:46:27.660]   So there is a clear distinction.
+[00:46:27.660 --> 00:46:35.660]   Nowadays, we tend to use these kinds of
+things and specifically Elliptic Curve, Diffie-Hellman, Ephemeral,
+[00:46:35.660 --> 00:46:40.660]   is one of the most used mechanisms in this
+respect.
+[00:46:40.660 --> 00:46:56.660]   Okay, we should start now the detailed
+analysis of the protocol, but we can have a first break, 10 minutes,
+[00:46:56.660 --> 00:47:00.660]   and then we will continue with this topic.
+[00:47:00.660 --> 00:47:09.660]   Okay, let's go back.
+[00:47:09.660 --> 00:47:19.660]   And since there has been an interesting
+question, I have prepared a couple of drawings to explain better this part.
+[00:47:19.660 --> 00:47:23.660]   I will try also to improve the slides and
+publish a new version.
+[00:47:23.660 --> 00:47:28.660]   But this is the explanation for the ephemeral
+keys.
+[00:47:28.660 --> 00:47:36.660]   If we don't use ephemeral keys, we have the
+server here on the right and the client on the left.
+[00:47:36.660 --> 00:47:48.660]   The server has a long term key pair, private
+key, public key, and there's got a public key certificate created by SEA,
+right?
+[00:47:48.660 --> 00:47:54.660]   And this is lasting, for example, one year or
+three years.
+[00:47:54.660 --> 00:48:08.660]   And the public key certificate is sent to the
+client, which has meanwhile generated the premaster secret.
+[00:48:08.660 --> 00:48:12.660]   Premaster secret is a sort of symmetric key.
+[00:48:12.660 --> 00:48:23.660]   Now, the premaster secret is encrypted with
+the public key which is extracted from the certificate and is sent to the
+server.
+[00:48:23.660 --> 00:48:29.660]   And the server is able to decrypt that using
+the private key.
+[00:48:29.660 --> 00:48:33.660]   So he will get the premaster secret.
+[00:48:33.660 --> 00:48:38.660]   Now, the premaster secret here was generated
+by the client.
+[00:48:38.660 --> 00:48:43.660]   The premaster secret here has been received
+and correctly decrypted.
+[00:48:43.660 --> 00:48:54.660]   Now, they can generate the master secret
+combining the premaster secret with the client random and the server random
+with an appropriate key derivation function.
+[00:48:54.660 --> 00:48:58.660]   And here is the same, because they have both
+the same information.
+[00:48:58.660 --> 00:49:02.660]   They have the premaster secret, the client
+random, and the server random.
+[00:49:02.660 --> 00:49:07.660]   Client random and server random are sent in
+the initial message in clear.
+[00:49:07.660 --> 00:49:13.660]   Now, if I am an attacker, I can observe
+client random and server random.
+[00:49:13.660 --> 00:49:15.660]   They are in clear.
+[00:49:15.660 --> 00:49:17.660]   I cannot decrypt this.
+[00:49:17.660 --> 00:49:26.660]   But if I am able to mount an attack and
+discover at some point the private key, then I can perform this operation.
+[00:49:26.660 --> 00:49:30.660]   And if I can perform this operation, I can
+perform this computation.
+[00:49:30.660 --> 00:49:37.660]   For all the packets, present and future, but
+we're using always these keys.
+[00:49:37.660 --> 00:49:40.660]   OK, so I can record the one year of traffic.
+[00:49:40.660 --> 00:49:44.660]   Meanwhile, I try to compute the private key.
+[00:49:44.660 --> 00:49:50.660]   If I am successful, I go back and I can
+decrypt everything.
+[00:49:50.660 --> 00:50:06.660]   If we use ephemeral, then the things change,
+because the server, again, has got a long-term private, public, and
+certificate.
+[00:50:06.660 --> 00:50:15.660]   Since we want to use ephemeral, we decide
+that in the initial negotiation, it will generate an ephemeral key pair.
+[00:50:15.660 --> 00:50:19.660]   Ephemeral private key, ephemeral public key.
+[00:50:19.660 --> 00:50:23.660]   Since it is ephemeral, I don't have time to
+go to the certification authority.
+[00:50:23.660 --> 00:50:27.660]   Please certify this, because I must do that
+in real time.
+[00:50:27.660 --> 00:50:39.660]   So I take the ephemeral public key, and I
+sign that with my long-term private key.
+[00:50:39.660 --> 00:50:48.660]   So I will send to the client the ephemeral
+public key and the signature with the long-term private key.
+[00:50:48.660 --> 00:50:53.660]   Just to tell this is the temporary key that I
+have selected.
+[00:50:53.660 --> 00:50:56.660]   This is received.
+[00:50:56.660 --> 00:51:05.660]   The client will generate the premaster secret
+and will encrypt the premaster secret with the ephemeral public key.
+[00:51:05.660 --> 00:51:16.660]   This is received. The premaster secret can be
+extracted from the packet that has been sent using the ephemeral private key.
+[00:51:16.660 --> 00:51:28.660]   In this case, if you discover the long-term,
+it's useless, because it is not used in any encryption.
+[00:51:28.660 --> 00:51:39.660]   And you note that this fact of ephemeral or
+long-term is always only happening when you start a new session,
+[00:51:39.660 --> 00:51:42.660]   not when you start a new connection.
+[00:51:42.660 --> 00:51:52.660]   Because once you have the master secret, all
+the other connections are always using the master secret
+[00:51:52.660 --> 00:51:57.660]   combined with client-random and server-random
+that are different every time.
+[00:51:57.660 --> 00:52:02.660]   Thank you.
+[00:52:02.660 --> 00:52:07.660]   [end]
+[00:52:07.660 --> 00:52:36.660]   [silence]
+[00:52:36.660 --> 00:52:41.660]   Okay, so let's go on with the slides.
+[00:52:41.660 --> 00:52:53.660]   So this is the handshake as it is performed
+in the last previous version.
+[00:52:53.660 --> 00:53:02.660]   Nowadays we are using TLS 1.3, but we still
+have at least 30% of the servers still using TLS 1.2.
+[00:53:02.660 --> 00:53:06.660]   And up to TLS 1.2, they were always using
+this handshake.
+[00:53:06.660 --> 00:53:11.660]   So we will start with this, and then we will
+evolve to the newest one.
+[00:53:11.660 --> 00:53:18.660]   So, as you can see, we have initial messages,
+client-hello and server-hello.
+[00:53:18.660 --> 00:53:24.660]   Then we have some dashed lines, because they
+do not happen always.
+[00:53:24.660 --> 00:53:30.660]   When you start a new session, yes, you have
+these messages.
+[00:53:30.660 --> 00:53:36.660]   When you continue an old session, you don't
+have.
+[00:53:36.660 --> 00:53:44.660]   And next, you see that the client eventually
+will send its own certificate,
+[00:53:44.660 --> 00:53:49.660]   but the messages that are always present are
+client-exchange.
+[00:53:49.660 --> 00:53:52.660]   This is only when you have a new session.
+[00:53:52.660 --> 00:53:58.660]   Change-cypher-spec, which is the message to
+pass from unprotected to protected.
+[00:53:58.660 --> 00:54:02.660]   And then a finished message to tell I
+finished my side,
+[00:54:02.660 --> 00:54:05.660]   and the server will respond in the same way.
+[00:54:05.660 --> 00:54:11.660]   I'm also changing from unprotected to
+protected, so you see the two different directions.
+[00:54:11.660 --> 00:54:15.660]   And then we'll say finished.
+[00:54:15.660 --> 00:54:22.660]   So now our task is to understand all those
+messages.
+[00:54:22.660 --> 00:54:33.660]   Client-hello, it's always the client that
+starts the dialogue with the server.
+[00:54:33.660 --> 00:54:47.660]   Sorry, but there is a problem. The battery is
+not keeping, so let me try change.
+[00:54:47.660 --> 00:54:58.660]   Let me see if this one is working.
+[00:54:58.660 --> 00:55:17.660]   Yeah, it seems that this is working.
+[00:55:17.660 --> 00:55:21.660]   Maybe it's the best I have.
+[00:55:21.660 --> 00:55:27.660]   It's not working.
+[00:55:27.660 --> 00:55:29.660]   The other one is charging.
+[00:55:29.660 --> 00:55:37.660]   Okay, so client-hello, because it's the
+client that starts, decides to open a TLS connection.
+[00:55:37.660 --> 00:55:42.660]   So the client-hello contains the SSL version
+preferred by the client.
+[00:55:42.660 --> 00:55:49.660]   Note, SSL, even if it is TLS, we continue the
+numbering.
+[00:55:49.660 --> 00:55:54.660]   So if that field contains 2, means we are
+negotiating SSL 2.
+[00:55:54.660 --> 00:55:58.660]   If it contains 3.0, it means SSL 3.
+[00:55:58.660 --> 00:56:04.660]   If it is 3.1, that is TLS 1.0, and so on.
+[00:56:04.660 --> 00:56:12.660]   Okay, so currently for TLS 1.3, we have in
+that field the number 3.4.
+[00:56:12.660 --> 00:56:17.660]   And that is the highest version supported.
+[00:56:17.660 --> 00:56:23.660]   So if you declare that, it means I can do
+everything up to this level.
+[00:56:23.660 --> 00:56:31.660]   Then the client-random, in clear, 28
+pseudo-random bytes.
+[00:56:31.660 --> 00:56:36.660]   Then a session identifier, named session ID.
+[00:56:36.660 --> 00:56:44.660]   This is 0 if we want to start a new session,
+and so performing all that negotiation.
+[00:56:44.660 --> 00:56:51.660]   It is different from 0 if the client is
+proposing to the server,
+[00:56:51.660 --> 00:56:54.660]   "Don't do all that complex asymmetric stuff.
+[00:56:54.660 --> 00:57:04.660]   Let's continue with an old version, with an
+old session in which we have already negotiated the master secret."
+[00:57:04.660 --> 00:57:11.660]   Then there is a list of cipher suite, which
+is a string that we will see,
+[00:57:11.660 --> 00:57:18.660]   which is the set of algorithms used for
+encryption, for key exchange, and for integrity.
+[00:57:18.660 --> 00:57:22.660]   And this list is the list of algorithms
+supported by the client.
+[00:57:22.660 --> 00:57:31.660]   And then, up to TLS 1.2, the list of
+compression methods supported by the client.
+[00:57:31.660 --> 00:57:35.660]   Now compression has disappeared in the latest
+version.
+[00:57:35.660 --> 00:57:45.660]   The server will respond with the server ILO,
+which is not negotiating anything, but just giving decisions.
+[00:57:45.660 --> 00:57:50.660]   The server has decided to use this version of
+the protocol.
+[00:57:50.660 --> 00:57:58.660]   It should be the highest version in common
+between the client and the server.
+[00:57:58.660 --> 00:58:04.660]   Then 28 random bytes, which are the server
+random.
+[00:58:04.660 --> 00:58:07.660]   Then a session identifier.
+[00:58:07.660 --> 00:58:18.660]   If the client sends 0, the server will say,
+"OK, this is a new session, and it is number 145."
+[00:58:18.660 --> 00:58:26.660]   Or, it can send a number, even if the client
+was asking to continue.
+[00:58:26.660 --> 00:58:29.660]   "I would like to continue number 34."
+[00:58:29.660 --> 00:58:34.660]   "No, no, no. I respond with 145. I want to
+start a new session."
+[00:58:34.660 --> 00:58:44.660]   So it is the server which is taking the
+decision if a session proposed by the client may continue or not.
+[00:58:44.660 --> 00:58:55.660]   Only if the server decides to continue the
+old session, it will put in the answer the same number as the client did.
+[00:58:55.660 --> 00:59:03.660]   And then, not a list, but the cipher suite
+selected by the server.
+[00:59:03.660 --> 00:59:10.660]   And again, it should be the strongest cipher
+suite in common between the client and the server.
+[00:59:10.660 --> 00:59:16.660]   And also, one compression method common
+between client and server.
+[00:59:16.660 --> 00:59:20.660]   OK, now we have set up the preliminary.
+[00:59:20.660 --> 00:59:28.660]   You see that as a result, after this phase,
+we have client random, server random, and we have the algorithm.
+[00:59:28.660 --> 00:59:35.660]   And we have also an indication if we need to
+negotiate the pre-master secret or not.
+[00:59:35.660 --> 00:59:38.660]   That is depending on the session.
+[00:59:39.660 --> 00:59:42.660]   OK, the cipher suite.
+[00:59:42.660 --> 00:59:50.660]   The cipher suite contains the description in
+a single string of the key exchange algorithm,
+[00:59:50.660 --> 00:59:58.660]   the symmetric encryption algorithm, and the
+hash algorithm being used for the MAC.
+[00:59:58.660 --> 01:00:07.660]   For example, when we start a channel and we
+are running the handshake,
+[01:00:07.660 --> 01:00:14.660]   but you remember that the handshake protocol
+is transported in the record protocol, right?
+[01:00:14.660 --> 01:00:18.660]   And the record protocol is a protected
+record.
+[01:00:18.660 --> 01:00:22.660]   But in the beginning, we don't have any
+protection.
+[01:00:22.660 --> 01:00:31.660]   So initially, the record protocol is using
+this one, SSL null with null null.
+[01:00:31.660 --> 01:00:37.660]   So formally, it is a cipher suite, but it is
+not giving any protection.
+[01:00:37.660 --> 01:00:40.660]   Then you can negotiate other things.
+[01:00:40.660 --> 01:00:48.660]   For example, you could have RSA for key
+exchange, like in those boards, with null.
+[01:00:48.660 --> 01:00:52.660]   We don't want encryption. We don't want
+confidentiality.
+[01:00:52.660 --> 01:00:58.660]   But remember that authentication and
+integrity of data is always compulsory.
+[01:00:58.660 --> 01:01:02.660]   So we use SHA-1 for that.
+[01:01:02.660 --> 01:01:10.660]   Or SSL RSA export with RC2 CBC40 MD5.
+[01:01:10.660 --> 01:01:22.660]   This is an example of an old cipher suite
+when the US government did not permit the export of strong algorithms outside
+the United States.
+[01:01:22.660 --> 01:01:34.660]   So RSA export is a version of RSA in which
+the keys are limited to 512 bytes, which is easy to attack.
+[01:01:34.660 --> 01:01:43.660]   RC2 CBC40, symmetric key, which is long only
+40 bits, quite short.
+[01:01:43.660 --> 01:01:52.660]   And also the algorithm for MAC was MD5, which
+is not the best.
+[01:01:52.660 --> 01:02:04.660]   Something a bit more modern could be RSA with
+no limitation, with triple DES in CBC mode, and SHA.
+[01:02:04.660 --> 01:02:08.660]   Those are just examples to let you
+understand.
+[01:02:08.660 --> 01:02:17.660]   If you go here, you have a huge list, more
+than 100, I think probably 200.
+[01:02:17.660 --> 01:02:27.660]   Because there are not only the classical
+algorithms, but also other algorithms that have been developed by the Soviet
+Union, by China, by Japan.
+[01:02:27.660 --> 01:02:36.660]   Every country, especially for the symmetric
+encryption, for confidentiality, prefers to use their own algorithms.
+[01:02:36.660 --> 01:02:42.660]   So have a look just to understand what was
+the complexity.
+[01:02:42.660 --> 01:02:52.660]   Great, so now we have completed the initial
+exchange and the server is ready to authenticate itself.
+[01:02:52.660 --> 01:02:56.660]   We said that the peer authentication is
+compulsory for the server.
+[01:02:56.660 --> 01:03:02.660]   So the server must send its long-term public
+key certificate.
+[01:03:02.660 --> 01:03:10.660]   And we will discuss later, when we talk about
+the PKI, that there are several fields.
+[01:03:10.660 --> 01:03:21.660]   The fields that must be completed are the
+subject or subject alternative name, and they must match the identity of the
+server.
+[01:03:21.660 --> 01:03:31.660]   So if you have performed, for example, an
+HTTP connection to www.polito.it, that name must appear inside the certificate.
+[01:03:31.660 --> 01:03:44.660]   If, on the contrary, you performed an HTTPS
+connection towards an IP address, because that is possible, then the IP address
+must be contained in the certificate.
+[01:03:44.660 --> 01:03:53.660]   So there must be a match between the
+application level identifier and the identifier present in the certificate.
+[01:03:53.660 --> 01:04:03.660]   Maybe you have found sometimes that when you
+connect to a web server, your browser is telling you, "Oh, name mismatch."
+[01:04:03.660 --> 01:04:13.660]   And the problem is like that, that people buy
+a certificate with one name and then use it for all the web servers in the
+company, which is bad, of course.
+[01:04:13.660 --> 01:04:24.660]   The server is not sending just its own public
+certificate, it is sending the whole certificate chain.
+[01:04:24.660 --> 01:04:35.660]   I hope you remember, you have a certificate
+issued by a certification authority that may be issued by another certification
+authority, and you go up to a root-trusted CA.
+[01:04:35.660 --> 01:04:50.660]   Beware, the root-trusted CA must not be sent.
+It's forbidden. Yet, some hackers will send it.
+[01:04:50.660 --> 01:05:08.660]   That is a nice try, because if you have a
+stupid browser that will accept also a root CA, then you are injecting a new
+root CA in the browser, which is, of course, very, very bad.
+[01:05:08.660 --> 01:05:19.660]   So the server should send only the part of
+the chain below the root CA, and the root CA should be something that the
+browser already knows.
+[01:05:19.660 --> 01:05:26.660]   Otherwise, you are running a big risk.
+[01:05:26.660 --> 01:05:44.660]   The public key certificate, we will see it is
+marked with special flags, and the special flags are the ones that are telling
+what is the cryptographic operation for which the private and public keys can
+be used.
+[01:05:44.660 --> 01:05:55.660]   So, as a minimum, a server must always have a
+certificate which is valid to perform a digital signature.
+[01:05:55.660 --> 01:06:03.660]   Optionally, the certificate may also be
+acceptable for key exchange.
+[01:06:03.660 --> 01:06:11.660]   If the certificate is also for key exchange,
+we can use directly, but we don't have a perfect form of secrecy.
+[01:06:11.660 --> 01:06:22.660]   If we have only digital signature, we are
+compelled, we must do ephemeral exchange, because it cannot be used for key
+exchange.
+[01:06:22.660 --> 01:06:27.660]   So, that thing is described in the field key
+usage.
+[01:06:27.660 --> 01:06:37.660]   If it is only for signing, then it is
+required also the phase for server key exchange, which is the part ephemeral.
+[01:06:37.660 --> 01:06:43.660]   Otherwise, it's a choice.
+[01:06:43.660 --> 01:06:54.660]   After sending its own certificate, the server
+may optionally ask the client, please send me your certificate.
+[01:06:54.660 --> 01:07:15.660]   That message is named certificate request, it
+is used for client authentication, and in this message, the server will send
+the list of trusted root CAs, because the client must send a certificate which
+is rooted in one of them.
+[01:07:15.660 --> 01:07:18.660]   So, this is a possible mismatch.
+[01:07:18.660 --> 01:07:29.660]   If you have a certificate issued by the
+Italian government and the server only accepts the German government, you will
+never go along.
+[01:07:29.660 --> 01:07:32.660]   So, you have a list of trusted CAs.
+[01:07:32.660 --> 01:07:45.660]   And the browser, upon receiving this message,
+will show them to the user only the certificates that are issued by one of
+those trusted CAs.
+[01:07:46.660 --> 01:07:51.660]   Server key exchange.
+[01:07:51.660 --> 01:08:03.660]   This is needed only in case of ephemeral
+mechanism, because it carries the server publicly for key exchange.
+[01:08:03.660 --> 01:08:13.660]   Of course, needed ephemeral also means that
+the RSA server certificate is usable only for signature, one possibility.
+[01:08:13.660 --> 01:08:20.660]   Or we are using anonymous or ephemeral
+Diffie-Hellman to establish the premaster secret.
+[01:08:20.660 --> 01:08:30.660]   Or there are, not anymore today, but in the
+past, yes, export problems that force the use of ephemeral keys.
+[01:08:30.660 --> 01:08:36.660]   Or we are using a variant of Diffie-Hellman,
+which is named Fortezza.
+[01:08:36.660 --> 01:08:46.660]   Fortezza was a security solution of the
+American government that worked only with specific hardware.
+[01:08:46.660 --> 01:08:51.660]   And it was based on a variant of
+Diffie-Hellman.
+[01:08:51.660 --> 01:09:03.660]   Since this is containing a temporary
+ephemeral key, this message must be signed explicitly by the server.
+[01:09:03.660 --> 01:09:09.660]   This is the only message explicitly signed by
+the server.
+[01:09:09.660 --> 01:09:20.660]   Certificate from the client.
+[01:09:20.660 --> 01:09:39.660]   If the server requested the client
+authentication, the client will send its own certificate along with the
+certificate chain up, but excluded, one of the trusted CAs that were listed by
+the server.
+[01:09:47.660 --> 01:09:53.660]   Now, the client generates the material for
+symmetric key derivation.
+[01:09:53.660 --> 01:09:56.660]   It generates the premaster secret.
+[01:09:56.660 --> 01:10:13.660]   And that can be premaster secret encrypted
+with the server RSA public key that may be ephemeral or may be from the X.509
+long term certificate.
+[01:10:13.660 --> 01:10:16.660]   But maybe we are not using RSA.
+[01:10:16.660 --> 01:10:28.660]   If we are not using RSA, the client is not
+generating the premaster secret, but the client is sending its public
+Diffie-Hellman parameters.
+[01:10:28.660 --> 01:10:34.660]   The server sent public Diffie-Hellman for the
+server, the client is sending public Diffie-Hellman for the client.
+[01:10:34.660 --> 01:10:37.660]   And now we both generate the key.
+[01:10:37.660 --> 01:10:43.660]   You remember that Diffie-Hellman is not key
+exchange, but it is a key agreement.
+[01:10:43.660 --> 01:10:47.660]   They separately compute the same result.
+[01:10:47.660 --> 01:10:55.660]   So the premaster secret with Diffie-Hellman
+is independently computed by server and client and they get the same result.
+[01:10:55.660 --> 01:11:05.660]   If you use RSA, on the contrary, the client
+generated the premaster secret and the server will receive it and decrypt with
+the private key.
+[01:11:05.660 --> 01:11:16.660]   Or again, in a similar way, if you are using
+Fortezza, the client is sending its own Fortezza parameters.
+[01:11:16.660 --> 01:11:18.660]   Certificate verify.
+[01:11:18.660 --> 01:11:31.660]   In case the server requested client
+authentication, then the client must sign this message, must send and sign this
+message.
+[01:11:31.660 --> 01:11:34.660]   So this is an explicit test.
+[01:11:34.660 --> 01:11:39.660]   You sent me a certificate, show me that you
+have the corresponding private key.
+[01:11:39.660 --> 01:11:48.660]   And this message contains the hash computed
+over all the handshake messages before this one.
+[01:11:48.660 --> 01:11:52.660]   And of course encrypted with the client
+private key.
+[01:11:52.660 --> 01:11:56.660]   This is to avoid a replay attack.
+[01:11:56.660 --> 01:12:03.660]   Because otherwise I could take a signature
+from another session and put it here.
+[01:12:03.660 --> 01:12:10.660]   But that is impossible because this message
+contains the hash of all the previous messages.
+[01:12:10.660 --> 01:12:16.660]   Which are different as a minimum for the
+session.
+[01:12:16.660 --> 01:12:27.660]   So this is used only when there is client
+authentication to identify and of course reject fake clients.
+[01:12:27.660 --> 01:12:29.660]   Now we are all set.
+[01:12:29.660 --> 01:12:32.660]   In the beginning we have negotiated the
+algorithm.
+[01:12:32.660 --> 01:12:37.660]   We have exchanged the material needed.
+[01:12:37.660 --> 01:12:44.660]   The premaster secret has been either sent
+from the client to the server or agreed between client and the server.
+[01:12:44.660 --> 01:12:45.660]   And now we are ready.
+[01:12:45.660 --> 01:12:50.660]   So each one separately, the client and the
+server, will send a changed cipher spec.
+[01:12:50.660 --> 01:13:00.660]   With the triggered changes it means next
+message will use the negotiated algorithm and keys.
+[01:13:00.660 --> 01:13:08.660]   So it permits to pass from previous
+unprotected messages to the protection with the algorithm keys negotiated.
+[01:13:08.660 --> 01:13:16.660]   Theoretically, you saw that I put it in a
+separate box like if it is a different protocol.
+[01:13:16.660 --> 01:13:19.660]   Actually it is a protocol composed by only
+one message.
+[01:13:19.660 --> 01:13:28.660]   So there are analyses that suggest that this
+message could be eliminated.
+[01:13:28.660 --> 01:13:30.660]   Because you have finished all the rest.
+[01:13:30.660 --> 01:13:34.660]   You could immediately go and send the data
+protected.
+[01:13:34.660 --> 01:13:43.660]   The finished message is the first message
+protected with the negotiated algorithm and keys.
+[01:13:43.660 --> 01:13:47.660]   This is a message that cannot be discarded.
+[01:13:47.660 --> 01:13:54.660]   Because it is important to authenticate the
+whole handshake.
+[01:13:54.660 --> 01:13:57.660]   Remember that we have a problem.
+[01:13:57.660 --> 01:14:02.660]   A man in the middle could alter something in
+the handshake.
+[01:14:02.660 --> 01:14:09.660]   For example, in the beginning, when I send
+the list of supported algorithms, they could change.
+[01:14:09.660 --> 01:14:12.660]   Why AS256?
+[01:14:12.660 --> 01:14:17.660]   Let me tell the other that you can only do
+DES40 bits.
+[01:14:17.660 --> 01:14:19.660]   How do you protect that?
+[01:14:19.660 --> 01:14:21.660]   You have no way.
+[01:14:21.660 --> 01:14:24.660]   So the handshake is at risk.
+[01:14:24.660 --> 01:14:25.660]   Big risk.
+[01:14:25.660 --> 01:14:32.660]   This is the message that will ensure that the
+handshake was not manipulated by a man in the middle.
+[01:14:32.660 --> 01:14:37.660]   Because it contains a MAC computed with the
+algorithm.
+[01:14:37.660 --> 01:14:46.660]   And the keys negotiated over all the previous
+messages excluded the changed cipher spec.
+[01:14:46.660 --> 01:14:49.660]   So we don't care about that.
+[01:14:49.660 --> 01:14:53.660]   Using, as a key, the master secret.
+[01:14:53.660 --> 01:14:58.660]   Which cannot be derived by looking only at
+exchanges.
+[01:14:58.660 --> 01:15:04.660]   And this prevents, for example, rollback
+man-in-the-middle attacks.
+[01:15:04.660 --> 01:15:08.660]   Version downgrade or cipher suite downgrade.
+[01:15:08.660 --> 01:15:10.660]   I have changed the version, agreed.
+[01:15:10.660 --> 01:15:13.660]   No, why TLS 1.3, which is too strong?
+[01:15:13.660 --> 01:15:15.660]   Let's make SSL 2.
+[01:15:15.660 --> 01:15:20.660]   Since the server is taking the decision, I
+can insert the wrong decision.
+[01:15:20.660 --> 01:15:23.660]   Or the cipher suite negotiated.
+[01:15:23.660 --> 01:15:26.660]   They are named in this way.
+[01:15:26.660 --> 01:15:30.660]   Protocol downgrade, version downgrade, or
+cipher suite downgrade.
+[01:15:30.660 --> 01:15:35.660]   And, of course, this finish is different from
+the client and the server.
+[01:15:35.660 --> 01:15:42.660]   Because each one is computing the MAC for its
+own messages.
+[01:15:42.660 --> 01:15:43.660]   Not the other one.
+[01:15:43.660 --> 01:15:46.660]   Otherwise, again, an attack could be
+successful.
+[01:15:46.660 --> 01:15:51.660]   So you can compare the MAC that the server is
+sending.
+[01:15:51.660 --> 01:15:56.660]   With the MAC that you have computing on the
+messages received.
+[01:15:56.660 --> 01:16:01.660]   And if there was an attack, the two MACs will
+not be equal.
+[01:16:01.660 --> 01:16:06.660]   And so you will detect that the
+man-in-the-middle has altered some messages.
+[01:16:06.660 --> 01:16:12.660]   And you will close the connection.
+[01:16:12.660 --> 01:16:14.660]   Okay.
+[01:16:14.660 --> 01:16:18.660]   So, I hope that you have followed.
+[01:16:18.660 --> 01:16:24.660]   Because now I have a question for you.
+[01:16:24.660 --> 01:16:43.660]   We have seen that this is the only message
+which is explicitly signed by the server.
+[01:16:43.660 --> 01:16:46.660]   But this message is not always present.
+[01:16:46.660 --> 01:16:49.660]   It is present only if we are using ephemeral
+keys.
+[01:16:49.660 --> 01:16:56.660]   So, if we are not using ephemeral keys, where
+is the server authentication?
+[01:16:56.660 --> 01:17:05.660]   If the server never performs a signature,
+where is the answer to the asymmetric challenge response?
+[01:17:06.660 --> 01:17:20.660]   [silence]
+[01:17:20.660 --> 01:17:22.660]   Which message?
+[01:17:22.660 --> 01:17:30.660]   [silence]
+[01:17:30.660 --> 01:17:39.660]   Yeah. It's the fact that the server is using
+its private key to decrypt this message or to agree.
+[01:17:39.660 --> 01:17:43.660]   And then that key will be used in the finish
+up.
+[01:17:43.660 --> 01:17:51.660]   So, you see why I said that the asymmetric
+challenge response for the server is implicit.
+[01:17:51.660 --> 01:17:59.660]   Because the server never performs a signature
+unless there are ephemeral keys.
+[01:17:59.660 --> 01:18:06.660]   While, on the contrary, the client will
+perform an explicit signature.
+[01:18:06.660 --> 01:18:11.660]   So, for the client, there is an explicit
+challenge response.
+[01:18:11.660 --> 01:18:19.660]   [silence]
+[01:18:19.660 --> 01:18:21.660]   After receiving the finished...
+[01:18:21.660 --> 01:18:23.660]   [silence]
+[01:18:23.660 --> 01:18:30.660]   Yes, when I receive the finished from the
+server, it is the MAC of all the server messages,
+[01:18:30.660 --> 01:18:33.660]   as computed by the server with the agreed
+key.
+[01:18:33.660 --> 01:18:35.660]   I have received this message.
+[01:18:35.660 --> 01:18:40.660]   I compute my MAC with what I think to be the
+correct key.
+[01:18:40.660 --> 01:18:44.660]   If the two things match, you have derived the
+right key, so I trust you.
+[01:18:44.660 --> 01:18:46.660]   [silence]
+[01:18:46.660 --> 01:18:53.660]   Yeah. Because when we go in the details,
+sometimes we lose the general view.
+[01:18:53.660 --> 01:18:58.660]   And since the general view is that there is a
+mechanism-like challenge response,
+[01:18:58.660 --> 01:19:04.660]   and "like" means we must use our private key
+in some way,
+[01:19:04.660 --> 01:19:09.660]   you must be able to explain where the private
+key is used,
+[01:19:09.660 --> 01:19:15.660]   because that is the only way for
+demonstrating the identity.
+[01:19:15.660 --> 01:19:17.660]   [silence]
+[01:19:17.660 --> 01:19:19.660]   Yeah.
+[01:19:19.660 --> 01:19:27.660]   [silence]
+[01:19:27.660 --> 01:19:35.660]   If I put you this question in the exam, it's
+better if you tell me that the MAC is computed
+[01:19:35.660 --> 01:19:41.660]   with the key that was derived through
+knowledge of the private key.
+[01:19:41.660 --> 01:19:47.660]   Because otherwise, I see the MAC. The MAC is
+something which is symmetric,
+[01:19:47.660 --> 01:19:51.660]   so I don't see where that symmetric part is.
+[01:19:51.660 --> 01:19:55.660]   [silence]
+[01:19:55.660 --> 01:19:58.660]   Or in the ephemeral part, I don't care.
+[01:19:58.660 --> 01:20:06.660]   But the fact that the server successfully
+completed the key exchange or key agreement,
+[01:20:06.660 --> 01:20:11.660]   because the key exchange or key agreement, I
+don't care if long-term or short-term ephemeral,
+[01:20:11.660 --> 01:20:15.660]   requires knowledge of the server private key.
+[01:20:15.660 --> 01:20:20.660]   So the fact that the server was able to
+complete that phase
+[01:20:20.660 --> 01:20:25.660]   and use that key in the finished message is
+the proof of the identity of the server.
+[01:20:25.660 --> 01:20:31.660]   So until you reach the finished, you are not
+sure that you are talking to the right machine.
+[01:20:31.660 --> 01:20:42.660]   [silence]
+[01:20:42.660 --> 01:20:44.660]   No.
+[01:20:44.660 --> 01:20:47.660]   Because you are sending something.
+[01:20:47.660 --> 01:20:52.660]   [silence]
+[01:20:52.660 --> 01:20:57.660]   Because if this is not happening, you have
+this one.
+[01:20:57.660 --> 01:21:04.660]   And the client is sending, but there's no
+proof that the server is using the private key.
+[01:21:04.660 --> 01:21:08.660]   So it's not after this message that you have
+the proof.
+[01:21:08.660 --> 01:21:11.660]   [silence]
+[01:21:11.660 --> 01:21:14.660]   Yes, but then you need to use it.
+[01:21:14.660 --> 01:21:20.660]   Because if you don't use it, I have no proof
+that you have correctly derived the symmetric key.
+[01:21:20.660 --> 01:21:26.660]   Okay? So this is the message which implies
+the usage of the private key.
+[01:21:26.660 --> 01:21:32.660]   And then the derived symmetric key must be
+used in this finished MAC,
+[01:21:32.660 --> 01:21:34.660]   and the client will verify that.
+[01:21:34.660 --> 01:21:43.660]   [silence]
+[01:21:43.660 --> 01:21:49.660]   In ephemeral, there is an explicit signature
+of the server.
+[01:21:49.660 --> 01:21:52.660]   Yes.
+[01:21:52.660 --> 01:21:58.660]   Okay, since there are quite a lot of messages
+here,
+[01:21:58.660 --> 01:22:09.660]   now let's see some of the possible exchanges
+that actually happen when we create a session.
+[01:22:09.660 --> 01:22:12.660]   [silence]
+[01:22:12.660 --> 01:22:17.660]   First case, we are creating a new TLS
+session.
+[01:22:17.660 --> 01:22:22.660]   We don't use ephemeral keys, and we don't
+have client authentication.
+[01:22:22.660 --> 01:22:27.660]   This is the most simple, basic kind of TLS
+channel.
+[01:22:27.660 --> 01:22:31.660]   Less than this, you cannot do anything.
+[01:22:31.660 --> 01:22:37.660]   Okay? So you have client on the left, server
+on the right.
+[01:22:37.660 --> 01:22:41.660]   Client is sending its clientelo, which has a
+lot of things.
+[01:22:41.660 --> 01:22:48.660]   The part which is most relevant here is the
+client random and the cipher suite list.
+[01:22:48.660 --> 01:22:54.660]   The server will respond with the serverelo,
+which contains its server random,
+[01:22:54.660 --> 01:23:00.660]   and the specific cipher suite that you
+choose.
+[01:23:00.660 --> 01:23:09.660]   Then the server is sending a certificate,
+which is also valid for key and cipherment.
+[01:23:09.660 --> 01:23:13.660]   So we don't need to go for ephemeral.
+[01:23:13.660 --> 01:23:17.660]   Now there is the message client key exchange,
+[01:23:17.660 --> 01:23:23.660]   in which the client created the premaster
+secret,
+[01:23:23.660 --> 01:23:30.660]   if the server is using RSA, or is simply
+sending its public key.
+[01:23:30.660 --> 01:23:36.660]   So key encrypted or public ephemeral
+parameters for the server.
+[01:23:36.660 --> 01:23:44.660]   Then we don't wait anything from the server,
+and we immediately say change cipher spec.
+[01:23:44.660 --> 01:23:50.660]   I have everything for computing the premaster
+secret, and you have it too.
+[01:23:50.660 --> 01:23:54.660]   So activate protection on the client side,
+and finish it.
+[01:23:54.660 --> 01:24:04.660]   MAC of all the previous messages, so MAC of
+the messages 1 and 4.
+[01:24:04.660 --> 01:24:09.660]   The server will respond with a message 7,
+change cipher spec.
+[01:24:09.660 --> 01:24:13.660]   I also start activating protection.
+[01:24:13.660 --> 01:24:17.660]   And then we'll send the finished MAC of all
+the previous messages.
+[01:24:17.660 --> 01:24:22.660]   That means MAC of number 2 and number 3, and
+nothing else.
+[01:24:22.660 --> 01:24:29.660]   Because each one can only compute the MAC of
+its own, not what they received.
+[01:24:29.660 --> 01:24:32.660]   Because received, the man in the middle may
+have manipulated.
+[01:24:32.660 --> 01:24:43.660]   I am sure of what I have sent, not of what
+has been received on the other side.
+[01:24:43.660 --> 01:24:47.660]   No, it was explicitly written, if you go back
+to the slide,
+[01:24:47.660 --> 01:24:55.660]   that the MAC does not contain the change
+cipher spec, because that is useless.
+[01:24:55.660 --> 01:24:59.660]   So we just avoid, it could well be inserted,
+no problem.
+[01:24:59.660 --> 01:25:04.660]   But it is such an irrelevant message, just an
+information.
+[01:25:04.660 --> 01:25:08.660]   It's just an information, next message will
+be protected.
+[01:25:08.660 --> 01:25:14.660]   So it's not relevant, and they decided not to
+insert it in the computation.
+[01:25:14.660 --> 01:25:21.660]   Okay, this is the most simple kind of session
+setup.
+[01:25:21.660 --> 01:25:25.660]   Let's make it a bit more complex.
+[01:25:25.660 --> 01:25:32.660]   No session, no ephemeral keys, but client
+authentication.
+[01:25:32.660 --> 01:25:39.660]   Okay, first phase, equal.
+[01:25:39.660 --> 01:25:44.660]   Server is sending again a certificate which
+is valid for key exchange.
+[01:25:44.660 --> 01:25:53.660]   And now, those marked with a star are new
+messages that were not present in the previous case.
+[01:25:53.660 --> 01:25:59.660]   Since the server wants client authentication,
+it is sending a certificate request.
+[01:25:59.660 --> 01:26:05.660]   Telling, I want a certificate of this type,
+for example X509.
+[01:26:05.660 --> 01:26:32.660]   And this is the list of the trusted CA.
+[01:26:32.660 --> 01:26:43.660]   Now the client is sending its certificate,
+along with all its chain, up to one trusted CA.
+[01:26:43.660 --> 01:26:45.660]   And that is an extra message.
+[01:26:45.660 --> 01:26:48.660]   And then we have the same messages as before.
+[01:26:48.660 --> 01:26:53.660]   The client key exchange, certificate verify,
+which is extra.
+[01:26:53.660 --> 01:26:57.660]   This is the explicit signature from the
+client.
+[01:26:57.660 --> 01:27:03.660]   Sign a dash of previous messages, and then
+change cipher spec and finish it.
+[01:27:03.660 --> 01:27:06.660]   And change cipher spec and finish it.
+[01:27:06.660 --> 01:27:13.660]   Of course, this could be aborted.
+[01:27:13.660 --> 01:27:19.660]   This could be aborted after message 7 is
+received.
+[01:27:19.660 --> 01:27:25.660]   When the server receives message 7, it will
+verify the signature.
+[01:27:25.660 --> 01:27:32.660]   If the signature does not match the public
+key certificate sent in step number 5,
+[01:27:32.660 --> 01:27:36.660]   you are not the real client, goodbye.
+[01:27:36.660 --> 01:27:42.660]   So the server will immediately send an alert
+message and will close the connection.
+[01:27:42.660 --> 01:27:52.660]   While on the contrary, if we have here a
+failure of the server authentication,
+[01:27:52.660 --> 01:27:56.660]   that will be on the client side after 8.
+[01:27:56.660 --> 01:28:01.660]   When 8 is received, the client will compute
+also the MAC.
+[01:28:01.660 --> 01:28:05.660]   And if there is a mismatch, the client will
+send an alert,
+[01:28:05.660 --> 01:28:08.660]   sorry, you are not the right one, goodbye.
+[01:28:09.660 --> 01:28:11.660]   So different steps.
+[01:28:11.660 --> 01:28:16.660]   Because for the server is implicit, until we
+don't finish the setup,
+[01:28:16.660 --> 01:28:18.660]   we are not sure about identity.
+[01:28:18.660 --> 01:28:23.660]   So only after the session is created, I can
+eventually abort it.
+[01:28:23.660 --> 01:28:28.660]   On the contrary, for the client, we have step
+number 7,
+[01:28:28.660 --> 01:28:33.660]   in which there is an explicit signature, so I
+can immediately test it.
+[01:28:33.660 --> 01:28:37.660]   And as a response to 7, I can send alert.
+[01:28:37.660 --> 01:28:40.660]   No, I don't want to continue, you are not the
+right client.
+[01:28:40.660 --> 01:28:51.660]   The alert can be sent because the
+verification fails,
+[01:28:51.660 --> 01:28:58.660]   but also in case the client is not an
+acceptable one.
+[01:28:58.660 --> 01:29:02.660]   That could even happen after step 5.
+[01:29:02.660 --> 01:29:10.660]   In the sense that the server is, as a
+minimum, performing authentication.
+[01:29:10.660 --> 01:29:15.660]   But it could use that also for authorization.
+[01:29:15.660 --> 01:29:22.660]   So when I receive the certificate, I see that
+this is a certificate of the user Antonio Lioi.
+[01:29:22.660 --> 01:29:25.660]   I check my list. No, Antonio Lioi is not
+permitted.
+[01:29:25.660 --> 01:29:29.660]   Yes, you are Antonio Lioi, because your
+signature is correct,
+[01:29:29.660 --> 01:29:31.660]   but you are not authorized.
+[01:29:31.660 --> 01:29:34.660]   But that is not part of the protocol itself.
+[01:29:34.660 --> 01:29:36.660]   The protocol is for authentication.
+[01:29:36.660 --> 01:29:40.660]   But once you have the information about the
+identity of the counterpart,
+[01:29:40.660 --> 01:29:45.660]   you can eventually use that for authorization
+or access control.
+[01:29:45.660 --> 01:29:49.660]   And you can do that quickly inside the
+handshake itself,
+[01:29:49.660 --> 01:29:57.660]   or you can do later, in the sense that after
+the handshake is completed,
+[01:29:57.660 --> 01:30:02.660]   the information will be passed from the TLS
+layer to the application layer.
+[01:30:02.660 --> 01:30:06.660]   And so eventually the application layer will
+decide to close the channel.
+[01:30:06.660 --> 01:30:10.660]   Yeah, yes, you have authenticated correctly,
+but I don't like you.
+[01:30:10.660 --> 01:30:13.660]   You cannot connect. Sorry. Goodbye.
+[01:30:19.660 --> 01:30:21.660]   Okay, let's make...
+[01:30:21.660 --> 01:30:43.660]   Let's make another case.
+[01:30:43.660 --> 01:30:47.660]   Ephemeral key, no client authentication.
+[01:30:47.660 --> 01:30:57.660]   Initial part is always the same.
+[01:30:57.660 --> 01:31:01.660]   But now there is a problem.
+[01:31:01.660 --> 01:31:05.660]   The certificate of the server can only be
+used for digital signature.
+[01:31:05.660 --> 01:31:09.660]   It's not valid for key encryption or key
+exchange.
+[01:31:09.660 --> 01:31:13.660]   But we must go for ephemeral.
+[01:31:13.660 --> 01:31:18.660]   Then there is that extra message, server key
+exchange,
+[01:31:18.660 --> 01:31:23.660]   which contains either a signed ephemeral RSA
+key
+[01:31:23.660 --> 01:31:27.660]   or an ephemeral Diffie-Hellman exponent.
+[01:31:27.660 --> 01:31:32.660]   In any case, signed with the long-term key of
+the previous message.
+[01:31:32.660 --> 01:31:41.660]   At that point, that key will be used for
+message number five.
+[01:31:42.660 --> 01:31:47.660]   And then all the rest goes the same.
+[01:31:47.660 --> 01:31:52.660]   So there is just one more message in case of
+ephemeral,
+[01:31:52.660 --> 01:31:56.660]   just for transferring the ephemeral key.
+[01:31:56.660 --> 01:31:59.660]   The rest is equal, just we substitute,
+[01:31:59.660 --> 01:32:05.660]   rather than using the long-term public key
+that we received in step three,
+[01:32:05.660 --> 01:32:09.660]   we use the key that we have received in step
+number four.
+[01:32:09.660 --> 01:32:19.660]   Okay, now we have the session and the
+connection created,
+[01:32:19.660 --> 01:32:22.660]   and we go on with transmission.
+[01:32:22.660 --> 01:32:26.660]   At some point, we need to close the link.
+[01:32:26.660 --> 01:32:28.660]   So there was the handshake.
+[01:32:28.660 --> 01:32:36.660]   Now there is the record number N that
+contains client data,
+[01:32:36.660 --> 01:32:41.660]   contains the MAC, eventually the data are
+encrypted and so on.
+[01:32:41.660 --> 01:32:45.660]   On the other side, there is record number M,
+[01:32:45.660 --> 01:32:49.660]   completely unrelated because we have
+different numbering
+[01:32:49.660 --> 01:32:53.660]   in the two directions with server data, MAC
+encryption.
+[01:32:53.660 --> 01:32:57.660]   At some point, we want to close the channel.
+[01:32:57.660 --> 01:33:01.660]   So the client is using the alert protocol,
+[01:33:01.660 --> 01:33:03.660]   not for sending an alarm,
+[01:33:03.660 --> 01:33:09.660]   but to notify of the imminent closure, alert,
+close, notify.
+[01:33:09.660 --> 01:33:16.660]   And this message is in clear, not encrypted,
+but protected with the MAC.
+[01:33:16.660 --> 01:33:22.660]   Otherwise, an attacker would send a message
+just to close your connection.
+[01:33:22.660 --> 01:33:24.660]   So it must be authenticated.
+[01:33:24.660 --> 01:33:30.660]   If it is not authenticated, it will not be
+accepted.
+[01:33:30.660 --> 01:33:35.660]   The server will send a pair, alert, close,
+notify.
+[01:33:35.660 --> 01:33:40.660]   I will do the same, okay.
+[01:33:40.660 --> 01:33:49.660]   Note that it is not said that it will happen
+exactly in this order.
+[01:33:49.660 --> 01:33:52.660]   Between the last minus one and the last,
+[01:33:52.660 --> 01:33:58.660]   the server might have other data that have
+not yet been sent.
+[01:33:58.660 --> 01:34:01.660]   So you tell me that you want to close the
+channel, okay,
+[01:34:01.660 --> 01:34:03.660]   but you close your side of the channel.
+[01:34:03.660 --> 01:34:06.660]   If I still have data to send, I will send,
+[01:34:06.660 --> 01:34:16.660]   and then I will send my last message to tell
+you, okay, I will close as well.
+[01:34:16.660 --> 01:34:32.660]   Let's see the case in which we resume a
+previous session rather than starting a new one.
+[01:34:32.660 --> 01:34:37.660]   In the client hello, there is a session ID
+different from zero.
+[01:34:37.660 --> 01:34:41.660]   I would like to continue with session number
+X.
+[01:34:41.660 --> 01:34:54.660]   And the server responds and inserts the same
+session identifier in its message.
+[01:34:54.660 --> 01:34:59.660]   You see what happens?
+[01:34:59.660 --> 01:35:01.660]   Nothing else.
+[01:35:01.660 --> 01:35:07.660]   We skip any kind of negotiation.
+[01:35:07.660 --> 01:35:13.660]   Note that the client will send, because the
+client L is always the same,
+[01:35:13.660 --> 01:35:17.660]   the list of cipher suite, the list of
+compression.
+[01:35:17.660 --> 01:35:24.660]   And the server will select one, but that will
+be based on session ID X.
+[01:35:24.660 --> 01:35:30.660]   And since in session ID X, they negotiated a
+master secret,
+[01:35:30.660 --> 01:35:35.660]   now they can use that master secret along
+with the client and server random
+[01:35:35.660 --> 01:35:38.660]   to generate the new keys for this connection.
+[01:35:38.660 --> 01:35:41.660]   And so they can immediately use them.
+[01:35:41.660 --> 01:35:45.660]   Change cipher spec, and then a MAC of all
+previous messages,
+[01:35:45.660 --> 01:35:50.660]   which is just message number one for the
+client and message number two for the server,
+[01:35:50.660 --> 01:35:54.660]   MAC computed with the new keys.
+[01:35:54.660 --> 01:36:00.660]   Because the master secret is the same, but
+client random and server random are different.
+[01:36:00.660 --> 01:36:07.660]   So now we have new keys for this connection.
+[01:36:07.660 --> 01:36:09.660]   Okay, great.
+[01:36:09.660 --> 01:36:26.660]   Let's stop here for another 10 minutes and
+then we will finish this lecture.
+[01:36:26.660 --> 01:36:35.660]   If the client is sending a TLS version of 1.1
+as the best support,
+[01:36:35.660 --> 01:36:39.660]   and the server is able to do 1.2 or 1.3,
+[01:36:39.660 --> 01:36:45.660]   and the server does not want to do 1.1, 1.0
+because they are old,
+[01:36:45.660 --> 01:36:49.660]   also in that case, the connection could fail.
+[01:36:49.660 --> 01:36:52.660]   So in that case, it's not a mismatch.
+[01:36:52.660 --> 01:36:55.660]   It's the fact that the server has a security
+configuration
+[01:36:55.660 --> 01:36:59.660]   that requires a high strength of the
+protocol,
+[01:36:59.660 --> 01:37:03.660]   and old versions are deprecated.
+[01:37:03.660 --> 01:37:08.660]   So there are various points in which the
+server can fail.
+[01:37:08.660 --> 01:37:16.660]   And then there was another question related
+to a comparison with the SYN attack.
+[01:37:16.660 --> 01:37:21.660]   You remember the SYN attack in which the
+client is connected to a server,
+[01:37:21.660 --> 01:37:26.660]   sending the SYN, but never giving the final
+ACK.
+[01:37:26.660 --> 01:37:30.660]   And one colleague of you was telling, "We can
+do the same here,
+[01:37:30.660 --> 01:37:33.660]   because we start the negotiation,
+[01:37:33.660 --> 01:37:37.660]   but we never send the change cipher spec from
+the client."
+[01:37:37.660 --> 01:37:43.660]   Since the server must keep in memory all the
+messages for computing the final MAC,
+[01:37:43.660 --> 01:37:46.660]   the server is not sending.
+[01:37:46.660 --> 01:37:50.660]   And it's blocked, and I will open another in
+order to oblige you
+[01:37:50.660 --> 01:37:52.660]   to keep in memory a lot of things.
+[01:37:52.660 --> 01:37:55.660]   This attack is not so effective,
+[01:37:55.660 --> 01:37:58.660]   because the main difference compared to the
+SYN attack
+[01:37:58.660 --> 01:38:03.660]   is that the SYN attack is related to the
+saturation of a table,
+[01:38:03.660 --> 01:38:08.660]   which is in the kernel, and kernel memory is
+limited.
+[01:38:08.660 --> 01:38:12.660]   The size of the table is, I don't know, 100
+connections.
+[01:38:12.660 --> 01:38:15.660]   It depends on the capability of the server.
+[01:38:15.660 --> 01:38:19.660]   So it's very easy to saturate a kernel table.
+[01:38:19.660 --> 01:38:25.660]   On the contrary, these messages are kept in
+normal user space.
+[01:38:25.660 --> 01:38:29.660]   And if the server has got a lot of RAM, there
+is no problem.
+[01:38:29.660 --> 01:38:32.660]   Also because there will be surely timeout.
+[01:38:32.660 --> 01:38:37.660]   If I don't see the change cipher spec
+arriving in a short time,
+[01:38:37.660 --> 01:38:40.660]   I will abort the connection anyway.
+[01:38:40.660 --> 01:38:42.660]   So the comparison was nice.
+[01:38:42.660 --> 01:38:47.660]   That was a good intuition that there is the
+possibility of memory saturation,
+[01:38:47.660 --> 01:38:51.660]   but it's not so effective, because it's not
+kernel memory,
+[01:38:51.660 --> 01:38:53.660]   but user space memory.
+[01:38:53.660 --> 01:38:58.660]   Good. Good shot. Nice.
+[01:38:58.660 --> 01:39:00.660]   Okay.
+[01:39:00.660 --> 01:39:03.660]   And also here, another person was asking,
+[01:39:03.660 --> 01:39:07.660]   "But if the client is sending the list of
+cipher suites,
+[01:39:07.660 --> 01:39:13.660]   even if he is proposing to continue with the
+old session,
+[01:39:13.660 --> 01:39:16.660]   will the server perform again a choice?"
+[01:39:16.660 --> 01:39:21.660]   No. The client must send the list of cipher
+suites.
+[01:39:21.660 --> 01:39:28.660]   But it could even be an empty list, as if it
+is not supporting anything,
+[01:39:28.660 --> 01:39:33.660]   because anyway, the server will look at
+number X,
+[01:39:33.660 --> 01:39:38.660]   and if the server is accepting to continue
+session number X,
+[01:39:38.660 --> 01:39:44.660]   will put in the answer the same algorithm as
+the same cipher suite
+[01:39:44.660 --> 01:39:49.660]   as it was written, agreed originally in
+session X.
+[01:39:49.660 --> 01:39:52.660]   Okay?
+[01:39:52.660 --> 01:39:59.660]   Okay. Now, let's discuss a bit of problem.
+[01:39:59.660 --> 01:40:04.660]   TLS is often used with HTTP,
+[01:40:04.660 --> 01:40:13.660]   and that is worrying the people that would
+like to have very fast HTTP connections,
+[01:40:13.660 --> 01:40:20.660]   because for setting up the TLS, you have
+first the TCP and SHAKE,
+[01:40:20.660 --> 01:40:23.660]   three-way and SHAKE, and it takes time.
+[01:40:23.660 --> 01:40:28.660]   Then you have the TLS and SHAKE.
+[01:40:28.660 --> 01:40:34.660]   You see that in some cases there are two
+messages that are sent in sequence,
+[01:40:34.660 --> 01:40:41.660]   so possibly those could fit inside the single
+TCP segment.
+[01:40:41.660 --> 01:40:46.660]   Not always. If you have a very long
+certificate chain, for example,
+[01:40:46.660 --> 01:40:48.660]   that might not be the case.
+[01:40:48.660 --> 01:40:52.660]   You might need to split that across various
+segments.
+[01:40:52.660 --> 01:40:56.660]   So, let's imagine that we can fit in a single
+segment.
+[01:40:56.660 --> 01:41:02.660]   So, this requires at least one round-trip
+time for TCP, SYN, SYN/HACK,
+[01:41:02.660 --> 01:41:05.660]   and two round-trip times for TLS,
+[01:41:05.660 --> 01:41:11.660]   because you have, you see here, SYN,
+SYN/HACK,
+[01:41:11.660 --> 01:41:17.660]   and the HACK is sent piggybacked on the
+client ELO.
+[01:41:17.660 --> 01:41:23.660]   Then you have the server sending server ELO
+and the certificate altogether,
+[01:41:23.660 --> 01:41:26.660]   if the certificate chain is not too big.
+[01:41:26.660 --> 01:41:29.660]   Then the client will send client key
+exchange,
+[01:41:29.660 --> 01:41:31.660]   change cipher spec, and finish it,
+[01:41:31.660 --> 01:41:36.660]   and the server will send in the same segment,
+change cipher spec, and finish.
+[01:41:36.660 --> 01:41:44.660]   So, assuming a 30 millisecond delay between
+client and server, one way,
+[01:41:44.660 --> 01:41:49.660]   there is a total of 180 milliseconds of delay
+[01:41:49.660 --> 01:41:54.660]   before client and server can send protected
+data.
+[01:41:54.660 --> 01:42:00.660]   For this, this seems trivial to me, 180
+milliseconds.
+[01:42:00.660 --> 01:42:02.660]   Not very much.
+[01:42:02.660 --> 01:42:06.660]   For Google, Microsoft, and others, that is
+too much.
+[01:42:06.660 --> 01:42:12.660]   So, they are trying to reduce this time as
+much as possible.
+[01:42:12.660 --> 01:42:18.660]   We will discuss which improvements are done
+on that side later.
+[01:42:18.660 --> 01:42:25.660]   Now, let's finish this lecture by reviewing
+the most recent version.
+[01:42:25.660 --> 01:42:29.660]   So, SSL2 and SSL3 are history,
+[01:42:29.660 --> 01:42:33.660]   and they should not be considered absolutely
+anymore.
+[01:42:33.660 --> 01:42:36.660]   So, we are considering just TLS.
+[01:42:36.660 --> 01:42:42.660]   TLS 1.0 was actually a small evolution over
+SSL3.
+[01:42:42.660 --> 01:42:48.660]   In fact, it is labeled 3.1 when you go in the
+specific version field.
+[01:42:48.660 --> 01:42:56.660]   It was published in January 1999, and 99% is
+coincident with SSL3.
+[01:42:56.660 --> 01:43:05.660]   The only thing that happened is that SSL3 was
+using some proprietary or patented algorithm.
+[01:43:05.660 --> 01:43:10.660]   Since now we passed from a solution,
+proprietary of Netscape,
+[01:43:10.660 --> 01:43:13.660]   to a public solution for the whole Internet,
+[01:43:13.660 --> 01:43:19.660]   they stressed the usage of public algorithms
+without patents.
+[01:43:19.660 --> 01:43:25.660]   So, emphasis on standard, not proprietary,
+for digest and asymmetry.
+[01:43:25.660 --> 01:43:31.660]   So, the mandatory cipher suite that everybody
+must support in TLS 1.0
+[01:43:31.660 --> 01:43:35.660]   is Exchange of Keys with Diffie-Hellman,
+[01:43:35.660 --> 01:43:38.660]   Authentication with DSA,
+[01:43:38.660 --> 01:43:41.660]   and Encryption with Triple DES,
+[01:43:41.660 --> 01:43:45.660]   and MAC computed with HMAC SHA-1.
+[01:43:45.660 --> 01:43:50.660]   That is, the cipher suite, ephemeral
+Diffie-Hellman,
+[01:43:50.660 --> 01:43:55.660]   DSS with Triple DES, and CBC SHA.
+[01:43:55.660 --> 01:44:00.660]   That was the minimum for interoperability of
+everybody.
+[01:44:00.660 --> 01:44:07.660]   TLS 1.0 exhibited a series of problems that
+we will discuss
+[01:44:07.660 --> 01:44:11.660]   when we will discuss probably tomorrow the
+attacks.
+[01:44:11.660 --> 01:44:15.660]   So, that was followed by TLS 1.1,
+[01:44:15.660 --> 01:44:19.660]   that took a bit of time, nearly six or seven
+years.
+[01:44:19.660 --> 01:44:27.660]   That was specifically developed to protect
+against attacks against CBC.
+[01:44:27.660 --> 01:44:35.660]   The cipher blockchain computation performed
+in TLS 1.0 could be attacked,
+[01:44:35.660 --> 01:44:41.660]   because it was using an implicit
+initialization vector
+[01:44:41.660 --> 01:44:46.660]   that was coming from the previous segment
+into the next segment,
+[01:44:46.660 --> 01:44:50.660]   now with an explicit initialization vector.
+[01:44:50.660 --> 01:44:54.660]   Otherwise, certain kind of attacks would be
+possible.
+[01:44:54.660 --> 01:44:58.660]   And secondly, there was another problem,
+[01:44:58.660 --> 01:45:03.660]   that if there are padding errors,
+[01:45:03.660 --> 01:45:09.660]   now the error message is bad record MAC alert
+message,
+[01:45:09.660 --> 01:45:12.660]   rather than the decryption failed.
+[01:45:12.660 --> 01:45:14.660]   What does that mean?
+[01:45:14.660 --> 01:45:19.660]   There are some attacks that are named Oracle
+attacks,
+[01:45:19.660 --> 01:45:23.660]   in the sense that you try to change
+something,
+[01:45:23.660 --> 01:45:29.660]   and if different modifications generate
+different messages,
+[01:45:29.660 --> 01:45:32.660]   you can see, oh, this is a part of the pad,
+[01:45:32.660 --> 01:45:36.660]   oh, no, this is part of the payload.
+[01:45:36.660 --> 01:45:43.660]   So, we don't want to give that kind of
+information to the attacker.
+[01:45:43.660 --> 01:45:48.660]   So, in the past, we said the decryption
+failed.
+[01:45:48.660 --> 01:45:50.660]   Now, if there is something which is not good,
+we say,
+[01:45:50.660 --> 01:45:56.660]   okay, the MAC is not correct, and we don't
+give you any further information.
+[01:45:56.660 --> 01:45:59.660]   So, the problem was leakage of information
+[01:45:59.660 --> 01:46:03.660]   when you change something in an encrypted
+part.
+[01:46:03.660 --> 01:46:06.660]   In the encrypted part, you don't know what
+you are changing.
+[01:46:06.660 --> 01:46:08.660]   But if the message is different,
+[01:46:08.660 --> 01:46:13.660]   if you touch the pad or you touch the
+content, that is important.
+[01:46:13.660 --> 01:46:19.660]   Then, Jana started registering various
+protocol parameters,
+[01:46:19.660 --> 01:46:23.660]   and in case of premature close,
+[01:46:23.660 --> 01:46:29.660]   not due to an alert, but because maybe the
+TCP channel died.
+[01:46:29.660 --> 01:46:31.660]   That may happen.
+[01:46:31.660 --> 01:46:34.660]   In the previous version, if the TCP channel
+dies
+[01:46:34.660 --> 01:46:40.660]   and the connection is interrupted without
+doing the correct shutdown,
+[01:46:40.660 --> 01:46:45.660]   the last messages, in the past, you should
+negotiate a new session,
+[01:46:45.660 --> 01:46:49.660]   and that was a waste of time, and probably
+the network was already bad
+[01:46:49.660 --> 01:46:51.660]   since you had a problem with the network.
+[01:46:51.660 --> 01:46:55.660]   Now, you can resume the previous session,
+[01:46:55.660 --> 01:47:00.660]   even if the connection was not closed
+correctly.
+[01:47:00.660 --> 01:47:06.660]   Plus, in that RFC 4346, there are various
+additional notes
+[01:47:06.660 --> 01:47:11.660]   for correct implementation against various
+attacks.
+[01:47:15.660 --> 01:47:21.660]   TLS 1.1 was further improved with TLS 1.2,
+August 2018.
+[01:47:21.660 --> 01:47:28.660]   Now, the Cypher suite specifies also the
+pseudo-random function
+[01:47:28.660 --> 01:47:33.660]   used to create the client random and server
+random.
+[01:47:33.660 --> 01:47:37.660]   That is important to avoid wrong
+implementation.
+[01:47:37.660 --> 01:47:42.660]   We don't leave that anymore to the selection
+of the developer
+[01:47:42.660 --> 01:47:45.660]   that may do wrong things.
+[01:47:45.660 --> 01:47:51.660]   No, you must use one of the acceptable
+pseudo-random functions.
+[01:47:51.660 --> 01:48:02.660]   Then, we pass from the original SHA-1 to the
+compulsory use of SHA-256,
+[01:48:02.660 --> 01:48:07.660]   for example, in the finished and in the HMAC
+messages.
+[01:48:07.660 --> 01:48:14.660]   Optionally, we use authenticated encryption,
+so it is possible, not compulsory.
+[01:48:14.660 --> 01:48:17.660]   You can still have the MAC separated by the
+encryption.
+[01:48:17.660 --> 01:48:20.660]   We have seen MAC then encrypt.
+[01:48:20.660 --> 01:48:25.660]   Now, if you want, you can use AS with GCM or
+CCM mode,
+[01:48:25.660 --> 01:48:30.660]   so an authenticated encryption with
+associated data,
+[01:48:30.660 --> 01:48:35.660]   and incorporates things that are named
+protocol extensions,
+[01:48:35.660 --> 01:48:41.660]   so the possibility for the client and the
+server to send additional information
+[01:48:41.660 --> 01:48:45.660]   inside the client L and server L,
+[01:48:45.660 --> 01:48:51.660]   and especially the AS Cypher suite that was
+optional in the past.
+[01:48:51.660 --> 01:48:54.660]   Now, it is part of the standard.
+[01:48:54.660 --> 01:49:00.660]   You see, RFC 3268 is before 5246.
+[01:49:00.660 --> 01:49:05.660]   So, that was an addition, and now it has been
+incorporated in the standard.
+[01:49:05.660 --> 01:49:12.660]   So, the default Cypher suite now becomes PLS
+RSA
+[01:49:12.660 --> 01:49:19.660]   with AS 128 CBC, unfortunately, and SHA.
+[01:49:19.660 --> 01:49:23.660]   Beware that even if it is written SHA, it's
+not SHA-1.
+[01:49:23.660 --> 01:49:26.660]   It's SHA-256.
+[01:49:28.660 --> 01:49:35.660]   All the Cypher suites that use this idea are
+deprecated.
+[01:49:35.660 --> 01:49:41.660]   It means they are still there, but you
+deprecate something as an information
+[01:49:41.660 --> 01:49:46.660]   that in the next version of the protocol,
+that thing will no longer be available.
+[01:49:46.660 --> 01:49:52.660]   So, get ready, get prepared, start your
+migration away from that thing.
+[01:49:55.660 --> 01:50:00.660]   Beside this evolution, TLS 1.0, 1.1, and 1.2,
+[01:50:00.660 --> 01:50:04.660]   there have been a lot of other things that
+have been added.
+[01:50:04.660 --> 01:50:10.660]   So, we mentioned AS that has been
+incorporated in 1.2,
+[01:50:10.660 --> 01:50:15.660]   but, for example, the elliptic curve
+cryptography
+[01:50:15.660 --> 01:50:20.660]   was added as an option in 1RFC.
+[01:50:20.660 --> 01:50:27.660]   Camellia, Seed, and ARIA, that are encryption
+algorithms of specific countries,
+[01:50:27.660 --> 01:50:32.660]   I don't remember exactly, but one is Japan,
+the other is South Korea,
+[01:50:32.660 --> 01:50:36.660]   are now possible to support those countries.
+[01:50:36.660 --> 01:50:42.660]   For authentication, we accept not only
+challenge-response,
+[01:50:42.660 --> 01:50:45.660]   but we accept also other techniques.
+[01:50:45.660 --> 01:50:47.660]   For example, Kerberos.
+[01:50:47.660 --> 01:50:52.660]   It means that if you are inside a security
+domain,
+[01:50:52.660 --> 01:50:56.660]   such as, for example, a Microsoft network,
+[01:50:56.660 --> 01:51:01.660]   in Microsoft authentication is performed with
+Kerberos locally,
+[01:51:01.660 --> 01:51:08.660]   and now you can use the Kerberos ticket for
+authenticating the server and the client.
+[01:51:08.660 --> 01:51:13.660]   Another option, which is quite important,
+[01:51:13.660 --> 01:51:17.660]   in order to reduce the size of the messages,
+[01:51:17.660 --> 01:51:20.660]   is the pre-shared key.
+[01:51:20.660 --> 01:51:25.660]   It is possible to pre-share the premaster
+secret,
+[01:51:25.660 --> 01:51:29.660]   or Diffie-Hellman, or RSA.
+[01:51:29.660 --> 01:51:34.660]   That is specifically important if you are
+using TLS
+[01:51:34.660 --> 01:51:39.660]   for Internet of Things or embedded devices,
+[01:51:39.660 --> 01:51:43.660]   because those are devices that have very
+scarce memory,
+[01:51:43.660 --> 01:51:47.660]   very low computational capacity.
+[01:51:47.660 --> 01:51:52.660]   So, if you implement the hole-in-the-shade
+with all the certificates
+[01:51:52.660 --> 01:51:55.660]   that need to be downloaded to verify the
+process,
+[01:51:55.660 --> 01:52:00.660]   maybe you are consuming a lot of energy, a
+lot of time.
+[01:52:00.660 --> 01:52:05.660]   If you have a secure process, in which when
+you deploy an item,
+[01:52:05.660 --> 01:52:10.660]   you put inside the key and you're sure that
+no one else can modify that key,
+[01:52:10.660 --> 01:52:14.660]   you can have a pre-shared key between a
+client and the server,
+[01:52:14.660 --> 01:52:20.660]   and you can skip all the phase of key
+negotiation.
+[01:52:20.660 --> 01:52:23.660]   Or, to avoid just the certificate,
+[01:52:23.660 --> 01:52:29.660]   you can pre-share the Diffie-Hellman or the
+RSA keys.
+[01:52:29.660 --> 01:52:34.660]   There is another mechanism for
+authentication, secure remote passwords,
+[01:52:34.660 --> 01:52:37.660]   but we have not considered the details,
+[01:52:37.660 --> 01:52:44.660]   and also OpenPGP, which is a variant, the
+standard of PGP, is also supported.
+[01:52:44.660 --> 01:52:50.660]   Then, for compression, initially it was
+defined
+[01:52:50.660 --> 01:52:54.660]   how the compression methods should be
+described.
+[01:52:54.660 --> 01:53:16.660]   [inaudible]
+[01:53:16.660 --> 01:53:19.660]   So, one RFC to define the compression
+methods,
+[01:53:19.660 --> 01:53:28.660]   and one basic method, name it Deflate, and
+then later LZS methods were added.
+[01:53:28.660 --> 01:53:32.660]   This is history, because, as you will see in
+the next lecture,
+[01:53:32.660 --> 01:53:37.660]   using compression is a bad idea.
+[01:53:37.660 --> 01:53:43.660]   For TLS, you may remember that in ISS, I told
+you,
+[01:53:43.660 --> 01:53:48.660]   it is a good idea to compress the data before
+encryption,
+[01:53:48.660 --> 01:53:52.660]   because compression typically cancels the
+similar things.
+[01:53:52.660 --> 01:53:54.660]   They are just substituted.
+[01:53:54.660 --> 01:53:59.660]   So, it reduces the quantity of data,
+eliminates similarities, and so on.
+[01:53:59.660 --> 01:54:05.660]   But, the way in which compression is used in
+TLS was bad,
+[01:54:05.660 --> 01:54:10.660]   and created the possibility, the opportunity
+for various attacks.
+[01:54:10.660 --> 01:54:15.660]   So, they are there for history, starting with
+TLS 1.3,
+[01:54:15.660 --> 01:54:18.660]   compression is forbidden.
+[01:54:18.660 --> 01:54:22.660]   You cannot have it at TLS level.
+[01:54:22.660 --> 01:54:29.660]   Then, there are other various things that are
+mostly extensions.
+[01:54:29.660 --> 01:54:33.660]   You can see that there is one RFC, just not
+only to deprecate,
+[01:54:33.660 --> 01:54:39.660]   but telling you no, SSL2 is completely
+prohibited.
+[01:54:39.660 --> 01:54:42.660]   And, other mechanisms for having an NShake,
+[01:54:42.660 --> 01:54:45.660]   in which you transfer supplemental data,
+[01:54:45.660 --> 01:54:51.660]   this was asked specifically by Microsoft and
+other large companies,
+[01:54:51.660 --> 01:54:56.660]   because during the NShake, the only
+identifier that you can transfer
+[01:54:56.660 --> 01:55:00.660]   is possibly the client certificate.
+[01:55:00.660 --> 01:55:05.660]   But, if you already have, for example,
+performed a login to a Windows network,
+[01:55:05.660 --> 01:55:08.660]   you have already an identifier, which is the
+SID,
+[01:55:08.660 --> 01:55:13.660]   the subject identifier, as generated by
+Kerberos.
+[01:55:13.660 --> 01:55:19.660]   So, they could insert that, and have this
+transferred to the server,
+[01:55:19.660 --> 01:55:22.660]   in order to perform also authorization.
+[01:55:22.660 --> 01:55:35.660]   Okay, now, let's go and have a look to some
+of the most frequent attacks.
+[01:55:35.660 --> 01:55:39.660]   We will not be able to see all of them today,
+[01:55:39.660 --> 01:55:42.660]   because I've got another lecture at half past
+five,
+[01:55:42.660 --> 01:55:45.660]   so I will stop at a quarter past five,
+[01:55:45.660 --> 01:55:48.660]   in order to move to the other side of the
+polytechnic.
+[01:55:48.660 --> 01:55:54.660]   But, let's start, we have a bit more time
+now, to consider some attacks.
+[01:55:54.660 --> 01:55:59.660]   Heartbleed is a very famous attack,
+[01:55:59.660 --> 01:56:05.660]   that exploits one extension that has been
+widely implemented.
+[01:56:05.660 --> 01:56:09.660]   It is named Heartbeat extension.
+[01:56:09.660 --> 01:56:13.660]   This is an extension to keep a connection
+alive,
+[01:56:13.660 --> 01:56:21.660]   without the need to constantly renegotiate
+the SSL session.
+[01:56:21.660 --> 01:56:26.660]   And, it's also useful in the PMTU discovery,
+PathMTU.
+[01:56:26.660 --> 01:56:30.660]   What does that mean? You have opened a TLS
+channel.
+[01:56:30.660 --> 01:56:35.660]   A TLS channel has got a list of keys and
+algorithms associated.
+[01:56:35.660 --> 01:56:40.660]   So, it takes memory, as one of you told.
+[01:56:40.660 --> 01:56:44.660]   If no one is transmitting data, maybe the
+server or the client,
+[01:56:44.660 --> 01:56:46.660]   at some point, will close that.
+[01:56:46.660 --> 01:56:52.660]   But, maybe, on purpose, I want to have the
+connection open for one hour,
+[01:56:52.660 --> 01:56:55.660]   even if I send just one byte per hour,
+[01:56:55.660 --> 01:56:59.660]   because I want to avoid the handshake time.
+[01:56:59.660 --> 01:57:06.660]   So, the Heartbeat session is a mechanism in
+which, automatically,
+[01:57:06.660 --> 01:57:10.660]   without intervention of the application
+developer,
+[01:57:10.660 --> 01:57:16.660]   the TLS, periodically, will send data from
+client to server,
+[01:57:16.660 --> 01:57:19.660]   and the server will copy that data back,
+[01:57:19.660 --> 01:57:23.660]   just to demonstrate that the channel is
+working.
+[01:57:23.660 --> 01:57:30.660]   Okay? It's a sort of automatic ping, but
+performed inside a TLS channel.
+[01:57:30.660 --> 01:57:36.660]   Okay. From the course that you attended with
+Professor Sist and Professor Basile,
+[01:57:36.660 --> 01:57:42.660]   you should know what is a CVE, right?
+[01:57:42.660 --> 01:57:45.660]   Yes, or no?
+[01:57:45.660 --> 01:57:50.660]   Common Vulnerability and Exposure is a
+worldwide database,
+[01:57:50.660 --> 01:57:54.660]   which is listing all the attacks that have
+been performed so far.
+[01:57:54.660 --> 01:58:02.660]   So, CVE 2014, number 160, is a buffer
+overflow,
+[01:58:02.660 --> 01:58:06.660]   sorry, buffer overread in OpenSSL,
+[01:58:06.660 --> 01:58:12.660]   and OpenSSL is the most widely used library
+for TLS.
+[01:58:12.660 --> 01:58:17.660]   The problem is that the TLS server is sending
+back more data,
+[01:58:17.660 --> 01:58:23.660]   up to 64 kilobytes, than in the Heartbeat
+request.
+[01:58:23.660 --> 01:58:28.660]   So, I'm sending you 3 bytes, but you are
+sending me much more.
+[01:58:28.660 --> 01:58:34.660]   And, in that way, the attacker can get
+sensitive data,
+[01:58:34.660 --> 01:58:39.660]   stored in RAM, and RAM is very dangerous,
+[01:58:39.660 --> 01:58:44.660]   because if a user is submitting a username
+and password in a form,
+[01:58:44.660 --> 01:58:50.660]   protected with TLS, the username and password
+are unclear in memory.
+[01:58:50.660 --> 01:58:55.660]   Or, there may be the server private key,
+[01:58:55.660 --> 01:58:59.660]   if the server is not using an HSM.
+[01:58:59.660 --> 01:59:03.660]   Okay. This attack was very, very bad,
+[01:59:03.660 --> 01:59:08.660]   and it made even its role in XCD.
+[01:59:08.660 --> 01:59:10.660]   I don't know if you have never seen XCD,
+[01:59:10.660 --> 01:59:15.660]   it's a comic strip, quite famous, that is
+touching a lot of subjects.
+[01:59:15.660 --> 01:59:18.660]   And, when a cyber security thing goes to XCD,
+[01:59:18.660 --> 01:59:21.660]   it means that it was really important.
+[01:59:21.660 --> 01:59:25.660]   So, just to finish this lecture, have a look,
+[01:59:25.660 --> 01:59:29.660]   we have a look all together at this comic,
+[01:59:29.660 --> 01:59:39.660]   that explains very well this attack.
+[01:59:39.660 --> 01:59:42.660]   So, I stop sharing this,
+[01:59:42.660 --> 01:59:59.660]   and on the contrary, I share the browser
+window.
+[01:59:59.660 --> 02:00:17.660]   Okay, great. And now,
+[02:00:17.660 --> 02:00:20.660]   Heartbleed.
+[02:00:20.660 --> 02:00:23.660]   This is the heart beating.
+[02:00:23.660 --> 02:00:26.660]   Server, are you still there?
+[02:00:26.660 --> 02:00:29.660]   If so, reply potato, six letters.
+[02:00:29.660 --> 02:00:33.660]   So, the client is sending you the text that
+you should send back,
+[02:00:33.660 --> 02:00:36.660]   and the size of the text.
+[02:00:36.660 --> 02:00:41.660]   So, the server is receiving potato and six,
+[02:00:41.660 --> 02:00:51.660]   and will send back potato.
+[02:00:51.660 --> 02:00:53.660]   Server, are you still there?
+[02:00:53.660 --> 02:00:57.660]   If so, reply bird, four letters.
+[02:00:57.660 --> 02:01:05.660]   That is received, and the server is sending
+bird.
+[02:01:05.660 --> 02:01:08.660]   Now, let's test this.
+[02:01:08.660 --> 02:01:11.660]   Server, are you still there?
+[02:01:11.660 --> 02:01:16.660]   Reply hat, 500 letters.
+[02:01:16.660 --> 02:01:20.660]   And now, the server is sending back hat,
+[02:01:20.660 --> 02:01:26.660]   and 497 bytes after that.
+[02:01:26.660 --> 02:01:32.660]   So, it sends back hat, and the next cells,
+[02:01:32.660 --> 02:01:37.660]   because the request was containing the text,
+[02:01:37.660 --> 02:01:41.660]   and the size.
+[02:01:41.660 --> 02:01:46.660]   But, the destination, the server was not
+checking.
+[02:01:46.660 --> 02:01:49.660]   That is an error in the implementation.
+[02:01:49.660 --> 02:01:51.660]   It's not a problem of the protocol.
+[02:01:51.660 --> 02:01:56.660]   It was a bug in the implementation of
+OpenSSL.
+[02:01:56.660 --> 02:01:58.660]   You see?
+[02:01:58.660 --> 02:02:03.660]   But, by repeating these attacks, you can scan
+the memory,
+[02:02:03.660 --> 02:02:08.660]   because the text that you send will be one in
+one moment here,
+[02:02:08.660 --> 02:02:11.660]   in one moment there, and by looking at that,
+[02:02:11.660 --> 02:02:16.660]   you can get cookies, usernames, passwords,
+private keys,
+[02:02:16.660 --> 02:02:21.660]   and it was a very, very bad time when this
+thing was discovered,
+[02:02:21.660 --> 02:02:23.660]   because everybody was looking,
+[02:02:23.660 --> 02:02:28.660]   "Oh, have I got OpenSSL used in this way?"
+[02:02:28.660 --> 02:02:29.660]   Okay?
+[02:02:29.660 --> 02:02:31.660]   So, that's all for tonight.
+[02:02:31.660 --> 02:02:34.660]   We will meet again tomorrow.
+[02:02:34.660 --> 02:02:36.660]   Have a nice evening, and see you tomorrow.
+[02:02:36.660 --> 02:02:39.660]   [END]
+[02:02:39.660 --> 02:02:42.660]   www.open-ssl.org
+[02:02:42.660 --> 02:02:45.660]   www.open-sl.org
+[02:02:45.660 --> 02:02:48.660]   www.open-sl.org
+[02:02:48.660 --> 02:02:58.660]   [BLANK_AUDIO]
+
