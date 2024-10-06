@@ -96,45 +96,93 @@ The keys are \textbf{directional}, so there are two keys( one for
 client to server and one for server to client) to protect against
 reuse of the sequence number in the opposite direction.
 
+\section{Relationship among keys and sessions}
+When a new session is created using the handshake protocol, a new
+\textbf{pre-master secret} is established using public key
+cryptography. Then from the session a new connection is created, which
+requires a random number to be generated, and exchanged between the
+client and the server. Those two values are combined via a KDF,
+usually HHKDF( HMAC-based key derivation function) to generate the 
+\textbf{master secret}. This computation is done only once, and the 
+secret is common to several connections.\\
+The pre-master secret is then discarded, and the keys necessary for
+the MAC computation, encryption and, if necessary, IVs will be derived
+from the master secret.\\
+You can notice that the master secret is common to any connections
+inside a session, but the per-connection keys are different every
+time. This is another important feature to avoid replay attacks,
+possible because numbering is per-connection. This solution also
+allows to reduce the cost of establishing new keys for each
+connection.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.5\textwidth]{img/relationship
+  keys-connection.png}
+  \caption{Relationship among keys and sessions.}
+  \label{fig:tls-keys-and-sessions}
+\end{figure}
+
 \section{Perfect Forward Secrecy}
-Since the keys are generated from asymmetric crypto, if the private
-key is compromised, all the previous communication can be decrypted.
-In this context, perfect forward secracy is desirable.
+Since the keys are generated from symmetric crypto, if the private key
+used to perform encryption and decryption of the pre-master secret is
+compromised, all the previous communication can be decrypted because
+it is possible to derive the master-secret. This is only possible if
+the server has a certificate valid for both signature and encryption
+In this context, perfect forward secrecy is desirable.
 \begin{boxH}
   \textbf{Perfect Forward Secrecy} is a property of key-agreement
   protocols ensuring that the compromise of the secret key used for 
   will compromise only current (and eventually future) traffic but not
   the past one
 \end{boxH}
-The most common way to achieve this is to use ephiemeral keys, which
-are one-time asymmetric keys( used for key exchange) 
+The most common way to achieve this is to use \textbf{ephemeral keys},
+which are one-time asymmetric keys( used for key exchange). This means
+that the key pair used for key exchange is not a long term key pair,
+but a temporary one generated on-the-fly when necessary.\\ 
+The ephemeral key needs to be authenticated, so only for this purpose
+the long-term key is used for signing the ephemeral key. This is done
+using DHKE instead of RSA because the latter one is really slow, while
+the former one is faster with the compromise of only using the
+established key for a certain number of session.\\
+Let's now go over some considerations: if the temporary key is
+compromised, perfect forward secrecy of the communication is still
+valid because he can only decrypt the traffic exchanged using the
+temporary key. On the contrary, if the long-term key is compromised,
+no secret is really disclosed, because no traffic has been exchanged
+using it for encryption, but is still a problem for server
+authentication.
 
 \section{The protocol}
 The TLS handshake is always initiated by the client. 
 
 \subsection{Client Hello and Server Hello}
-In version 1.2 the client sends a Client Hello, which contains:
+In version 1.2 the client sends a \textbf{Client Hello}, which
+contains:
 \begin{itemize}
   \item the SSL version preferred by the client, and the highest
     supported(2=SSL-2, 3.0=SSL-3, 3.1=TLS-1.0, \dots)
   \item a 28 bytes pseudo-random number, which is the client random
-  \item a session-id, which is empty if the client is starting a new
-    session, and not empty if the client is trying to resume a 
+  \item a session-id, which is \textit{0} if the client is starting a
+    new session, and \textit{1} if the client is trying to resume a
     previous session
   \item a list of cipher suites supported by the client, in order to 
-    let the server choose the most secure one.
+    let the server choose the most secure one (the set of algorithms
+    used for encryption, for key exchange, and for integrity)
   \item a list of compression methods supported by the client
+    (supported only up to TLS 1.2)
 \end{itemize}
 
-And then a server hello is sent back, which contains:
+And then a \textbf{server hello} is sent back, which contains:
 \begin{itemize}
-  \item the SSL version chosen by the server
+  \item the SSL version chosen by the server, the highest one
+    supported by both the client and the server
   \item a 28 bytes pseudo-random number, which is the server random
   \item a session identifier(session-id), which is a new one if the
     server is starting a new session, and the same as the client's if
     the server is resuming a previous session
-  \item the cipher suite chosen by the server, the strongest one
-    common between the client and the server
+  \item the cipher suite chosen by the server, the strongest common
+    one between the client and the server
   \item the compression method chosen by the server
 \end{itemize}
 
@@ -156,13 +204,14 @@ And then a server hello is sent back, which contains:
 \end{figure}
 
 \subsection{Cipher suite}
-A cipher suite is a set of cryptographic algorithms used in the TLS
-protocol. A typical cipher suite consists of a key exchange algorithm,
-the symmetric encryption algorithm, and the hash function used for 
-generating MACs.
+A cipher suite is a string which contains the set of cryptographic
+algorithms used in the TLS protocol. A typical cipher suite consists
+of a key exchange algorithm, the symmetric encryption algorithm, and
+the hash function used for generating MACs.
 Some example of those are:
 \begin{itemize}
-  \item SSL\_NULL\_WITH\_NULL\_NULL
+  \item SSL\_NULL\_WITH\_NULL\_NULL (no protection, used for the record
+    protocol to be used in the handshake)
   \item SSL\_RSA\_WITH\_NULL\_SHA
   \item SSL\_RSA\_EXPORT\_WITH\_RC2\_CBC\_40\_MD5
   \item SSL\_RSA\_WITH\_3DES\_EDE\_CBC\_SHA
@@ -170,10 +219,21 @@ Some example of those are:
 
 
 \subsection{Certificates}
-The server sends its certificate to the client for server
-authentication.
-% there should lie the server authentication even if ephimeral keys
-% are not used
+After the initial exchange, the server is ready to authenticate
+itself.\\
+The server sends its long-term public key certificate to the client
+for server authentication. Actually, the whole certificate chain, up
+to the root CA, must be sent. Furthermore , the subject of the 
+certificate must match the server name.\\
+Server authentication is implicit, because its private key is used to
+decrypt the pre-master secret, while client authentication is 
+always explicit.
+
+\begin{boxH}
+  The implicit server authentication is based on the fact that the MAC
+  is computed trough the key derived trough knowledge of the private
+  key, so only the server can compute it.
+\end{boxH}
 
 Optionally, the server can request a certificate from the client for
 client authentication. In this case the server specifies the list of
@@ -186,7 +246,22 @@ one and encrypted with the client private key is sent to the client.
 
 \subsection{Key exchange}
 The key exchange is the most important part of the handshake protocol.
-The server key exchange message is sent only if the
+If the server is using RSA for key exchange, the client generates a
+pre-master secret, encrypts it with the server's public key(which can
+be ephemeral or from its x.509 certificate) and sends it to the
+server. If RSA is no used, DHKE can be used to generate the pre-master
+secret, and in this case the server computes the value independently 
+and the two parts can derive the master secret.\\
+Another option is to use FORTEZZA, which is a key exchange algorithm
+based on DH.
+
+\subsection{Certificate verify}
+In case the server requested client authentication, the client will be
+required to send the certificate to prove that he is the owner of it's
+private key. The message to be signed is the hash of all the messages
+exchanged up to this point in the handshake protocol. This is to avoid
+replay attacks too.
+
 
 \subsection{Change cipher spec}
 The change cipher spec message used to trigger the change of the
@@ -209,6 +284,33 @@ and the server, because the MAC is computed over different messages.
 This allows to prevent rollback man-in-the-middle attacks (version
 downgrade or ciphersuite downgrade)
 
+% 3 subfig, 2 on top and 1 on bottom
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{img/TLS no ephimeral no
+    auth.png}
+    \caption{TLS handshake(no ephemeral, no client authN).}
+    \label{fig:tls-handshake-protocol}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{img/TLS no ephimeral
+    auth.png}
+    \caption{TLS handshake(no ephemeral, client authN).}
+    \label{fig:tls-handshake-protocol-2}
+  \end{subfigure}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{img/TLS ephimeral no
+    auth.png}
+    \caption{TLS handshake(ephemeral, no client authN).}
+    \label{fig:tls-handshake-protocol-3}
+  \end{subfigure}
+  \caption{TLS handshake protocol.}
+\end{figure}
+
 \section{Setup Time}
 The setup time is the time required to establish a secure connection 
 between the client and the server. TLS depends on TCP, so the TCP
@@ -217,6 +319,24 @@ performed, meaning that typically 3 RTTs (1 for TCP and 2 for TLS) are
 required to establish a secure connection. Usually after 180ms the two
 parties are ready to send protected data( assuming 30ms delay
 one-way).
+
+% 2 subfig
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{img/TLS link teardown.png}
+    \caption{TLS link teardown.}  
+    \label{fig:tls-link-teardown}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{img/TLS resume session.png}
+    \caption{TLS resume session.}
+    \label{fig:tls-resume-session}
+  \end{subfigure}
+  \caption{TLS link teardown and resume session.}
+\end{figure}
 
 \section{TLS versions}
 \subsection{TLS 1.0}
@@ -229,7 +349,7 @@ encouraged.
 TLS 1.1 was released in 2006, and it introduced some security fixes
 especially to protect against CBC attacks. In fact, the implicit
 IV is replaced with an explicit IV to protect against CBC attacks.
-Also protection against padding oracle attacks were instroduces to
+Also protection against padding oracle attacks were introduces to
 reduce the information leaks. For this reason Passing errors now use
 the bad\_record\_mac alert message (rather than the decryption\_failed
 one). Furthermore, premature closes no longer cause a session to be non-
@@ -249,7 +369,7 @@ All the chipersuites tat use IDEA and DES are deprecated.
 Heartbleed is a security bug in the OpenSSL cryptography library,
 which is a widely used implementation of the TLS protocol. It was able
 to exploit the fact that the heartbeat extension keeps the connection
-alive without the need to negituate the SSL session again. The
+alive without the need to negotiate the SSL session again. The
 attacker could send a heartbeat request, but the length of the 
 response is much longer( up to 64KB) than the actual data sent by the
 client. This attack could then allow to leak memory contents.
