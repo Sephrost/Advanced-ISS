@@ -373,3 +373,306 @@ alive without the need to negotiate the SSL session again. The
 attacker could send a heartbeat request, but the length of the 
 response is much longer( up to 64KB) than the actual data sent by the
 client. This attack could then allow to leak memory contents.
+
+\subsection{Bleichenbacher attack}
+Blackenbacker is a 1998 attack and it's the so-called the million
+message attack because it exploited a vulnerability in the way the RSA
+encryption was done. RSA requires the padding to be done in a certain
+way, because if it is unoptimally done, it could cause some issues.\\
+The attacker could perform an RSA private key operation with a
+server’s private key by sending a million or so well-crafted messages
+and looking for differences in the error codes returned. By basically
+knowing the public key and trying to decrypt a message with some
+guessed private keys, the different responses obtained were giving
+hints about which bits were correct and which bits were wrong.\\
+Later one the RSA implementations moved to RSA-OAEP, which is a
+padding scheme that is provably secure against chosen-ciphertext
+attacks.\\
+In 2017 another variant of this attack was discovered, called
+ROBOT( Return Of Bleichenbacher's Oracle Threat), to which many major
+websites, like Facebook, were vulnerable.
+
+\subsection{Other attacks against SSL/TLS}
+Some other attacks against SSL/TLS are CRIME, BREACH, BEAST and
+POODLE.\\
+\textbf{Crime} is an attack against the \textbf{compression algorithm}
+used in \textbf{SSL/TLS}, which by injection chosen plaintext in the
+user requests, for example by using a form or choosing fraudulently an
+username that is displayed, and then measure the size of the encrypted
+traffic, an attacker could recover specific plaintext parts exploiting
+information leaked from the compression, and this is part of the
+reason why the compression is deprecated in TLS 1.3.\\
+\textbf{BREACH} is an attack against the \textbf{HTTP compression} to
+deduce a secret within the HTTP response provided by the server. It is
+different from Crime because the former is an attack against the
+compression algorithm used in SSL/TLS, while the latter is an attack
+against the HTTP compression.\\
+\textbf{BEAST} is an attack that exploits a vulnerability in the way
+the \textbf{CBC} mode of operation is used in SSL/TLS. The attack is
+possible if \textbf{IV concatenation}is used, meaning that the initial
+vector for the next encryption is taken from the end of the previous
+encryption. A MITM may decrypt HTTP headers with a blockwise-adaptive
+chosen-plaintext attack, and by doing so, he's able to decrypt HTTPS
+requests and steal information such as session cookies.\\
+\textbf{POODLE}, or Padding Oracle On Downgraded Legacy Encryption, is
+an attack that exploits the fact that SSL 3.0 uses a padding scheme
+that is vulnerable to a \textbf{padding oracle attack}, by acting as a
+MITM. This is done by exploiting SSL-3 fallbacks to decrypt data. This
+is also the only attack among those that still works today.\\
+\textbf{FREAK}, or Factoring RSA Export Keys, is an attack that
+exploits the downgrades on TLS to export-level RSA keys to a
+factorizable bit length(512 bits). It is also possible to carry this
+out by downgrading the symmetric key too and then perform a brute
+force attack( 40-bit). As you can see from figure
+\ref{fig:freak-attack}, in the first phase the random and the
+supported elliptic curve are not altered by the MITM, but only the
+supported cipher suites are altered( to export level ones). Usually 40
+bits chiper suits should not be configured at all, but some
+misconfigurations may happen. The third phase is where the magic
+happen: we have theoretically the MAC  in the FINISHED message to
+protect against tampering (recall that the MAC will be computed over
+all the handshake messages) but since the MAC is protected with the
+master secret, the master secret is only 40 bits. The attacker can
+then brute force the master secret on-the-fly, recompute the MAC so
+that the server will accept the message. Since the attacker have
+access to the premaster secret and the master secret, all traffic
+beyond this point is encrypted with a weak shared key and the
+middleman can read and even modify the traffic.\\
+For all those reasons SSL-3 has been disabled on most browsers, but
+its still needed for some browsers, for example IE6 by Microsoft,
+which is outlasting its expected life span, because its the default
+browser on Windows XP, which is still used today unfortunately,
+meaning that the window of exposure for those attacks is still open.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.6\textwidth]{img/FREAK attack.png}
+  \caption{FREAK attack.}
+  \label{fig:freak-attack}
+\end{figure}
+
+\section{ALPN extension}
+The ALPN extension, or Application-Layer Protocol Negotiation, is an
+extension that allow to negotiate the application protocol to speed up
+the connection creation, avoiding additional round-trips for
+application negotiation. It is used to negotiate the protocol to be 
+used on top of the TLS connection, such as HTTP/2, SPDY, or QUIC,
+before the connection is established. This is useful because it saves
+time, obviously, because after the connection is established, the
+client and server could still fail to communicate because the
+application protocol is not supported by the server.\\
+The extension is inserted in the client hello message, by setting the
+ALPN flag to true and providing a list of supported protocols in the
+client HELLO message. The server will respond with the ALPN flag set
+to true(if it supports the extension) and the selected protocol.\\
+This is also useful for those servers that use different certificates
+for the different application protocols.
+
+\section{TLS False Start}
+TLS False Start is another extension that allows the client can send
+application data together with the ChangeCipherSpec and Finished
+messages, in a single segment, without waiting for the corresponding
+server messages. The biggest advantage of using this is the reduction
+of the latency to 1 RTT. In theory this should work without changes,
+but to use this in Chrome and Firefox they require the ALPN and the 
+Forward Secrecy enabled, while Safari requires forward secrecy.
+
+\section{The TLS downgrade problem}
+In theory, when negotiating the TLS version to be used, the client
+sends (in ClientHello) the highest supported version, while the server
+notifies (in ServerHello) the version to be used (highest in common
+with client).\\
+For example if the client support up to SSL 3.3(TLS 1.2) and the
+server support the same version, the connection will be established
+using TLS 1.2. But if the server supports only SSL 3.2(TLS 1.1), the
+connection will be established using SSL TLS 1.1.\\
+Some servers, instead of sending the highest version supported, just
+close the connection, forcing the client to retry with a lower version
+of the protocol. An attacker could exploit this behavior to force the
+client to use an older version of the protocol, by repeatedly closing
+the connection, and then exploit the vulnerabilities of the older
+version of the protocol.\\
+\begin{boxH}
+  This means that its not a problem of the protocol itself, but of the
+  implementation of the server.
+\end{boxH}
+
+\subsection{TLS Fallback Signalling Cipher Suite Value (SCSV)}
+This behavior is not always an attack, for example there could be and
+error in the channel, which is closed by the server. This means that
+there's a need to distinguish between a real attack and a simple 
+error.\\
+The \textbf{TLS Fallback SCSV} is a \textbf{special value} that is
+used to prevent the protocol downgrade attacks, not only chiper suite.
+It do so by sending a new (dummy) ciphersuite
+value(TLS\_FALLBACK\_SCSV) which is sent by the client when opening a
+downgraded connection as the last value in the chipersuite list.\\
+If the server receives this value and still supports an higher version
+of the protocol, it will know that the client is trying to downgrade
+the connection, and it will refuse to establish the connection by
+sending a \textbf{inappropriate\_fallback} alert message an closing
+the channel.\\
+This notify the client that he should retry with the highest version 
+of the protocol supported by himself.\\
+Many servers do no support SCSV yet, but most servers have fixed their
+behavior when the client requests a version higher than the supported
+one so browsers can now disable insecure downgrade
+
+\section{TLS session tickets}
+We know that session resumption is possible with TLS, but the server
+needs to keep a cache of session IDs, which may become very large for
+high traffic servers. For this reason, the \textbf{TLS session
+tickets} were introduced, which are an extension allowing the server
+to send the session data to the client encrypted with a server secret
+key. This data is stored by the client, which will send it again when
+it wants to resume a session. This allows to move the cache to the
+client side. Obviously, this data has to be encrypted with a server
+secret key.\\
+Even if this behaviour is desirable for the server, it still need to
+be supported by the browser ( it's an extension after all) and needs a
+mechanism to share keys among the servers in a load-balancing heavy
+environment.
+\section{The Virtual Server Problem}
+Nowadays, virtual servers are very common in web hosting, because they
+allows to have different logical names associated with the same IP
+address( ie: home.myweb.it=10.1.2.3, food.myweb.it=10.1.2.3).
+This is easy to manage in HTTP/1.1 but quite troublesome with HTTPS,
+because TLS is activated before the HTTP request is sent, which makes
+it difficult to know which certificate should be provided in advance.
+The solutions are quire simple:
+\begin{itemize}
+  \item use a wildcard certificate, which is a certificate that is
+    valid for all the subdomains of a domain (ie: *.myweb.it)
+  \item use the SNI (Server Name Indication) extension, which is an
+    extension that allows the client to specify the hostname of the
+    server it is trying to connect to, allowing the server to provide
+    the correct certificate. This is sent in the ClientHello message.
+  \item provide a certificate with a list of servers in
+    subjectAltName, which allow to share the same private key for 
+    different servers.
+\end{itemize}
+
+\section{TLS 1.3}
+TLS 1.3 was released in 2018, and it introduced some new features
+while solving some of the most common problems of the previous 
+versions:
+\begin{itemize}
+  \item \textbf{reduce} the \textbf{handshake latency} in general 
+  \item \textbf{encrypting} more of the \textbf{handshake} (for
+    security and privacy, after all up to TLS 1.2 the handshake was in
+    clear text)
+  \item \textbf{improving resiliency} to cross-protocol attacks
+  \item removing legacy features
+\end{itemize}
+We will now go over the main changes in TLS 1.3.
+
+\subsection{Key exchange}
+In this version, the support for static RSA and DH key exchange was
+removed for many reasons:
+\begin{itemize}
+  \item it does not implement forward secrecy 
+  \item its difficult to implement correctly, which is a problem
+    because it exposes the system to many attacks like Bleichenbacher
+\end{itemize}
+Now Diffie-Hellman ephemeral (DHE) and Elliptic Curve Diffie-Hellman
+Ephemeral (ECDHE) are the only key exchange methods supported, with
+some required parameters( some implementations weren't really up to
+the standards, ie: used DH with small numbers( just 512 bits) or
+generated values without the required mathematical properties).
+
+\subsection{Message protection}
+TLS 1.3 greatly improves message protection by eliminating several
+vulnerabilities present in earlier versions. Previously, issues arose
+from using CBC mode with authenticate-then-encrypt, which led to
+attacks like Lucky13 and POODLE. The use of RC4 also allowed plaintext
+recovery due to measurable biases, and compression enabled the CRIME
+attack.\\
+TLS 1.3 addresses these weaknesses by removing CBC mode and enforcing
+AEAD modes for stronger security. Insecure algorithms such as RC4,
+3DES, Camellia, MD5, and SHA-1 have been dropped, and compression is
+no longer used, ensuring a more secure cryptographic environment.
+
+\subsection{Digital signature}
+In TLS 1.3, digital signatures have been strengthened to address
+earlier vulnerabilities. Previously, RSA signatures were used on
+ephemeral keys with the outdated PKCS\#1v1.5 schema, leading to
+potential flaws. The handshake was authenticated using a MAC instead
+of a proper digital signature, which exposed the protocol to attacks
+like FREAK.\\
+TLS 1.3 improves this by using the modern, secure RSA-PSS signature
+scheme. Additionally, the entire handshake is signed, not just the
+ephemeral keys, providing more comprehensive security. The protocol
+also adopts modern signature schemes, enhancing the overall strength
+of the cryptographic process.
+
+\subsection{Ciphersuites}
+TLS 1.3 simplifies the protocol by reducing the complexity seen in
+earlier versions, which had a long list of cryptographic options that
+grew exponentially with each new algorithm. This complexity made
+configuration and security management difficult.\\
+To address this, TLS 1.3 specifies only essential, orthogonal
+elements: a cipher (and mode) combined with an HKDF hash function. It
+no longer ties the protocol to specific certificate types (like RSA,
+ECDSA, or EdDSA) or key exchange methods (such as DHE, ECDHE, or
+PSK).\\
+Moreover, TLS 1.3 narrows the selection to just five ciphersuites:
+\begin{itemize}
+  \item TLS\_AES\_128\_GCM\_SHA256
+  \item TLS\_AES\_256\_GCM\_SHA384
+  \item TLS\_CHACHA20\_POLY1305\_SHA256
+  \item TLS\_AES\_128\_CCM\_SHA256
+  \item TLS\_AES\_128\_CCM\_8\_SHA256 (deprecated but yet supported
+    for computational environments with low capacity)
+\end{itemize}
+
+\subsection{EdDSA}
+EdDSA, or Edwards-curve Digital Signature Algorithm, is a digital 
+signature scheme using the EdDSA signature scheme. The EdDSA scheme,
+unlike standard DSA doesnt require a PRNG, which could in some cases
+leak the private key if the underlying generation algorithm is broken
+or predictable.\\
+EdDSA picks a nonce based on a hash of the private key and the
+message, which means after the private key is generated there’s no
+more need for random number generators. Another advantage is that the
+EdDSA is faster in signature generation and verification than the
+standard DSA.
+
+
+\subsection{Other improvements}
+
+\subsection{HKDF in TLS 1.3}
+
+\subsection{TLS-1.3 handshake}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.6\textwidth]{img/TLS 1-3 handshake.png}
+  \caption{TLS 1.3 handshake.}
+  \label{fig:tls-1.3-handshake}
+\end{figure}
+
+\subsection{Pre-shared keys}
+In TLS, the pre-shared key (PSK) replaces the session ID and session
+ticket. PSKs are agreed upon during a full handshake and can be reused
+for multiple connections. They can be combined with (EC)DHE to achieve
+forward secrecy, where the PSK is used for authentication and (EC)DHE
+for key agreement. While PSKs can be generated out-of-band (OOB) from
+a passphrase, this is risky due to the potential lack of randomness,
+making brute-force attacks feasible. Therefore, using OOB PSKs is
+generally discouraged.
+
+\subsection{0-RTT connections}
+In TLS 1.3, when using a pre-shared key (PSK), a client can send
+"early data" with its initial message, which is protected by a
+specific key. However, this approach lacks forward secrecy because it
+relies solely on the PSK and could be vulnerable to replay attacks.
+While some complex mitigations exist, they are particularly
+challenging for multi-instance servers.
+
+\subsection{Incorrect share}
+In TLS 1.3, if a client sends a list of (EC)DHE groups that the server
+does not support, the server responds with a HelloRetryRequest,
+prompting the client to restart the handshake with different groups.
+If the new groups are also unacceptable, the handshake will be
+aborted, and the server will send an appropriate alert.
+

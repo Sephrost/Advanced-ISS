@@ -1,0 +1,1173 @@
+ Okay, so welcome back. Today we continue with our analysis of TLS.
+ Yesterday we saw a first attack, quite recent, but there are many
+ others that explain why there has been this continuous evolution of
+ the protocol. The next attack that we consider is Blackenbacker and
+ also a variant named Robot. Blackenbacker is a 1998 attack and it's
+ so-called the million message attack because it exploited a
+ vulnerability in the way the RSA encryption was done. I don't know if
+ in the cryptography course you have seen the different ways for
+ performing RSA encryption and they have explained to you that there
+ are some insecure ways if you don't do optimal padding. Do you know
+ that? No, it has not been illustrated. Okay, there are some problems
+ related to RSA. RSA can be used in general as an encryption algorithm
+ but can be used for digital signature together with hash function.
+ But the basic encryption requires some workaround like some padding
+ to go to the sides of the block and there was an old way of doing RSA
+ that permitted this attack. Next, it has moved to RSAOAEP that stands
+ for optimal something padding. So, in the version of 1998 that
+ variant of implementing RSA encryption was not implemented in TLS and
+ so the attacker can perform an RSA private key operation by sending a
+ million or so well-crafted messages and looking for differences in
+ the error codes returned. So, he saw the public key. Then, by sending
+ many messages and trying different private keys, the different
+ responses obtained were giving hints about which bits were correct
+ and which bits were wrong. And so, after more or less one million
+ messages sent, the private key of the server was discovered and
+ especially if the key was used both for signature and encryption, you
+ could decrypt all the messages or as a minimum you could pose as a
+ fake server because you discovered the private key used for
+ authentication. This original attack was continuously refined over
+ the years and in some cases only requires a thousand of messages.
+ That means that you don't need a big computational power but you can
+ perform that kind of attack from a very simple laptop. In 2017, more
+ or less nine years later, the robot attack emerged which is a variant
+ of Black & Becker's attack that affected major websites. For example,
+ Facebook was affected even if meanwhile TLS had evolved to a
+ different version but that is to show you how difficult it is to do
+ things correctly and it's still related to RSA. So, yet another good
+ reason to stay away from RSA nowadays. Prime 2012. If an attacker can
+ inject chosen plain text in the user request and that is possible
+ because, for example, if you have a HTTPS website that requires input
+ from a form, maybe then that input is returned in the resulting page.
+ You enter your name and you get back a page with "Welcome, Antonio"
+ and so on. So, that is a way in which you can inject the chosen plain
+ text in a user request and you are able to measure the size of the
+ encrypted traffic then it may recover specific plain text parts
+ exploiting information leaked from the compression. This is one of
+ the examples why in TLS 1.3 we will see that compression has been
+ completely disabled because if you compress something and you have a
+ user input, by crafting different user inputs, each word that I have
+ inserted was present in the response, you see, because compression
+ eliminates equal parts and so by playing around with the input that
+ you provide and looking at the variable size of the encrypted
+ message, you can decide if that thing is part of the answer or not.
+ So, that is Breach 2013 is able to deduce a secret that is present in
+ one HTTP response provided by a server that uses HTTP compression, so
+ they've moved to a different level because crime is exploiting TLS
+ compression, in which you take whatever is coming from the
+ application level, you compress that in TLS before creating the
+ record payload. Since people started disabling TLS compression, they
+ said, "Okay, let's look if other application level protocols are
+ doing compression," and that is typical. HTTP 1.0, 1.1, they were
+ using compression at HTTP level, and so we can again exploit problems
+ of compression. So, if the website uses HTTP compression and inserts
+ user input into HTTP responses, so again a form and then you get part
+ of the form in the response, and it contains a secret. For example, a
+ token. There are various kinds of tokens. Here is a cross-site
+ reference token in HTTP responses, then that token, which is the one
+ important to avoid the attacks or to duplicate the access, can be
+ deduced. BEAST 2011, browser exploit against SSL/TLS. If you are using
+ an SSL channel, so should not apply anymore nowadays, but it's good
+ for historical reasons and also good because sometimes you will meet
+ old versions when you go really on the field. So, if you have an SSL
+ channel which uses CBC with initial vector concatenation, so it means
+ that the initial vector for the next encryption is taken from the end
+ of the previous encryption, then a man in the middle may decrypt HTTP
+ headers with a specific kind of cryptographic attack, block-wise
+ adaptive chosen plain text, and the attacker may decrypt HTTP
+ requests and steal information such as the session cookies. So, they
+ are all attacks in which they don't decrypt everything, but they find
+ valuable pieces. Poodle is still active nowadays, padding Oracle on
+ downgraded legacy encryption. It's a man-in-the-middle attack that
+ exploits the fallback to SSL3. We mentioned yesterday the fact that
+ we need handshake protection because otherwise there could be
+ downgrade attacks. So, a man-in-the-middle could say "no, no, you
+ don't negotiate TLS 1.2, but you negotiate SSL3". And if that is
+ possible, then Poodle December 2014 variant can exploit CBC errors in
+ TLS 1.0 up to 1.2. So, this new variant of Poodle works even if SSL3
+ is disabled. So, it's not enough to say "on my server I don't want
+ SSL2 or 3", but you must be also careful if you are using up to 1.2.
+ FREAK factoring RSA export keys 2015. It is again a downgrade attack
+ in which the negotiated key is downgraded to export and export for
+ the United States was RSA 512-bit. Then it's so easy to factor that
+ and to decrypt the channel or rather than attacking the RSA when you
+ have export protocol it is 512 for RSA and 40-bit for symmetric. So,
+ you decide to downgrade one or the other and if you downgrade to
+ 40-bit the symmetric key, then you can brute force to crack the key.
+ So, as a result of many of these attacks, SSL2 is very old. 3 has
+ been disabled on most browsers. So, if you use for example Firefox,
+ any version after 34 is automatically disabled or may be disabled. If
+ you are using Firefox, you should go to the configuration
+ security.tlsversion.min and if you put 1 for example, that is the
+ minimum version that the browser will accept TLS 1.0 that is SSL3.1.
+ But SSL3 is needed by Internet Explorer 6 which is the last version
+ available for Windows XP and you can say Windows XP is very old, I
+ don't care about that. But maybe you remember last year when we
+ discussed the window of exposure and I told you beware because in
+ some cases the window of exposure will never close, will be an
+ infinite window and I mentioned explicitly the Windows XP case which
+ is out of date, no more supported by Microsoft. Yet, if you go around
+ just here in Piedmont, you will find many copies of that, not for
+ normal computation but in a control system for factories, magazines.
+ Because once you have a computer which is controlling a robot, which
+ is controlling a production line, it's not easy to upgrade that and
+ so Windows XP is outliving the original life foreseen by Microsoft.
+ And if you have Windows XP, the only browser that you can use is
+ Explorer 6 and TLS cannot be disabled. Okay, so there are many of
+ these attacks. What normally is strongly suggested, since it may be
+ difficult to know if your server and browser are vulnerable to these
+ attacks, is to use some automatic tools. There is a good set of tools
+ from Qualys SSL Labs in which you connect to that website and then
+ you ask to test either your browser, please test my browser that I'm
+ using for performing this connection, or you can give the address of
+ a TLS website and they will test for you and will tell you if that
+ site is up to date, is protected against all the attacks or not.
+ Okay, we will go now in the detail of one attack, just to show a real
+ case and to let you understand. We mentioned that Frick is a
+ downgrade attack in which a man in the middle is able to put you back
+ to export grade and then the RSI key will be attacked. So you see
+ here what happens, you have the client, you have the server and in
+ phase one the clientele contains client random, the supported ciphers
+ and eventually the supported curves if it is for elliptic curve. You
+ have a middle man, man in the middle, which changes the supported
+ ciphers to export level ciphers, okay, that is an alteration of the
+ handshake. So the client random will be the original one, but the
+ cipher suite will contain only things that for the symmetric part are
+ up to 40, so this is the attack, the curves are left. Now, the
+ server, if the server is not well configured, they will accept to use
+ an export cipher. That is a decision of the manager of the server,
+ you should not accept nowadays, but in case you are configured to
+ find just the strongest one, maybe strongest one is 40 bit, so if you
+ have not cleared well enough the server you may have that problem. So
+ the response will have a server random, the export cipher that was
+ manipulated by the man in the middle, then certificate, server key
+ exchange and the signature. So the export cipher will make it to the
+ client and now the client will generate a weak shared key, okay. This
+ is an example courtesy of Cloudflare, just in case you want to know.
+ Now, in phase three, we have theoretically the MAC that will protect
+ us from this manipulation, because the MAC will be computed over all
+ the handshake messages, but since the MAC is protected with the
+ master secret, the master secret is only 40 bits, because that was
+ the purpose of the attack. So when the man in the middle receives
+ this packet, it will not transmit it, but will very fast brute force
+ the key. Since there are only 2 to the 40 attempts to be made, it
+ will succeed and now it will recompute the MAC with the key that he
+ was able to break, so that it appears perfectly valid. Of course, the
+ server generates the same weak shared key, will use that in the MAC
+ message and I don't need to do anything on the way back, because it
+ is the same key. So the only point is, I need to change the finished
+ MAC of the client by doing a real-time brute force attack. So I must
+ be very powerful here, but 2 to the 40 with a special hardware
+ acceleration is perfectly feasible nowadays. So since now you have
+ access to the premaster secret and the master secret, all traffic
+ beyond this point is encrypted with a weak shared key and the
+ middleman can read and even modify, because you remember that from
+ premaster and master secret we derive not only the encryption keys,
+ we derive the initialization vector and we derive the keys used for
+ MAC computation for each single record transmitted. So this is an
+ example in which we are successful in downgrade attack, even if there
+ is the finished message that in theory should protect us from that
+ attack. What is the solution? [PAUSE] Okay, if you are controlling
+ the server, if you are a user and you are sending your credit card,
+ you don't know what the server is doing. [PAUSE] I not understood
+ your answer. For the server is clear and you will have the in-class
+ exercises in which Andreazzeni will come and will show you how you
+ can configure a server properly. But for the client? [PAUSE] But you
+ don't see it, do you see it? [PAUSE] You cannot because you are not
+ controlling the browser. You should be aware that even if it is
+ hidden, and that is the reason for which I prefer Firefox for example
+ over [PAUSE] Chrome because it is more efficient. Firefox is giving
+ you some control and in Firefox you have the ability to select the
+ cipher suites. [PAUSE] Yeah, but not the browser should see what is
+ answered. The browser should not offer that. Okay, so it means that
+ even for the browser you may perform a correct configuration in the
+ cipher suite list that the browser is sending. On the contrary, on
+ the server. [PAUSE] Yes, if there is not, I cannot. Why? Why? Let's
+ imagine, try to think. Let's imagine that the client is well
+ configured and it's not offering -40 bit. I could anyway change it
+ and put it even if you don't have it. [PAUSE] No need to check. If
+ you don't support it, you don't support it. So in that case, if the
+ browser is not offering -40, it means that is not supported. So even
+ if the server is selecting that, that will cause an error. Okay, so I
+ don't care. of the attack if the browser is not offering. So the
+ important point is the browser should not offer that. [PAUSE] So you
+ should be able to manipulate the list of the cipher suites and offer
+ only strong cipher suites on the browser side. On the server side, it
+ is much, much easier because there is typically a well-known
+ configuration file in which you can edit everything. [PAUSE] Other
+ attacks. There are many, many, many. There is a plethora of attacks.
+ Heartbleed, we have seen. Berserk, go to fail. Lucky 13. This is a
+ timing side channel attack. That is a variant of Vodaness attack that
+ works even if that one was fixed. You understand what is timing side
+ channel attack? Have you seen that in some courses? Okay, good.
+ [PAUSE] Lucky microseconds, November 2015, a variant to attack S2N,
+ which is the Google TLS library that claimed to be more secure and
+ resistant. They say, okay, you claim that and we will take care of
+ you. And now immediately they attack also that library. Resisting to
+ this kind of attacks, timing side channel, is very, very hard.
+ Typically, you need to do that in hardware, not in software. Doing
+ that in software is very, very risky. It's difficult. And then these
+ are implementation errors. There are protocol design errors. Some of
+ them are just theoretical. It was never demonstrated that they are
+ feasible in practice. Slot, curve swap. There are some that require
+ high resources. This one, very high. These are really practical and
+ dangerous. Poodle and robot. Okay, and we have mentioned that. Okay,
+ now let's put some other additional information related to TLS.
+ Alpine is an extension that can be inserted in the TLS messages. It
+ is RFC 7301 and permits to negotiate at TLS level, the application
+ level protocol. That seems to be incoherent because you first
+ activate TLS and then whatever application you can layer on top of
+ that. But the problem is that you can open TLS, then you try to
+ connect to the web server with HTTP/2 and the web server does not
+ support HTTP/2. So the channel is closed and you have lost all the
+ time that you employed for performing the TLS and shake. Now you do
+ another TLS and shake and you will try HTTP/1.1 and again not
+ supported. The channel is closed. You have wasted your time. And
+ finally you open third time TLS and you get correct HTTP/1.0. We
+ would like to avoid this thing. We would like to open TLS and
+ immediately know which is the correct version of the application
+ level protocol. That can be done with the Alpine extension which is
+ inserted in the clientelo. So in clientelo you have an option Alpine.
+ You can put it true to say yes I do support Alpine extension. And
+ then you send the list of supported application protocols. In the
+ serverelo there is the corresponding extension. So if the server
+ supports Alpine, will respond with Alpine true and the selected
+ activating TLS, please use this application level protocol. Okay so
+ this is nothing to do with an attack, has to do with the setup time
+ of the secure channel for arriving at the application level. That as
+ we discussed yesterday is of concern for the web world. This is
+ pretty important to be able to negotiate HTTP/2 and QUIC because for
+ example Chrome and Firefox support HTTP/2 only over TLS. There is no
+ HTTP/2 plain. It's also useful for those servers that use different
+ certificates for the different application protocols. Imagine if you
+ have one certificate for the HTTP/2 server and one certificate for
+ the HTTP/1X. Then which certificate are you offering at TLS level? If
+ you don't know which protocol will be negotiated later. So there are
+ various reasons for having that information. Some possible values are
+ HTTP/1.0, HTTP/1.1, HTTP/2 that means HTTP/2 over TLS and you see
+ that there is no indication of TLS. It is given as a default or you
+ have HTTP/2C where the C stands for classic that is no TLS. In fact
+ this is HTTP over normal TCP. Another extension which is sometimes
+ useful is the TLS false start in which the client can send
+ application data together with the change cipher spec and finish add
+ messages in a single segment without waiting for the corresponding
+ server messages. So that is again to reduce the latency. Change
+ cipher spec is a very short message. Finish add is also a very short
+ message because it contains just a MAC. Okay we have a TCP segment
+ which is bigger. Why should I waste? If a segment is not full of data
+ and it's a short segment you just waste one round trip time. So you
+ say okay I do change cipher, I do finish add and I put here already
+ the data. Okay so this reduces the latency to one round trip time
+ because you don't wait for the answer of the server before starting
+ sending data. In theory this should work without changing this
+ because even if there is an attack and the server is not the real one
+ so the finish the message of the server will not be correct. I don't
+ care. As a maximum I have just wasted a bit of space in this segment
+ and nothing more. But if it works I have reduced the latency of the
+ setup time. Okay so in theory this should work without any changes.
+ So for this to work in Chrome and Firefox you must negotiate Alpine
+ and you must have forward secrecy while Safari supports false start
+ only if you have activated forward secrecy. So to enable TLS false
+ start for all browsers the server should advertise supported
+ protocols because otherwise Chrome and Firefox will not work. So you
+ must declare Alpine for example. I don't care if you have HTTP 1.1
+ there inside because so you are negotiating TLS. Okay and then be
+ configured to prefer cipher suites with forward secrecy. So this is
+ another message if you become the system manager of a TLS server. One
+ message is use only strong cipher suites to avoid bad negotiation.
+ The other message is even if you would not like to use explicitly
+ these things please do that. For example Alpine. I don't care about
+ Alpine. You must use Alpine otherwise you will not have TLS false
+ start with Chrome and Firefox. Okay so those are all practical for
+ system management. Now let's go back to the TLS downgrade problem
+ because it has also another way of looking at it. So the client sends
+ in clientelo the highest supported version and the server notifies
+ through the serverelo the version to be used that should be the
+ highest in common with the client. So a normal version negotiation
+ with agreement on TLS.2 is the client sending to the server 3.3 which
+ is TLS 1.2 and server to the client 3.3. Okay agreement we will use
+ TLS 1.2. Fall back because the server is not offering TLS 1.2. So I
+ send 3.3 but the server says sorry I don't support TLS 1.2 we will
+ use TLS 1.1 normal. Okay now some servers do not send the correct
+ response but they close the connection. If the client is sending 3.3
+ the server does not respond with 3.2 but closes the connection say no
+ I don't talk TLS 1.2 which is wrong because the definition of the
+ protocol. So that is not a problem in the protocol is a problem in
+ the implementation of the server. Okay when that happens the client
+ has no choice but try again since the connection with TLS 1.2 failed.
+ Okay let me try TLS 1.1 and see if that works. Correct. So downgrade
+ attack. The attacker sends a fake server response which is basically
+ I close the channel to force repeated downgrade. One thing that you
+ should not that we have not mentioned yesterday is that if you close
+ the channel before the end of the shake the responses are not
+ authenticated. Because the shake is authenticated only with finish
+ add so anything that stops before finish add can be a fake. Okay so
+ the attacker is sending fake server responses basically no no no no
+ close close close close until I send you back to the level that I
+ think suitable. For example I send you back to SSL 3 and then I
+ execute because next time you will open again and will use SSL 3 and
+ then I will use an attack which is suitable for SSL 3 such as Poodle.
+ The problem is that sometimes this is not an attack. So there is a
+ problem the channel by mistake was closed because there was a network
+ error. So we need to know if that was a real discard no I don't talk
+ or if it was an error or if it was an attack. So now there is a new
+ thing the TLS fallback signaling cipher suite value which is aiming
+ to prevent protocol downgrade attacks not cipher suite downgrade only
+ protocol downgrade. So when the client is sending the link from SSL 3
+ to SSL 4 to SSL 5 to SSL 6 is sending the list of cipher suites it
+ can put in that list one thing which is not a cipher suite it's a
+ dummy value which is encoded and registered at that Tiana and the
+ cipher suite is TLS fallback SCSV signaling cipher suite value that
+ should be sent by the client when the client is opening a downgraded
+ connection and should be placed in the last place of the cipher suite
+ list. So you offer that TLS 1.2 and the channel was closed. Okay now
+ I will try connecting with TLS 1.1 hoping that this time I go through
+ but I will send all the supported algorithms and last place I put
+ this so if the server is receiving this and say hey why are you
+ asking TLS 1.1 with the signal that it was downgraded I can do TLS
+ 1.2 so there was an attack here and now again the channel will be
+ closed but will be closed with an alert value inappropriate fallback
+ hey you have gone back but should not go back try again with the
+ higher level so it's a way of talking between them so he received
+ this and the version lower than the highest one supported then the
+ channel is closed and the client should retry with its highest
+ protocol version okay yes not cipher suite protocol careful yes
+ exactly again it's an implementation error because you have standards
+ and then you have humans that implement the standards and maybe don't
+ read very well the specification is not browser the server no it's
+ the server the client sent 1.2 the server does not support the rule
+ would say that the server should send back 1.1 and continue but on
+ the contrary no no no and continue yesterday when we have performed
+ and shake we told the client will send the highest protocol version
+ and the server will select the highest protocol in common so if the
+ client is sending 1.2 and the server can only do 1.1 the server will
+ send 1.1 and we will go on continue on the contrary there is a
+ problem on the server when the server sees 1.2 say no I cannot and
+ closes so the problem is on the server not on the client because
+ whatever option you have you try the 1.2 and the server is sending
+ you an alert message unsupported protocol yes that is the general
+ behavior for example if a browser is connecting to a web server and
+ uses HTTP 2 and the channel is closed means that web server is not
+ supporting HTTP 2 and you will open the channel again with HTTP 1.1
+ and that is not supporting and you will go back to HTTP 1.0 the
+ client is behaving correctly but the problem is on the server which
+ is not doing the correct thing the correct thing would be this one I
+ send 3.3 you don't support it you send me 3.2 but then we go on yes
+ no no he is able because if the server is implementing correctly the
+ server will respond in this way the client has no way to say if the
+ server is behaving wrongly or if there was an attack that is the
+ problem you don't know if it is a broken server or it is an attack
+ for that reason you insert this message okay I'm going back but I
+ inform you that I'm going back so in case that was inappropriate in
+ fact you see the alert value the server now is telling you
+ inappropriate why are you talking 1.1 we could talk 1.2 so now you
+ close again and reopen 1.2 and then what it blocks that alert and can
+ then shake gone no no so then I remember when you have a man in the
+ middle a denial of service is always possible I stop the traffic but
+ the man in the middle if he's blocking the that alert cannot go on
+ let's imagine that he's just cancelling the alert the client goes on
+ sending data but the server says no because after the alert you close
+ the channel remember every time there is an alert message then the
+ result is goodbye so the server will not have any more valid channel
+ with the client so you can block it but that's not not lost maybe it
+ is cancelled by a man in the middle but you will detect in the end
+ because at the end when you get the finished message you have the MAC
+ and the client will send you a MAC which is different from the MAC
+ that you compute so if you cancel any of the data sent the client not
+ as a whole but even just one line that will be detected at the
+ finished message [INAUDIBLE] so you mean rather than responding with
+ 3.2 it closes the channel it's an implementation error the developer
+ is not a good one they have not read very well the RFC specification
+ we will flog them okay but unfortunately they exist and so no no no
+ the point is that several people read the RFC implement things
+ perfectly then they connect to someone else and does not work and you
+ cannot go there and tell chrome no you have done wrong you have to
+ adapt and so unfortunately this is one of those cases which we need
+ to adapt and the adaptation went up to another RFC in which say okay
+ since there are people that cannot read the RFC so please let's do
+ this [PAUSE] it could if the server sorry ah [PAUSE] you mean the
+ server is responding for example with 3.0 [PAUSE] that is a problem
+ it means that the system manager of the server is a stupid one okay
+ no if it is an attack because some man in the middle changed the
+ response of the server you will detect it when in the finished
+ message because the finish sent by the server will be different by
+ the finish computed by the client so any change will be detected as a
+ minimum at the end that's why they don't try to change well at least
+ not but for the freak attack and that's why it's important that the
+ browser is not supporting weak protocol version or weak cipher suites
+ because otherwise we can do things like freak [PAUSE] clear everybody
+ [PAUSE] many servers do not yet support a csv unfortunately but most
+ servers have fixed their behavior when the client requests a version
+ higher than the supported one so browsers can now disable insecure
+ downgrade firefox from 2015 and chrome from 2016 have canceled the
+ insecure downgrade as part of their implementation okay okay time for
+ the first break 10 minutes as usual and then we will continue [PAUSE]
+ okay so let's continue and let's [PAUSE] we look at another thing
+ session tickets this is yet another improvement of TLS you remember
+ from the description that we did actually last year we have not
+ repeated it now but yesterday we during the shake we have mentioned
+ the fact that in the clientele and server elo there is a session
+ identifier okay which permits to avoid the hull and shake in fact we
+ have seen one example of session resumption in which after clientele
+ server elo you go directly to change cipher spec and finish it
+ immediately so you skip all the complex part but using a session
+ identifier means that at the server you need to keep a cache you need
+ to keep a cache also at the client but the problem typically is at
+ the server because client has few connections server has thousands of
+ connections millions of connections that cache may become very large
+ for high traffic servers so TLS session ticket is an extension that
+ permits to the server to send the session data to the client this is
+ always the same thing if you remember when we discussed the the scene
+ attack the solution by Bernstein was I don't keep the state I give
+ the state to the client and here we are doing the same I don't keep
+ the state the session at the server I give it to the client okay so
+ the danger is that that is something valuable so the session ticket
+ must be encrypted with a server secret key okay and will be returned
+ by the client when resuming a session and in practice it just moves
+ the session cache to the client issues we cannot be sure what is the
+ behavior of the client I was also talking with one of you during the
+ break and the big problem is always like that you manage the server
+ and you don't know who is your client why some servers still support
+ the TLS 1.0 if you want to be inclusive maybe around the world there
+ will be some user that wants to contact you and use TLS 1.0 and now
+ you have to decide if you want to lose users or if you want to run
+ the risk to be attacked on specific protocols and here is the same I
+ would like very much to get rid of my session ID cache but I can do
+ that only if the browser supports that so that is adding complexity
+ in the implementation so again is a problem of having a smart
+ developer behind that because you must support session ID with cache
+ for those browsers that don't support session tickets if they support
+ session tickets that session will not be put in the cache but now you
+ have double the code you have the code for managing the normal
+ session identifier and you have the code to manage the session
+ tickets okay so need support the browser and there is another problem
+ in a load balancing environment it means that the key is shared among
+ the values and points because you don't know if the same client will
+ go to the same server or not and when you perform a key update you
+ must synchronize everything so it's a bit tricky it's interesting
+ because permits to lower the load on the server but it's not trivial
+ another problem that we have nowadays is the behavior with the
+ virtual servers a virtual server means that you got one IP address
+ and then you have several servers with different names on top of that
+ so different logical names associated to the same IP address for
+ example I own the address 10.1.2.3 and then I put two web servers
+ homemyweb.it and foodmyweb.it two different shops one for food and
+ one for home appliances great now when you connect remember you
+ connect to an address because networks open a TCP channel towards a
+ specific address and port when you reach that end point you must have
+ a way to select the proper server with HTTP starting with HTTP 1.1
+ that is very easy because in the HTTP header there is a specific
+ header which is named host which is telling to the server I want to
+ talk with this higher level server but in HTTPS because in HTTPS we
+ have a TLS first and then HTTP but when you open the TLS channel you
+ need a certificate and the certificate must contain the name of the
+ correct application level server and you don't know that so you risk
+ a name mismatch. So possible solutions for this problem in the common
+ name of the certificate it's not written home or foodmyweb.it but
+ it's written asterisk dot myweb.it that is valid for all the web
+ servers in case those servers are hosted on different machines and
+ anyway even if they are on the same machine it means that the private
+ key is shared by all those servers which may be a problem of course
+ additionally using a wildcard certificate is not managed in the same
+ way by all browsers some accept it some don't accept it some accept
+ it only if there is one level homemyweb.it some accept even if there
+ is more than one level home.italy.myweb.it for example for some it's
+ good for others it's not a certificate it's not so well specified or
+ we will discuss that is the topic of the next lectures the fact that
+ inside the certificate you have not only the common name but you have
+ also an additional field that I will explain which is named the
+ subject alternative name so in addition to the name which is present
+ in the common name you can specify other names so you say okay great
+ this is homemyweb.it but it is also foodmyweb.it again the private
+ key is shared by all servers but since the names are listed inside
+ the certificate you may need to revoke the certificate and create a
+ new one every time you need to add a new server or to cancel a server
+ because that list must be up to date and if the list is inside the
+ certificate then the certificate is revoked and you create a new one
+ or there is another extension in TLS which is named SNE server name
+ indication that is inside the clientelo so the clientelo can take
+ with it this server name indication so that the server may select the
+ appropriate certificate but it is an extension and as such some
+ browsers support it other browsers don't support it and so the server
+ as usual does not know what to do okay we have more or less seen the
+ most important things in TLS 1.2 it is now time to go to the next
+ major version which is the most recent one TLS 1.3 so the purpose in
+ designing TLS 1.3 was improve several things first of all latency
+ latency latency everybody's asking I want to be fast and TLS of
+ course one of the parts that's making the system slow so they want to
+ reduce the end shake latency then they wanted to encrypt more of the
+ shake you see that up to TLS 1.2 there is nothing encrypted then
+ shake is completely unclear okay so for security and partly also for
+ privacy if we can encrypt sooner that would be better then improving
+ resiliency to cross-protocol attacks and finally finally remove some
+ legacy features that are no more really needed that was in August
+ 2019 RFC 4846 so let me start with some points here's change static
+ RSA and static Diffie-Hellman are no more supported so TLS 1.3 always
+ uses ephemeral keys always there is no choice you must implement that
+ so that was removed because it's not forward secrecy and for example
+ that was a problem with the heart bleed attack and also difficult to
+ implement correctly for example with the black and back attack that
+ attacked the RSA encryption technique so the only solution is you
+ must use Diffie-Hellman ephemeral but we could also have RSA
+ ephemeral why not no but we said it's slower but we could reuse it I
+ don't care the purpose of this phase is that in the end they both
+ have we don't use RSA due to implementation problems as demonstrated
+ by black and backer the million messages attack so it's difficult and
+ complex to make RSA encryption correct so let's get rid of that and
+ let's use Diffie-Hellman only ephemeral but Diffie-Hellman requires
+ agreement about a certain set of parameters and not all parameters
+ are created equal so for example in 2015 there were the attacks
+ logjam and weak Diffie-Hellman that was able to trick server to use
+ small numbers for Diffie-Hellman just 512 bits and in 2016 the
+ researcher Sanso finds that OpenSSL generates Diffie-Hellman values
+ without the required mathematical properties that you should have
+ studied in the cryptography course so for that reason the standard
+ does not simply say use Diffie-Hellman no no use Diffie-Hellman with
+ one of this set of parameters so there is a list of acceptable
+ parameters well p and g basically okay so TLS 1.3 uses only
+ Diffie-Hellman and only with a few predefined groups another
+ improvement message protection to solve a series of previous pitfalls
+ for example in the past we used the cbc and authenticate then encrypt
+ that was culprit for lucky 13 lucky microseconds poodle okay we
+ accepted rc4 and in 2013 it was demonstrated that plain text can be
+ recovered due to some biases measurable we used compression which is
+ the culprit for crime and other attacks okay so all those things we
+ don't want them anymore so TLS 1.3 uses only safe cryptographic modes
+ does not use any more cbc and no more authenticate then encrypt TLS
+ 1.3 is using only IA/IE/AD okay only that and it dropped completely
+ some algorithms that are weak or not used rc4, triple dash, camellia,
+ md5 and so on we are modern get rid of that so only modern crypto
+ algorithms and no compression at all for digital signature again what
+ were the problem RSA signature of ephemeral kiss could have been done
+ and it was done in some version wrongly using the pkcs version 1.5 no
+ the handshake we have seen yesterday is authenticated with the MAC
+ not a signature which makes possible the freak attack because
+ discovering a symmetric key if the key is sufficient short is much
+ easier than discovering a symmetric key pair so TLS 1.3 uses RSA
+ signature with the modern secure RSA PSS schema so if you still use
+ RSA signatures you must use that schema and the whole handshake is
+ signed not just the ephemeral kiss in the past we just signed the
+ ephemeral kiss now we sign the whole handshake and in general we
+ adopt modern signature schemas cipher suites if you have taken the
+ time to go to the IANA website you will found some hundreds of cipher
+ suites no please let's simplify that but that was a huge list
+ increasing every time we added just one new algorithm for encryption
+ it had to be joined with all possible and authentication so TLS 1.3
+ only specifies orthogonal elements so the specification is for the
+ encryption and mod plus the hash function used in the h-based key
+ derivation function the certificate type is no more declared in the
+ exchange because when you receive the certificate you will see what
+ it is and we accept nowadays RSA ECDSA and EDDSA again the key
+ exchange is not specified anymore in the cipher suite because we use
+ ephemeral that may be Diffie-Hellman or elliptic curve Diffie-Hellman
+ ephemeral or we use a pre-shared key or we use a combination of
+ pre-shared with ephemeral Diffie-Hellman normal or elliptic curve
+ that means that in the end some things are hidden we have them
+ certificate and key exchange and we have only five cipher suites TLS
+ with AS128 or AS256 GCM goal was counter mode in this first case with
+ SHA-256 in the second case SHA-384 or CHA-20 with POLY-1305 and
+ SHA-256 or again AS128 with CCM SHA-256 and CCM-8 SHA-256 this one is
+ deprecated but yet supported for computational environments with low
+ capacity. Do you like this set? Do you have any observation that
+ comes out evident and you should know from the previous course? There
+ is one thing that is disturbing me, it's not disturbing you? SHA-384,
+ why? It should always be the double. So there is no explanation for
+ that, they decided it like that and it happens also in other areas.
+ So they say okay one of the point is that that algorithm is used in
+ the key derivation function and since the keys are always smaller
+ than that number there is no need to go up to other values. So it's
+ true that you should use a SHA-512 if that would be used for
+ computation of a MAC for integrity because then you need integrity to
+ avoid collision but here it's not used for collision. That is the
+ function used in the key derivation function and there is no
+ collision, you are not computing the hash of data, you are computing
+ the hash of some data but just derive a key, so there is no data
+ being transmitted that can be inspected and so on. So it's true that
+ in general we should have the double, in this specific case since the
+ hash algorithm is not applied to data there is not really the problem
+ of collision build-day attacks. So we can live with SHA-384. ADDSA,
+ that is a strange algorithm because we know elliptic curve, we know
+ normal but we have Edwards curve digital signature algorithm. This is
+ a variant of the normal elliptic curve DSA because DSA requires a
+ pseudo-random number generation and that can leak the private key if
+ the underlying generation algorithm is broken or made predictable.
+ Since it is pseudo-random there is always the risk, it's not a real
+ random number generation. But the specification of Edwards curve DSA
+ does not need a random number. So again, the developer not to be
+ stupid. You remember the mistake of the Sony PlayStation 3. Rather
+ than explaining to the developer to behave correctly we avoid
+ completely the problem. One last thing that I have to think about. On
+ the contrary, ADDSA picks up a nonce based on a hash of the private
+ key and the message which means that after the private key is
+ generated there is no more need for a random number generator. So the
+ random number generator is involved only when you create your private
+ key that you're doing once in your lifetime maybe and maybe that one
+ is supported by proper hardware because that is the key used by the
+ server. It's the authentication key and if you do your work seriously
+ on the server you will have an HSM and if you have an HSM that is not
+ only useful because you have a cryptoprocessor which is very fast.
+ You have also a hardware random number generator which completely
+ solves the problem. Additionally, there is not only the problem that
+ the random number is not needed anymore. Edwards curve is also faster
+ in signature and verification with respect to normal elliptic curve
+ DSA because it implements simplified point addition and doubling with
+ respect to a normal elliptic curve. In general, ADDSA is using an
+ n-bit private and public keys and will generate a signature which has
+ a size which is the double of the keys. So the implementations that
+ are accepted in TLS 1.3 and you remember they are not mentioned in
+ the cipher suites so they must be written in the RFC. The RFC is
+ telling you must support ED25519 and ED448. It's compulsory. If you
+ are TLS 1.3 compliant you must support them because you may receive
+ them. The first one uses SHA512 with the famous curve 25519. This
+ will use 256-bit key, 512-bit signature generated and will give you a
+ security which is 128-bit. ED448 is using SHAKE256. Maybe you
+ remember that SHAKE is one of the possible implementations of SHA-3
+ with another curve, curve 448 and you get not really the double, it's
+ not 256, but you get a security which is 224 which is acceptable,
+ it's nearly the double and you see also the keys are not really the
+ double, the keys and the signature size. Among these two normally the
+ curve 25519 is the most widely used. This is an elliptic curve over
+ the field given by this formula and it is important because there is
+ also an elliptic curve Diffie-Hellman schema which uses that curve
+ and that is named X25519. Unfortunately when it goes to
+ implementation we have a small problem. AD DSA has two standards that
+ are slightly different. RFC 8032 is for general internet
+ implementation because it's IETF so implementation details are left
+ to the developers and we know that that is bad in general. But there
+ is also FIPS 1865 and FIPS is the one that applies to everything
+ which is provided to the US government. And in general the FIPS
+ standard specifies not only the mathematics behind an algorithm but
+ also implementation details because when you have a FIPS standard and
+ then you want to sell your products you need to be FIPS certified and
+ the certification will look at the implementation will not only look
+ at the result that your system is producing. So stringent guidelines
+ for secure key management, secure key generation and implementation.
+ Other improvements that we have in TLS 1.3. First of all, all and
+ shake messages after the server "hello" are now encrypted. Specified
+ like that is magic. How is that possible? We don't have yet the keys.
+ So we will have to discuss how we can make that. Good in principle
+ but please explain. The newly introduced encrypted extension message
+ allows various extensions that were previously sent in clear in the
+ server "hello" to also enjoy confidentiality protection. The key
+ derivation functions have been redesigned to permit an easy analysis
+ thanks to their key separation properties. And now the HMAC based key
+ derivation function is used always as an underlying primitive. Then
+ shake state machine has been restructured to be more consistent and
+ to remove superfluous messages such as change cipher spec. So we are
+ getting rid of that or maybe not because here is one thing and
+ practice is another. And when you work with real companies and maybe
+ you remember, no not yet talked with you, but with some of you that
+ already asked for a thesis, we are working on several European
+ projects with one major internet vendor which is Telefonica.
+ Telefonica is the leader in Spain, South America and so on. And we
+ are learning quite a lot from them. One of the things that we are
+ learning is that even if you are talking between a browser and the
+ server and you think to have a direct connection, actually it never
+ happens. There are several objects placed by the internet service
+ provider that are not the routers, are other things that they call
+ generally middle boxes. Boxes that stay in the middle that are there
+ to manage the traffic at a higher level. So they are continuously
+ inspecting the traffic to understand which kind of traffic is going
+ on, if we could find a better path for this, if we can provide
+ quality of service for one customer rather than another and so on.
+ But that requires understanding the protocol being used. If you have
+ TLS, of course you cannot see the application level protocol, but you
+ can see TLS. So these boxes must understand the various versions of
+ TLS. But how many of these boxes exist? Quite a lot. Can we upgrade
+ them instantaneously to TLS 1.3? No, forget. So if this box is using
+ TLS 1.2 but browser and server negotiate TLS 1.3, the result is this
+ box will drop the traffic. So in several cases, you still send the
+ TLS 1.2 messages even if you are using TLS 1.3. So if you are a pure
+ TLS 1.3, you could remove change cipher spec. But in several cases,
+ the browser and the server still send that just to avoid breaking the
+ channels due to the presence of a middle box. Okay, HKDF is one of
+ the novelties of TLS 1.3 and is HMAC based, extract and expand key
+ derivation function. So in general, this function has got four
+ inputs. A salt that we have already met several times in the previous
+ course, the input keying material that is basically a symmetric key,
+ some info and then the length of the desired derived key. And it
+ works in this way. You have a first function HKDF extract that will
+ create a key from the salt and the initial key material. Then that
+ key will be used in the expand one together with the info and the
+ length desired. So the first one takes the input key material and
+ extracts from it fixed length pseudorandom key. Then the second stage
+ expands this key into several additional pseudorandom keys, which are
+ the output of the KDF. So multiple outputs can be generated from the
+ single IKM value by using different values info. You will see that
+ info is actually a text. I could write key1, key2, ciao mama, hello
+ baby. And then since one ingredient has changed, you will get a
+ different keys. And this is what will be done. So we will repeatedly
+ call HMAC using the PR key as the key and the info as the message.
+ The HMAC inputs are chained by prepending the previous hash block to
+ the info and appending an incrementing 8-bit counter. That means that
+ from one call, you can generate at most 256 different keys. What is
+ that used in TLS 1.3? In general, you have this function HKDF label,
+ which is a structure with the length TLS 1.3 as a text, blank, and
+ the label, and then the context. And you use that in this way. Then
+ there is another function, derive_secret, and so on. So I don't need
+ you to remember, of course, all these things. You must remember the
+ philosophy. But now we have got these functions that derive and then
+ expand. So derive is the first phase in which we create a basic
+ pseudorandom key and then we expand. Starting from that, we can
+ generate a lot of keys. And as you can see, for example, the finished
+ message is protected not with the master secret as it was in TLS 1.2,
+ but with the specific key, which is created with expand starting from
+ the base key and putting as info the text "finished" and then the
+ desired length. The pre-shared key to protect the ticket contains the
+ word "resumption". So you start with some basic key material and then
+ by using different labels, you are able to generate the different
+ keys. This is creating a very complex procedure. For extract, when
+ you see here extract, you take a salt from the top, so zero for
+ example, and the initial key material from the left. For derive, we
+ get the secret from the left. So for example, we start with the salt
+ of zero, with a pre-shared extract, we generate an early secret. Then
+ this early secret is used here with external binder concatenated with
+ the resume binder, and that will give me the binder key. Derive
+ secret with CE traffic and clientello will give me client early
+ traffic secret, and so on. A lot of keys according to all these
+ schemas. And you see, it goes on and on. Okay, let's see if it is
+ time for another break before the handshake. No, not yet, so we can
+ start discussing the handshake. Okay, so the handshake here is a pure
+ TLS 1.3, so you can immediately see that we don't have the change
+ cipher spec. We have a hello, the list of cipher suite, and what they
+ call it now the key share, because we always use Diffie-Hellman.
+ Server hello, the selected cipher suite, the key share of the server.
+ After that, they have enough information to encrypt. When you see
+ curly braces, it means that these messages are encrypted. So you see
+ that actually, what they have done is to put inside the client hello,
+ and inside the server hello, what originally was a separate message.
+ The purpose is, as usual, to reduce the latency. You don't wait
+ round-trip time, I send you a reply, everything that I need to send
+ you, I will put here, in the client hello. Why in the client hello?
+ If I put it in another place, and the middle box does not understand
+ TLS 1.3, it will cancel it. But the client hello and the server hello
+ have very nice features. They have extensions, and the middle box
+ understands what is an extension, because extensions are always
+ specified in a very nice way. You know what is this? Tag length of
+ value. It means that an extension is also a tag that tells you this
+ is an extension for a session ticket, and has a specific code.
+ Length, 300 bytes, and then the 300 bytes. If you are a server or a
+ middle box that does not understand the session tickets, you can
+ simply skip that part, because you see, "Oh, I don't understand this
+ extension, the next 300 bytes, I must skip them." So the whole TLS
+ 1.3 protocol appears as if it was an extension of TLS 1.2. And you
+ will see when you go to the lab, doing the test, that we open the
+ channel, we declare TLS 1.2, even if we are opening a TLS 1.3
+ channel. So we don't expect to see 3,4 for TLS 1.2. You see 3,3. This
+ is a normal TLS 1.2. But then, in the client hello, you have those
+ extensions. And so the server says, "Ah, I understand, we are trying
+ to trick the middle boxes. Okay, let's go on." You see that this is
+ engineering. Because a computer scientist will say, "Oh, this is the
+ protocol, you must obey the protocol." Engineers have to do it in
+ real life. And so they play this kind of trick. Have you understood?
+ Is that clear? And since everything now is inside the client hello
+ and the server hello, you understand that after these two messages,
+ the keys are ready. And that's why all the other messages can be
+ encrypted. That was the problem that we had. How can they encrypt?
+ And actually, any extension that is not evident here, which appears
+ after the key share, can already be encrypted, even if it is inside
+ the client hello server hello. Okay, some notes. As I just said, TLS
+ 1.2 messages are sent and most TLS 1.3 features are in message
+ extensions. Because you should note that the middle box will not
+ check the whole state machine of the handshake. It will just check
+ that the kind of messages that are passing are legal, are valid. And
+ you label those messages as 1.2. Great. Basically, in this way, if
+ you look at the previous picture, it's a one round trip time in
+ shake, which is much faster than previously. And we can even go to a
+ zero round trip time, which seems impossible if you are resuming a
+ previous session. Because when you resume, you have already the key,
+ which is named pre-shared key. Or if you are using a real pre-shared
+ key that you are deploying manually on the various elements, which is
+ of course rare. Notation that I will use explaining the various
+ messages. When there is a curly brace, it means that that data is
+ protected by keys that are derived from sender and shake traffic
+ secret or receiver and shake traffic secret. One generates
+ protection, the other is verifying protection. On the contrary, when
+ I use square brackets, it is protected with keys derived from sender
+ or receiver application traffic secret. So among all those keys that
+ are derived with that very complex key schedule, we have specific
+ keys for the handshake and we have specific keys for the application
+ traffic. That was not needed in the beginning because we had no
+ encryption for the handshake. So let me start with the client
+ request. Clientele contains the client random, the highest support
+ protocol version, and I told you that that will be TLS 1.2 and not
+ TLS 1.3. The supported cipher suites and compression methods.
+ Compression, we don't have compression, but we need to have a
+ compatibility. So compression is not used, but we declare it. And
+ then a session identifier. Plus, so that is as if it was TLS 1.2. And
+ note that depending on the browser, in those supported cipher suites,
+ you could have also old cipher suites, not only the five supported by
+ TLS 1.3, you can have also old things. Then there are extensions,
+ which are ignored if you don't understand, and on the contrary, if
+ you understand, that is the pointed signal. Hey, we have this
+ extension, so we have TLS 1.3. Key share, that extension contains the
+ client normal or elliptic curve Diffie-Hellman share. Signature
+ algorithm, the list of supported algorithms, because we have not
+ inserted that in the cipher suite, we have a compulsory list, but we
+ declare, okay, I would like to use one of these. Then list of
+ supported modes for the pre-shared key exchange, and then the
+ pre-shared keys, the list of pre-shared keys offered, which are not
+ the real keys, are just an index label for the pre-shared keys
+ available. The server response, server random, selected version,
+ cipher suite, that is normal. Key exchange, key share with the server
+ share of Diffie-Hellman ephemeral, and the selected pre-shared key.
+ Then the server parameters, which are already encrypted at this
+ point, because we received the Diffie-Hellman part from the client,
+ we have just declared ours, so we can already compute the agreed key
+ and we can start encrypting. So these things are responses to
+ non-cryptographic client extensions, and eventually certificate
+ request, which is not in the separate message, but it's inside here,
+ and it's encrypted, just for privacy. So if you observe the messages,
+ you don't understand what you don't understand here. Sorry? No,
+ because each extension is starting with the tag, let's say this is an
+ extension, so you will see that this is the extension for certificate
+ request. Certificate. This is the request from the server, it's not
+ the client certificate. What does that message contain? No, it's a
+ request. The list of trusted root CA, that is what we want to
+ protect, so that the attacker cannot try to get a certificate from
+ one of them. That is the part that we want to keep private. It's not
+ the fact that we are acquiring client authentication, it's the fact
+ that I trust these CAs. And then server authentication, the
+ certificate encrypted. There is also an option, which is interesting
+ for low power, embedded IoT, those kind of things, which permits to
+ send in this message, not an X.509 certificate, but directly a raw
+ public key. That of course must be already trusted by the client,
+ that's why I'm saying it's for embedded, closed IoT environments in
+ which you can manipulate directly the devices, it's not for general
+ internet consumption. Then certificate verify, it's encrypted but it
+ contains a signature performed by the server over the entire
+ handshake. And then you have the finished encrypted MAC over the
+ entire handshake. And then finally, the server can immediately send
+ application data, if needed. Typically it's difficult that the server
+ will send data, but when the server will send the data, they will be
+ encrypted with square brackets, the key derived for traffic
+ protection, not for handshake protection. The client on the other
+ side, if client authentication was requested, he is now able to
+ encrypt the answer. So this for privacy, the certificate that we send
+ is not disclosed. So if you observe, you cannot see who is accessing
+ the server. This is a very good privacy measure compared to the
+ previous system. And again, also in this case, you can use a row key.
+ Then there is a certificate verify, in which there is a signature
+ over the entire handshake. Of course, only if client authentication
+ was requested. And then there is the finished, which is the MAC over
+ the entire handshake. So you see that the handshake is protected
+ always with the signature server side. Client side is protected with
+ the MAC, unless client authentication was requested. So there is in
+ some sense a double protection, because also the server, you see,
+ that computed both the signature and the MAC. Now, the client is able
+ to send encrypted or let's say protected application data, because
+ all the keys have been derived. You should also note that while in
+ the past, in several versions of TLS, encryption was optional. Now,
+ encryption is compulsory, because all the cipher suites here, all the
+ cipherswitches, all the cipherswitches, all the cipher suites here,
+ do have always a symmetric encryption algorithm. In the past, you
+ could decide not to have encryption, if you don't have private data
+ being transferred. Now, it has been decided that it's much better to
+ protect everything, just to make life more difficult for the
+ attackers. Okay, let me check the time. I think it's time for another
+ break, and then we will finish the lecture. And finish this lecture.
+ Let's have a look at the pre-shared keys, which is a new feature of
+ TLS 1.3. Pre-shared keys replace the session ID and the session
+ tickets. So, we have no more session ID, no more session tickets, we
+ have only pre-shared key. One or more pre-shared keys that are agreed
+ in a full handshake and are reused for other connections. So, we do
+ have a pre-shared key, only if we completed previously one handshake.
+ Of course, there is always the possibility of having a real
+ pre-shared key, but that's another matter. Pre-shared keys are
+ combined with Diffie-Hellman for forward secrecy. In that case, the
+ pre-shared key is used for authentication and the Diffie-Hellman is
+ used for key agreement. Pre-shared key could also be out of band,
+ that is a big novelty, that is generated from a passphrase. But this
+ is risky if the passphrase has insufficient randomness, so that a
+ brute force attack could be possible. So, even if RFC 4086 is
+ documented, how you should do in general usage of out-of-band
+ pre-shared key is highly discouraged. Zero runtime connections. When
+ using a pre-shared key, so when you are continuing with a new
+ connection, an old session, the client can send early data along with
+ first message. That is, directly in the clientelo, you have already
+ data. Those data are named early data and they are protected with a
+ specific key, because the client has not yet received the
+ Diffie-Hellman share of the server. So, we were not able to create
+ the specific keys for this connection. So, this is named the client
+ early traffic secret, which does not provide forward secrecy, because
+ it depends on the previous keys, while we should negotiate new ones
+ to have forward secrecy. So, it is possible some kind of replay
+ attack and partial mitigations are feasible, but complex and
+ especially multi-instance servers. So, you can do that if you really
+ want very, very fast service, you are running some risks. Incorrect
+ share, this is another problem. Client is sending a list of groups
+ not supported by the server. The server will respond with a hello
+ retry request and the client must restart the handshake with other
+ groups. The groups are inside the clientelo, so they are not redoing
+ the handshake. We send a new clientelo with other groups. If also the
+ new groups are not accepted for the server, then the handshake will
+ be aborted with an appropriate alert. Okay, that's all for TLS 103.
+ In the laboratory we will do some experiments with data to fully
+ understand it. Now, the last part of this lecture is related to the
+ relation between TLS and PKI, because we have seen that in several
+ steps we need X.509 certificates, both for the server as a minimum
+ and also for the client. So, PKI is needed for server and optionally
+ also for client authentication, unless a real pre-shared key
+ authentication is adopted, which is very rare indeed. So, when a peer
+ is sending its certificate, the whole chain is needed but the root
+ CA, we have already said that, and the receiver, be that the server
+ or the client, must validate the whole chain, not just the end entity
+ certificate. Okay, and at each step of the validation must check the
+ revocation status. By the way, this means that another reason for
+ which a handshake is interrupted before reaching the finished, is
+ when a certificate is sent from one side to the other, because the
+ receiving peer at that point can start this validation, and if this
+ validation fails, we don't proceed, no need to go on. Okay, so after
+ the server certificate message and also after the client certificate
+ message, we can have an early abortion of the handshake. So, we need
+ to check revocation status. You know, by the previous course, the
+ principles. Now, in the next lecture, we will talk about the details,
+ but you should remember that we have two options, CRL, Certificate
+ Revocation List, and OCSP. CRL can be used, but the usual problem is
+ that CRL is big, and you need to perform a lookup by yourself, so it
+ can take time. OCSP is much faster, but it generates privacy
+ problems, because the client, when verifying the server certificate,
+ receives the certificate and will query an OCSP responder asking, is
+ the certificate of www.michalcini.org trusted or not, revoked or not,
+ and so the OCSP server will know that you are visiting
+ www.michalcini.org, which I don't know if it is a valuable
+ information or not, but anyway, your privacy is compromised. The OCSP
+ responder knows which server you are visiting. And anyway, both
+ solutions require one additional network connection, because you were
+ connected to the server, now you need to connect to the CS responder
+ and add delay. OCSP, which is the fastest of the two solutions on the
+ average, is adding 300 milliseconds on the median and up to one
+ second on the average, which is an enormous time when compared to all
+ the discussion that we were doing about achieving low latency in the
+ handshake. So, we need to solve this problem of TLS and certificate
+ status revocation. Another problem, what if the URL to the CRL
+ repository or to the OCSP responder is unreachable? Maybe due to an
+ actor problem, or maybe due to an attacker stopping the traffic to
+ those sites, so you don't see that the certificate has been revoked.
+ So, maybe server error, maybe network error, maybe access blocked by
+ a firewall due to security policy, or insecure channels. OCSP
+ responders quite often don't use any channel protection, because the
+ OCSP response is digitally signed, so you don't need any other
+ protection. But if the rule of your firewall, your company firewall,
+ is that only protected channels are permitted, you will not be able
+ to get that response. Possible approaches. I'm unable to contact the
+ server and to validate the certificate, so I may have a hard fail.
+ The page is not displayed and you get a security warning. Sorry, I
+ will not connect to the server, because I cannot validate its
+ certificate. Soft fail, the page is displayed anyway. We assume the
+ certificate is valid, which may not be the case. But anyway, both
+ hard and soft fail require additional load time, because you need to
+ wait for the connection to time out. So, this is bad from the point
+ of view of those that want a quick handshake to be performed. So,
+ some solutions have been developed to try to improve over this
+ situation. The first solution is pushed CRL. So, revoked certificates
+ are often originated not by a user that was able to trick a
+ certification authority. That may happen, but it's rare. It's most
+ common that an hacker attack was able to compromise a whole CA and
+ generate quite a lot of certificates. So, rather than revoking all
+ the certificates, you revoke the compromise at the CA. As always,
+ stop me if I'm telling something which is not sound to you. So,
+ browser vendor has decided to push some revoked certificates. So,
+ rather than waiting for the browser to ask if certificate is valid or
+ not, the manufacturer of the browser, the vendor of the browser, will
+ put inside the browser some revoked certificate. So, Internet
+ Explorer and also, no, Internet Explorer, whenever you perform a
+ browser update, will get an improved CRL list already inserted inside
+ the browser. That is bad, because the update process might fail or
+ might be blocked, and so you will never get that update. Firefox is
+ using a solution which is named OneCRL, which is a part of a more
+ general thing that Firefox has, which is named Block Listing Process.
+ Firefox has a series of rules inside it that block certain things,
+ block, for example, a connection to well-known spam sites, to
+ well-known malware distributors, and as part of that, blocks also to
+ any server which is showing a certificate issued by a compromised CA.
+ So, it has this thing. Chrome, but remember that Chrome is not only
+ Chrome, it's also Edge, Opera, because the same kernel is being used,
+ it's only a different interface, is using another feature which is
+ named CRL Sets. So, one example, if you use CURL to perform an HTTP
+ connection by hand, you can connect to
+ firefox-settings-services-mozilla.com version 1, buckets, security
+ state, connection, OneCRL records, and what you get is the OneCRL in
+ JSON format. Now, you need to interpret that, and you can use JSON
+ query. You want to extract the data with enabled issue name and
+ serial number, then you select the enabled, you can sell those,
+ because you don't want, and all the rest is the short version in
+ which only the revoked certificates are displayed. I encourage you to
+ try and do that by yourself, so you see what is inside, even if you
+ don't have Firefox, you can do this exercise anyway. On the contrary,
+ if you want to see what is inside Chrome in this moment, you simply
+ go to GitHub, and you need to download those CRL Sets tools that are
+ the tools needed to manage the CRL Sets according to Chrome. Okay,
+ now let's have a look at some problems that happened in the past with
+ Internet Explorer. When you have Internet Explorer, you should go to
+ Internet Options to check the validation of a certificate. There is a
+ tab Security, don't go there, because in pure Microsoft style,
+ security is not in the security place. Okay, you should go to
+ Content, which is normal. Okay, now you go to Internet Options,
+ Certificates, and Untrusted Publishers. So, it means that inside
+ Internet Explorer, as I told you, Microsoft has pushed a list of CAs
+ not to be trusted, and you see Yahoo, Google, Microsoft, these are
+ all fake certificates that have been created as a consequence of some
+ attack. In fact, you see that they are labelled fraudulent,
+ fraudulent, fraudulent, untrusted, untrusted, fraudulent, and so on.
+ And you see various dates, I have not copied the whole thing, but up
+ to 2017. But you see, it means that someone was able to create a fake
+ certificate for www.google.com. Others to create mail.google.com were
+ made not by normal hackers, but by national state. If you are a
+ country and you want to check the mail of your citizens, the best
+ thing that you can do is create a fake certificate for
+ mail.google.com. Then you divert all the traffic of the users of
+ Gmail to that website, and now you will inspect all the traffic,
+ because then you will act as a proxy. The citizen will ask to you,
+ okay, great, I will ask to the server, but I will be a man in the
+ middle. So you can create a man in the middle for all those things.
+ But it's also interesting that not only Google and Yahoo, but
+ Microsoft itself was tricked in this kind of things. And in fact, if
+ you look at this, this is a certificate for Microsoft, created by
+ Verisign, which is one of the biggest certification authorities in
+ the world. And it's very funny, because 50% of the shares of Verisign
+ are owned by Microsoft. It means that Microsoft fucked herself. That
+ happened in 2002. And here, unfortunately, it was not able to display
+ everything, but it's written fraudulent. This hand is not Microsoft.
+ Here it is, the real certificate. This certificate has been revoked
+ by this certification authority. And now, here you see in full,
+ preemptly named fraudulent, not Microsoft. But the only way was to
+ insert that inside the browser, because Internet Explorer is not
+ using CRL, and it's not using OCSP. So unless you put inside the
+ browser, there is no other way in which Explorer will understand that
+ that is an invalid certificate. This is even more fun, because this
+ is a certificate that has been revoked, but look at what it is. This
+ is a certificate for software license, to give you the permission to
+ use Microsoft software. And it was created by Microsoft Root
+ Certification Authority. Someone was able to enter inside Microsoft
+ because this is not for us as normal users. That is the internal
+ certification authority of Microsoft for its own products. So someone
+ was able to do that and create fake licenses, so that people can use
+ software without paying. And okay, revocation status, the certificate
+ is revoked. Preemptly named, simply, untrusted. These problems were
+ very big. And in fact, you have not only, of course, documentation by
+ Microsoft itself, but even from the U.S. cert, they say, okay,
+ beware, there is this big problem. Let me see if we have time for
+ this part. Yeah, we can finish. Okay, that is for CRL. So CRL is not
+ such a good solution. It's better than nothing, but as you can see,
+ no browser is really downloading the CRL as needed, because it would
+ take too much time. In any case, browsers already have some
+ information extracted by CRL. Some, not all the information. So
+ something may escape if you use only that. On the contrary, OCSP
+ apparently is better, because you receive one certificate, and you
+ ask directly if that certificate is valid or not. But we mentioned
+ the problem of latency, one extra connection, and privacy. I will
+ disclose the website that I'm visiting. So the OCSP step thing, OCSP
+ automatic download, often disabled. And the OCSP request from a
+ client creates a privacy problem. Pushed CRL contains only some
+ certificates, not the whole CRL that would be too big. And browser
+ behavior is greatly variable. So let's try to improve over it.
+ Solution, OCSP stapling. And you have this machine here to remember
+ what is stapling. Stapling is putting together with those metal
+ stuff. So OCSP stapling means that the server, the TLS server that
+ you are contacting, has already obtained an OCSP answer and will
+ provide it to the browser when a connection is established. So it's
+ not the browser asking for the OCSP response and sending that as part
+ of the handshake. So you see that that immediately solves the two
+ problems. No privacy problem, because it's not requested by the
+ browser, so the responder will not know who is the browser
+ requesting. And also the timeout, sorry, the latency, because it's
+ part of the handshake and nothing extra. Implementation. So OCSP
+ stapling is yet another TLS extension that must be specified in the
+ TLS handshake. There are two versions, one and two, status request
+ and status request version two, with value certificate status
+ request. So the TLS server prefetches the OCSP responses and provides
+ them to the client in the handshake as part of the server certificate
+ message. So that is an extension inside the server certificate
+ message and in this sense the OCSP responses are stapled together
+ with the certificate. This eliminates privacy concern and the need
+ for the client to connect to the OCSP responder. Downside, the
+ freshness, because the server contacted the responder maybe at four
+ o'clock, now it's five o'clock. Is the response still good or
+ meanwhile the server has been attacked? Because you should also
+ always check if the certificate is valid now, not one hour ago, not
+ one month ago. So that is the big problem of OCSP stapling. The TLS
+ client may send the certificate status request to the server as part
+ of the client hello and the request the transfer of OCSP response in
+ the TLS handshake. The TLS server that receives a client hello with
+ status request version two may return OCSP responses for its
+ certificate chain. OCSP responses are in a new message certificate
+ status, that's the difference between version one and version two.
+ And then note one OCSP response for each element in the chain apart
+ of course the root which you cannot check in this way. Problems. The
+ client may ask and the server may ignore the request. No, I'm not
+ able to do OCSP stapling. Or clients may decide to continue anyway
+ the handshake even if I ask and the server is not providing. So again
+ we are facing a lot of variability in the implementation. Solution.
+ OCSP must staple, which is yet another thing. So this was a first
+ attempt. I ask and I hope that you provide. Since it may fail, we do
+ another thing. When a server asks a certificate to a certification
+ authority, the server may inform the certification authority that
+ they will always provide an OCSP response as well. They will always
+ perform OCSP stapling and that is reflected inside of the
+ certificate. So in the certificate in addition to the public key and
+ to the identification of the server, there is a certificate extension
+ which is named TLS features with this OID and that is defined in
+ 7633. The extension informs the client that it must receive a valid
+ response as part of the TLS handshake without the need to ask for.
+ When you have a server with this feature, the server will always
+ send, no need to ask. And if the client receives this certificate
+ that has this extension and does not receive an OCSP response, it
+ should reject the server certificate because there is some
+ misbehavior here. Benefit. Efficiency. The client does not need to
+ query the OCSP response and the attack response resistance because it
+ prevents specific client or denial of service attack against the OCSP
+ responder itself. So actors and duties. The CA must include the
+ extension into the server certificate if it has been requested by the
+ owner of the server. The OCSP responder must be available always 365
+ days 24 hours and must return valid OCSP responses. The TLS client
+ must send the extension in the clientelo, understand the must-staple
+ extension inside the certificate and reject the server certificate
+ without an OCSP-stapled response if there is that extension. Let's
+ continue. The TLS server must end caching the responses. The server
+ will not wait that the browser connects to get the response. They
+ prefetch and keep it. Provide the response in the handshake and will
+ handle, fully, errors in communication with the responders. TLS
+ server administrator should configure the server. So if you are a
+ server administrator, try using this stuff. This is important to
+ increase the security with respect to the browser and request a
+ server certificate with that extension. Operation. We said that we
+ should have a fresh response but the duration is big. For example,
+ Cloudflare, which is one of the major cloud providers and content
+ delivery network, is providing you OCSP responses that are typically
+ valid for seven days. That means that you have a big window of
+ attack. If you are able to compromise a server and that goes
+ unnoticed, then for seven days you will still have the valid OCSP
+ response, which is not so good. Let's finish with a bit of statistics
+ about what's happening really in TLS. I don't have the fresh data by
+ 2023, but I have this data from 2021 in which there was a survey of
+ the top one million servers in the world. 63% of them have TLS 1.3,
+ 80% of that was in the USA, 15% of China and Israel. So they are not
+ equally distributed. Most of the migration is in three countries.
+ Together they are 95% of all the 1.3 servers. 25% of the certificates
+ use Elliptic Curve DSA and 99% choose non-RSA and SHAKE. But
+ unfortunately, 52% permit RSA, 2.5% use expired certs, they don't
+ want to pay for new certificates, and 2% are still supporting SSL3.
+ So there are some points of attacks. Encryption, that should be a
+ feature used by goods, is used also by bets. 83% of the phishing
+ sites use valid TLS, so you don't detect immediately them as fake
+ sites, and 80% of the sites are hosted by 3.8% of the hosting
+ providers. So the majority of the TLS servers are hosted by a few
+ providers. SSL3 attack is still successful, which is the one in which
+ it is changing the request and not requesting TLS at all. So the
+ problem is on the server side. Do you accept to provide HTTP response
+ on a normal channel or you have it only on TLS? So it's urgent that
+ you use HSTS or completely disable plain HTTP. Charter revocation
+ checking is mostly broken, even if we have tried to find a solution
+ here. So now there is a trend towards short-lived certificates. In
+ the past, we had TLS certificates with a lifetime of three years.
+ Now, 2024, the longest certificate is one year. Now there is
+ discussion ongoing to have certificates that are valid for one week,
+ and every week you have to renew and change your certificate, just to
+ avoid the problem of validation. By TLS fingerprinting, among all
+ those one million, a small quantity, 531, potentially match the
+ identity of three bot malware servers, and one thousand and more
+ match the drydeck servers. So the command and control networks for
+ those botnets are indeed using TLS in order not to be detected. Okay,
+ for today it's all. Have a nice weekend. Let's meet next week. [END]
+ you [BLANK_AUDIO]
