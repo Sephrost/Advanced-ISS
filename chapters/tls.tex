@@ -626,23 +626,104 @@ Moreover, TLS 1.3 narrows the selection to just five ciphersuites:
 \end{itemize}
 
 \subsection{EdDSA}
-EdDSA, or Edwards-curve Digital Signature Algorithm, is a digital 
-signature scheme using the EdDSA signature scheme. The EdDSA scheme,
-unlike standard DSA doesnt require a PRNG, which could in some cases
+\textbf{EdDSA}, or Edwards-curve Digital Signature Algorithm, is a digital 
+signature scheme using the EdDSA signature scheme, which is a variant
+of the standard elliptic curve DSA schema. The EdDSA scheme,
+unlike standard DSA, doesnt require a PRNG, which could in some cases
 leak the private key if the underlying generation algorithm is broken
 or predictable.\\
-EdDSA picks a nonce based on a hash of the private key and the
-message, which means after the private key is generated there’s no
-more need for random number generators. Another advantage is that the
-EdDSA is faster in signature generation and verification than the
-standard DSA.
+EdDSA picks a nonce based on a \textbf{hash of the private key} and
+the \textbf{message}, which means after the private key is generated
+there’s no need anymore for random number generators. Another
+advantage is that the EdDSA is faster in signature generation and
+verification than the standard DSA, because it implements simplified
+point addition and doubling.\\
+EdDSA is using an n-bit private and public keys and will generate a
+signature which has a size which is the double of the keys size.
+As per the RFC stipulations, EdDSA must support the Ed25519 and
+Ed448 curves, which are based on the Edwards-curve Digital Signature,
+which uses respectively SHA-2 and SHA-3 as hash functions. Among those
+two, Ed25519 is the most used, which is also used for an
+implementation of EcDH.\\
+When it comes to the RFCs there's an issue: there are two RFCs that 
+are slightly different, one is the RFC 8032, which is for general
+internet implementations, with the implementational details left to
+the developers, and there's also FIPS 186-5, which specifies not only
+the mathematics behind an algorithm but also implementation details
+because it is a standard for the US government.
 
 
 \subsection{Other improvements}
+TLS 1.3 introduces several key improvements to enhance security and
+efficiency. One major change is that all handshake messages sent after
+the ServerHello are now encrypted, ensuring better confidentiality
+during the handshake process, even if the keys have not been
+enstablished(we will go over the details later). The new
+\textbf{EncryptedExtensions} message allows additional extensions,
+which were previously sent in cleartext during ServerHello, to also
+benefit from encryption, improving privacy.\\
+Additionally, key derivation functions have been redesigned to support
+easier cryptographic analysis due to their clear key separation
+properties. HKDF is now used as the underlying primitive for key
+derivation, providing a robust and flexible method.\\
+The handshake state machine has also been overhauled, making it more
+consistent by removing unnecessary messages, such as
+\textbf{ChangeCipherSpec}, which is now only retained for
+compatibility with older systems. This restructuring streamlines the
+handshake process, reducing complexity and improving protocol
+efficiency.
+
 
 \subsection{HKDF in TLS 1.3}
+HKDF is one of the novelties of TLS 1.3, and is a HMAC-based
+extract-and-expand Key Derivation Function. As a normal key derivation
+function, it takes 4 inputs: the salt, the input keying material(
+which is basically a secret key), the info string and the output
+length. It basically takes the first 2 inputs to derive a key which
+will be used to derive a pseudorandom key .Then the second stage
+expands this key into several additional pseudorandom keys, which are
+the output of the KDF. So multiple outputs can be generated from the
+single IKM value by using different values info strings.\\
+By calling the function repeatedly call the HMAC function with with PR
+keys and the info string as the input message, and then concatenate 
+the results, by appending the output of the HMAC function to the 
+previous output and incrementing an 8-bit counter.\\
+This means that from one call we can generate at most 256($2^8$)
+different keys.\\
+The finished message is not protected with the master secret as it was
+in TLS 1.2, but with the specific key, which is created with expand
+starting from the base key and putting as info the text "finished" and
+then the desired length. The pre-shared key to protect the ticket
+contains the word "resumption". So you start with some basic key
+material and then by using different labels, you are able to generate
+the different keys.
+
+% add this as a minted pseudocode 
+% HKDF-Expand( HKDF-Extract ( salt, IKM ), info, length ) 
+
+\begin{listing}[H]
+  \begin{minted}{python}
+    HKDF-Expand( HKDF-Extract ( salt, IKM ), info, length )
+  \end{minted}
+  \caption{HKDF-Expand pseudocode.}
+  \label{lst:hkdf-expand}
+\end{listing}
 
 \subsection{TLS-1.3 handshake}
+Even the handshake in TLS 1.3 was changed. The first thing that we
+notice is that the change chiper specs has been removed from the
+standard.\\
+At first, as you can see from figure \ref{fig:tls-1.3-handshake}, the
+connection starts with an hello message from the client, which will
+also send it's list of chipersuites. The following message is just the
+key share, in which the client will send it's DH parameters(it is
+still needed after all).\\ 
+The following messages are just the specular ones but sent from the
+server this time. After this point it is possible to have
+confidentiality of the communication, because a shared key has been
+established(the curly braces in the picture are just for that). This
+solution allow to save some RTTs, because we can send the needed data
+in the HELLO messages.
 
 \begin{figure}[H]
   \centering
