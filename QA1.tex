@@ -1,0 +1,93 @@
+\section{Questions and answers}
+\subsection*{Question 1}
+
+what of the following remarks regarding TLS are possibly true?
+\begin{itemize}
+  \item[\checkmark] has been established a session S1 that involved
+    connection C1 and C2 at time t1
+  \item[\checkmark] has been established a session S2 that involved
+    connection C1, C2 and C3, at different and non- overlapping time
+    intervals
+  \item[$\times$] connection C5 has been used initially in session S3
+    and then re-used in session S4 for performance-sake
+  \item[$\times$] in connection C1.1 of session S1 has been used
+    AES192, while in Connection C1.2 of the same session S1 has been
+    used AES128 since regarded less sensible information
+\end{itemize}
+%its a and b
+
+\subsection*{Question 2}
+focusing on TLS Connections and Sessions
+\begin{itemize}
+  \correct sessions are typically relatively long-life in respect to
+  connections
+  \incorrect connections allow to re-use cryptographic parameters
+  defined during handshake, thus reducing significantly the handshake
+  phase
+  \incorrect by using resumption mechanisms, the client can resume a
+  connections decreasing the overall connection time
+  \correct each connection has its own specific set of parameters like
+  seguence numbers and keys for integrity and confidentiality
+\end{itemize}
+\subsection*{Question 3}
+focusing on Perfect Forward Secrecy
+\begin{itemize}
+  \correct starting from version TLS version 1.3, it must be always
+  enabled
+  \incorrect using RSA mechanisms in TLS, it would be theoretically
+  impossible to achieve
+  \correct using RSA mechanisms in TLS, it would be impractical to
+  achieve
+  \incorrect using ECDH mechanisms in TLS, it would be impractical due
+  to the length of the key parameters
+\end{itemize}
+\subsection*{Question 4}
+Which of the following properties is NOT directly related to Perfect
+Forward Secrecy in a TLS context?
+\begin{itemize}
+  \incorrect the use of ephemeral keys 
+  \correct protection against replay attacks
+  \incorrect security of past sessions if the server's private key is compromised
+  \incorrect independent session keys for each connection
+\end{itemize}
+
+\subsection*{Question 5}
+In the context of TLS 1.3, what is the role of PFS in session
+resumption mechanisms like O-RTT?
+\begin{itemize}
+  \incorrect O-RTT resumption is vulnerable to replay attacks, thus
+  does not support PFS
+  \incorrect O-RTT session resumption uses pre-shared keys that
+  provide Perfect Forward Secrecy.
+  \correct O-RTT session resumption compromises Perfect Forward
+  Secrecy for faster handshakes.
+  \incorrect O-RTT session resumption reuses the original session's
+  ephemeral keys
+\end{itemize}
+
+
+\subsection*{Question 6}
+Which TLS feature was introduced to specifically mitigate downgrade attacks?
+\begin{itemize}
+  \incorrect HSTS (HTTP Strict Transport Security) 
+  \incorrect OCSP Stapling
+  \incorrect Certificate Pinning
+  \correct TLS FALLBACK SCSV
+\end{itemize}
+
+
+\subsection*{Question 7}
+Given the following packet capture:
+\begin{itemize}
+  \incorrect indicate a 
+  \incorrect might be the initial phase of a secured real-time data
+  exchange (like video streaming)
+  \incorrect It refers to an aborted TLS session, due to the
+  impossibility to verify the x509v3 certificate
+  \correct lt refers to an aborted TLS session, due to TLS version
+  mismatch between the versions supported by the server and by the
+  client
+\end{itemize}
+
+
+
