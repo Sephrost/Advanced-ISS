@@ -698,9 +698,6 @@ contains the word "resumption". So you start with some basic key
 material and then by using different labels, you are able to generate
 the different keys.
 
-% add this as a minted pseudocode 
-% HKDF-Expand( HKDF-Extract ( salt, IKM ), info, length ) 
-
 \begin{listing}[H]
   \begin{minted}{python}
     HKDF-Expand( HKDF-Extract ( salt, IKM ), info, length )
@@ -715,15 +712,17 @@ notice is that the change chiper specs has been removed from the
 standard.\\
 At first, as you can see from figure \ref{fig:tls-1.3-handshake}, the
 connection starts with an hello message from the client, which will
-also send it's list of chipersuites. The following message is just the
-key share, in which the client will send it's DH parameters(it is
-still needed after all).\\ 
+also send it's list of chipersuites and the key share material , in
+which the client will send it's DH parameters(it is still needed after
+all). All this data is sent in the same message to save some RTTs and
+to allow the middleboxes with lower TLS version support to understand 
+the message, interpreting them as an extension of the client hello and
+thus skipping them. In fact most of the TLS 1.3 features are 
+implemented in message extensions.\\
 The following messages are just the specular ones but sent from the
 server this time. After this point it is possible to have
 confidentiality of the communication, because a shared key has been
-established(the curly braces in the picture are just for that). This
-solution allow to save some RTTs, because we can send the needed data
-in the HELLO messages.
+established(the curly braces in the picture are just for that).\\
 
 \begin{figure}[H]
   \centering
@@ -732,17 +731,72 @@ in the HELLO messages.
   \label{fig:tls-1.3-handshake}
 \end{figure}
 
-\subsection{Pre-shared keys}
+\subsubsection{Client request}
+The client hello message contains the \textbf{client random}, the
+highest supported protocol version(which is 1.2), client random, the
+supported cipher suites and compression methods(no compression allows
+but still necessary for backward compatibility) and of course the
+session id.\\
+The supported extensions are: 
+
+
+\begin{itemize}
+  \item key\_share = client (EC)DHE share
+  \item signature\_algorithms = list of supported algorithms
+  \item psk\_key\_exchange\_modes = list of supported modes for the
+    pre-shared key exchange
+  \item pre\_shared\_key = list of PSKs offered, which are not
+    the real keys, are just an index label for the pre-shared keys
+    available
+\end{itemize}
+Recall that if the extension is not supported by the server or
+middlebox it will be ignored.
+\subsubsection{Server response}
+The server will respond with it's parameters, some of which will
+already be encrypted because the key has been established. The key
+exchange material will be sent in clear of course( the key\_share 
+and the pre\_shared\_key).\\
+The servers parameters are present too and encrypted, which are 
+\begin{itemize}
+\item \{ EncryptedExtensions \} = responses to non-crypto client
+  extensions
+\item \{ CertificateRequest \} = request for client certificate,
+  optional and encrypted for privacy
+\end{itemize}
+Even the server authentication parameters are sent in the same
+message:
+\begin{itemize}
+\item \{ Certificate \} = X.509 certificate (or raw key, RFC-7250,
+  useful for low power IoT devices)
+\item \{ CertificateVerify \} = signature over the entire handshake
+\item \{ Finished \} = MAC over the entire handshake
+\end{itemize}
+Finally, the server can immediately send application data, if needed,
+which will be encrypted with the key derived for data protection, not
+the one derived for the handshake.
+\subsubsection{Client finish}
+The client will respond with the last messages, which are:
+\begin{itemize}
+  \item \{ Certificate \} = X.509 certificate (or raw key, RFC-7250)
+  \item \{ CertificateVerify \} = signature over the entire handshake
+  \item \{ Finished \} = MAC over the entire handshake
+\end{itemize}
+\subsubsection{Pre-shared keys}
 In TLS, the pre-shared key (PSK) replaces the session ID and session
 ticket. PSKs are agreed upon during a full handshake and can be reused
-for multiple connections. They can be combined with (EC)DHE to achieve
-forward secrecy, where the PSK is used for authentication and (EC)DHE
-for key agreement. While PSKs can be generated out-of-band (OOB) from
-a passphrase, this is risky due to the potential lack of randomness,
-making brute-force attacks feasible. Therefore, using OOB PSKs is
-generally discouraged.
+for multiple connections.
+\begin{boxH}
+  Pre-shared keys are only used if a previous session has been 
+  established.
+\end{boxH}
 
-\subsection{0-RTT connections}
+They can be combined with (EC)DHE to achieve forward secrecy, where
+the PSK is used for authentication and (EC)DHE for key agreement.
+While PSKs can be generated out-of-band (OOB) from a passphrase, this
+is risky due to the potential lack of randomness, making brute-force
+attacks feasible. Therefore, using OOB PSKs is generally discouraged.
+
+\subsubsection{0-RTT connections}
 In TLS 1.3, when using a pre-shared key (PSK), a client can send
 "early data" with its initial message, which is protected by a
 specific key. However, this approach lacks forward secrecy because it
@@ -750,10 +804,256 @@ relies solely on the PSK and could be vulnerable to replay attacks.
 While some complex mitigations exist, they are particularly
 challenging for multi-instance servers.
 
-\subsection{Incorrect share}
+\subsubsection{Incorrect share}
 In TLS 1.3, if a client sends a list of (EC)DHE groups that the server
 does not support, the server responds with a HelloRetryRequest,
 prompting the client to restart the handshake with different groups.
 If the new groups are also unacceptable, the handshake will be
 aborted, and the server will send an appropriate alert.
 
+\section{TLS and PKI}
+Even with TLS 1.3, public key certificates are required, meaning TLS
+has a connection with Public Key Infrastructure (PKI), as certificates
+are typically issued by a PKI. PKI is always needed for server
+authentication and optionally for client authentication unless using
+"true" PSK (Pre-Shared Key) authentication. In this case, "true"
+refers to manually pre-installed shared keys between the client and
+server, which is rare, often limited to certain embedded systems.
+
+When a peer (server or client) sends its certificate to the other peer:
+\begin{itemize}
+    \item The entire certificate chain is sent, which includes the
+      peer’s certificate and certificates of intermediate CAs
+      (Certification Authorities). However, the root CA certificate is
+      not sent, as it should already be trusted and present on the
+      other side. Some attackers may attempt to send a fake root CA
+      certificate; if the receiving peer accepts it without proper
+      verification, the attack is successful. For instance, in TLS
+      monitoring systems, it’s crucial to ensure that the certificate
+      chain never includes the root CA.
+  
+    \item The receiving peer must validate each certificate in the
+      chain. A potential vulnerability is when some browsers and
+      servers only validate the peer's end certificate, neglecting the
+      intermediate CAs, which could be invalid. Proper validation must
+      recursively verify each certificate in the chain, including
+      checking the correctness of signatures, issue, and expiration
+      dates.
+  
+    \item It’s also essential to verify whether a seemingly valid
+      certificate has been revoked. This can be done using either:
+    \begin{itemize}
+        \item \textbf{CRL (Certificate Revocation List):} A list of
+          revoked certificates, though the list can be large, making
+          downloading and storing CRLs cumbersome—especially since a
+          separate CRL is needed for each step in the chain.
+        \item \textbf{OCSP (Online Certificate Status Protocol):} More
+          efficient performance-wise, as it allows querying an OCSP
+          server to check if a certificate is valid. However, this
+          method raises privacy concerns, as the OCSP server gains
+          visibility into the servers being visited.
+    \end{itemize}
+\end{itemize}
+
+Both CRL and OCSP add additional network requests and delays to the
+setup, as the certificates must be validated before the session
+begins. For example, OCSP can introduce a median delay of +300ms, with
+an average of +1 second. Therefore, privacy and performance trade-offs
+must be considered.
+
+\section{TLS and certificate status}
+What should be done if the CRL or OCSP servers are unreachable? This
+could happen due to server or network failures, or even because a
+firewall is blocking access—common in companies with strict firewall
+rules due to security policies. Another reason could be that OCSP
+responses are sent in clear text, even though they are signed. The
+potential responses to this situation are:
+
+\begin{itemize}
+    \item \textbf{Hard fail:} The page is not displayed, and the user
+      is shown a security warning. For instance, "Sorry, we cannot
+      display this page because we couldn't verify its revocation
+      status." While this is the most secure option, it is also the
+      most inconvenient for users. It could also result from a (D)DoS
+      attack on the OCSP or CRL server.
+    
+    \item \textbf{Soft fail:} The page is shown regardless of whether
+      the certificate's revocation status can be verified, assuming
+      the certificate is still valid.
+\end{itemize}
+
+Both approaches lead to extra load time, often longer than just
+waiting for an OCSP response. This happens because the system needs to
+wait for the timeout after initiating a TCP connection. To address
+these issues, two different solutions are typically used.
+\subsection{Pushed CRL}
+In most cases, revoked certificates result from a compromised
+intermediate CA. When this happens, all certificates issued by that CA
+must be revoked, which can be a significant number. As a result,
+browser vendors have chosen to push updates containing only major
+revoked certificates. If an intermediate CA becomes invalid, it is
+promptly marked as invalid, and the CRL containing this information is
+distributed through a browser update. Here are some examples of how
+different browsers handle this:
+
+\begin{itemize}
+    \item \textbf{Internet Explorer:} Updates its revoked certificate
+      list with each browser update, which isn’t ideal. If an update
+      is delayed, the user may not be informed about the CA revocation
+      in a timely manner.
+  
+    \item \textbf{Firefox:} Uses a system called \textit{oneCRL},
+      which is part of its blocklist management process. This list,
+      maintained by Firefox’s developers, is updated nightly and
+      includes CRLs of revoked intermediate CAs as well as known
+      malicious websites.
+  
+    \item \textbf{Chrome:} Utilizes \textit{CRLsets} to manage these
+      CRLs, which are pushed with each browser update. On startup,
+      Chrome checks for new CRLsets.
+\end{itemize}
+
+\section{OSCP Stapling}
+
+Let's now look at how browsers and servers manage OCSP-related issues,
+which can affect both verification and privacy. The term "Stapling"
+refers to keeping things together.
+
+\begin{itemize}
+    \item Automatic downloads of CRL and OCSP are often disabled
+      because they take too long. As a result, browsers may be
+      vulnerable to attacks using revoked certificates.
+  
+    \item Pushed CRLs only include a subset of revoked certificates;
+      otherwise, the list would become too large.
+  
+    \item Browser behavior varies significantly in this area.
+      Depending on the browser, different features may be available,
+      and there is no standardized method for handling certificate
+      revocation.
+\end{itemize}
+
+To improve this, instead of relying on the client to fetch revocation
+information, the server takes responsibility through a process called
+\textit{OCSP stapling}. When the server sends its certificate, it also
+provides recent revocation information via an OCSP response
+(essentially saying, "Here’s my certificate, and here’s proof it’s
+valid"). This allows the client to skip making a separate OCSP
+request, as the necessary information is included in the initial TLS
+handshake.\\
+
+OCSP Stapling is a TLS extension, meaning it is not part of the
+standard handshake and must be supported by both the server and the
+client. It is announced during the TLS handshake when the server sends
+the \textit{Server Hello} message, indicating to the client that it
+will be using this extension.\\
+The first version of OCSP Stapling is defined in RFC-6066 (extension
+\textbf{status\_request}), while version two is in RFC-6961 (extension
+\textbf{status\_request\_v2}) with the value
+\textbf{CertificateStatusRequest}. The TLS server pre-fetches the OCSP
+response from an OCSP server and includes it in the handshake as part
+of the server's certificate message. This message contains not only
+the certificate chain but also the OCSP responses for each certificate
+in the chain. As a result, the message size increases since there must
+be an OCSP response for each certificate, which validates that the
+certificates have not been revoked. This process ``staples'' the OCSP
+responses to the certificates.
+
+The main advantage is improved privacy for the client, as it no longer
+needs to request information directly from the OCSP server—this is
+handled by the TLS server, meaning the OCSP server remains unaware of
+which clients are requesting access. Additionally, the client avoids
+having to establish a separate connection to the OCSP server,
+improving both speed and privacy.
+
+However, a downside is that the freshness of the OCSP responses can be
+an issue. Since the OCSP response is pre-fetched by the server, it may
+not always be up-to-date (the server might store the response for a
+few minutes). This delay creates a small window of opportunity for
+attacks. For example, an attacker could retrieve the valid certificate
+and OCSP response, then attack the server to steal the private key and
+set up a fake server. When users connect to this fake server, the
+attacker can still present a valid certificate and OCSP response until
+the browser accepts it (would a browser accept an OCSP response from
+30 minutes ago?).
+
+OCSP stapling is typically handled automatically by the server, though
+the client can explicitly request it. When the client connects, it may
+not know whether the server supports OCSP stapling, so the client can
+send a \textit{Certificate Status Request} (CSR) as part of the
+\textit{ClientHello} message to request the OCSP responses in the TLS
+handshake.
+
+This process is optional: even if the client requests OCSP responses,
+the server may not support stapling. In this case, the server might
+return the OCSP responses for its certificate chain in a separate
+message called \textit{CertificateStatus}.
+
+The issues include:
+\begin{itemize}
+    \item Servers may ignore the status request; they are not
+      obligated to provide a response.
+    \item Clients may proceed with the handshake even if no OCSP
+      response is provided.
+\end{itemize}
+
+Although the technology exists, there is uncertainty about whether it
+is widely implemented. It is important to monitor the process to
+verify whether OCSP responses are being provided, requested, or
+ignored, as this offers insight into the actual security status, not
+just the theoretical one. To address this uncertainty, a newer
+solution called \textit{OCSP Must Staple} has been introduced, which
+forces OCSP stapling.
+\subsection{OCSP Must Staple}
+
+When a server requests a certificate from a certification authority,
+it may declare that it will always provide OCSP responses to clients,
+even if not explicitly requested. This information can be included in
+the certificate. Such servers present a certificate to the client that
+contains a certificate extension called \textbf{TLSFeatures}, as
+defined in RFC-7633. This extension informs the client that every time
+it connects to that server, it must receive a valid OCSP response as
+part of the TLS handshake. If the client does not receive an OCSP
+response, it should reject the server’s certificate. Essentially, the
+server promises to always send both its certificate and the OCSP
+response. If the server does not provide the OCSP response, it can be
+considered a fraudulent server.
+
+The benefit of this approach is that the client no longer needs to
+query the OCSP responder, and it enhances security by preventing
+attacks that block OCSP responses for a specific client or DoS attacks
+against the OCSP responder.
+
+\subsection*{Key actors and their responsibilities}
+\begin{itemize}
+    \item \textbf{Certification Authority (CA)}: Must include the
+      \textbf{TLSFeatures} extension in the server certificate if
+      requested by the server’s owner.
+  
+    \item \textbf{OCSP Responder}: Must be available 24/7 to provide
+      valid OCSP responses. This requires a robust infrastructure with
+      multiple network access points, backup servers, and resilience
+      against DoS attacks. Otherwise, servers would not be able to
+      establish connections, as they must provide OCSP responses.
+
+    \item \textbf{TLS Client}: Must send the Certificate Status
+      Request (CSR) extension in the \textit{ClientHello} message,
+      recognize the OCSP Must-Staple extension (if present in the
+      server's certificate), and reject the server’s certificate if no
+      OCSP response is provided when promised.
+
+    \item \textbf{TLS Server}: Must pre-fetch and cache OCSP responses
+      for a certain period, and include an OCSP response in the TLS
+      handshake. It must also handle errors when communicating with
+      OCSP responders, in case the responder is temporarily
+      unavailable.
+
+    \item \textbf{Server Administrators}: Should configure their
+      servers to use OCSP Stapling and request a server certificate
+      that includes the OCSP Must-Staple extension.
+\end{itemize}
+
+One potential issue is the duration of the OCSP stapled response (for
+example, Cloudflare has a validity of 7 days). A window of 7 days may
+be problematic if a server is compromised, as there is potential
+exposure during that time.
