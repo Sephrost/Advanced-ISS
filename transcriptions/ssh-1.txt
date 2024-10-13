@@ -1,0 +1,517 @@
+Okay, so sorry for the delay. Let's start this new lecture. As I have
+written in my email, today we will have half a lecture and half
+exercises. And on the contrary, tomorrow we will have no lectures. We
+will start next week after you have done the laboratories. So, now,
+today we are facing the SSH, which is the basic alternative to TLS.
+TLS is much more complex, much more used in several applications. SSH
+is a niche application, but it's still maintained and developed
+nowadays. Therefore, it's interesting to know, to understand, both as
+a comparison and because it's a tool in real use. Just a bit of
+history about SSH. In July 1995, it was invented, SSH-1, by a simple
+student of the University of Technology in Helsinki. As a response to
+a hacking incident, there was a sniffer placed on the backbone of the
+university, and thousands of usernames and passwords were copied.
+Because at that time, we just used the planer, plan FTP, and so
+usernames and passwords were sent. Okay, December 1995, the system
+became quickly very popular, and Ilonen created the SSH communication
+security, which is commercial. Since it is commercial, it was no more
+open source. So, in 1999, OpenSSH fork appears in OpenBSD. And OpenBSD
+is still the major maintainer of this open source version, which is
+then being ported to all major platforms. So, what we use nowadays is
+basically OpenSSH. This specification was officially published in 2006
+by IETF, and this specification is SSH version 2, which is
+incompatible with SSH 1. So, a mix of the client and server does not
+work. This has several improvements in security and features, and very
+frequently, it is the only version supported nowadays by clients and
+servers. In this lecture, we will always implicitly refer to SSH 2,
+unless otherwise not. From an architectural point of view, SSH has got
+a three-layer architecture, so a bit simplified with respect to TLS.
+It has a transport layer protocol, which is improper calling it a
+transport layer, because SSH is layered on top of TCP. So, TCP is the
+real transport layer. This is the SSH transport layer, which provides
+the setting of the initial connection, which is basically
+corresponding to the TLS and SHAKE, the part of server authentication,
+the negotiation of keys for confidentiality and integrity with perfect
+forward secrecy, which is compulsory in SSH 2, and the key ring
+exchange. This is something that we have not thoroughly discussed, but
+there is quite an interesting RFC that I suggest you to read, which
+recommends that after one gigabyte of data transmitted, or after one
+hour of transmission, you should change at least the keys as a
+minimum, not only for SSH, for any kind of encrypted channel. And this
+is particularly sensitive, for example, for long-term VPN. For
+example, you have a VPN between Turin and Milano, which is set up
+three months ago, and it's still running nowadays. Okay, then every
+hour or every gigabyte, you should change the keys. In some cases,
+even better, the algorithms. Then there is a specific protocol,
+mini-protocol, I would say, because that is just involved in user
+authentication. In fact, it's named the user authentication protocol,
+and the purpose is to authenticate the client to the server. So also
+in this case, SSH not really has optional client authentication.
+Client authentication is compulsory, but you have different techniques
+by which you can perform it, and we will discuss. And finally, the
+connection protocol. It supports multiple connections, that is,
+multiple channels over a single secure channel. So in some sense, this
+is telling you that SSH can act as a side-to-side VPN. You remember
+that you can have an end-to-end VPN, end-to-end IPSec, in which you
+have two nodes talking. Or you can have a side-to-side VPN, and on a
+single IPSec channel, you can carry several communications for all the
+nodes in the first and second net. This is similar. The connection
+protocol has exactly that purpose. You establish a connection between
+two nodes, and then inside that protected channel, you can implement
+as many individual channels pairwise between peers as you want. So the
+transport layer protocol is in charge of the following thing. The
+connection setup with TCP, that is given for granted, we assume it.
+Then there is a first exchange, which is the exchange of the version
+string. And as you will see, this is not only the version string.
+Inside that string, there is the list of all the protocols supported,
+both for security, cryptography, and compression. Then there is the
+key exchange, which includes algorithm negotiation for the key
+exchange itself. Then the data exchange of data protected with SSH
+happens, and then the termination of the TCP connection is not part of
+the protocol itself, but is done by TCP. So let's start with the first
+phase, corresponding roughly to the TLS and SHA. Connection and
+version and SHA. First, we need to have a TCP channel. By default, TCP
+port 22 on the server, so the responder, is active. And the client is
+the one that initiates the connection. Then there is the SSH version
+string. Both sides must send a version string of the form that you
+see. So SSH dash the protocol version, one or two in this moment, dash
+the software version, one space, comments if any, and then CR line 3.
+If comments are omitted, then also the space is omitted. So those
+things are optional. This is used to indicate the capabilities of an
+implementation, and triggers eventually compatibility extensions, if
+there are other extensions. All packets that follow the version string
+exchange is sent using the binary packet protocol, which is discussed
+in the talk. So the binary packet protocol is the basic unit on
+transmission. So the first string is just plain text in ASCII format,
+the one that you see. After that, everything becomes binary, even if
+you are transmitting text. So the binary packet protocol contains four
+bytes for the packet length. One byte for the padding length. Then the
+payload, which may be compressed. Then some random padding that can be
+as small as four, and as big as one entire block. If you remember when
+we discussed padding last year. And then a MAC for protected exchange.
+All these four initial parts are always encrypted. So in SSH,
+encryption is compulsory. So packet length does not include the MAC
+and the packet length field itself. So it is the length of all the
+other fields expressed in bytes. The payload, that might be
+compressed, has got a size which is equal to packet length minus
+padding length minus one. And the maximum uncompressed size is 32
+kilobytes. The random padding, so the padding here is random, so that
+even if you sent twice the same text, the same command, and so on, the
+encryption will be different in order to avoid disclosing any kind of
+hint to an attacker. The total packet length, MAC excluded, must be a
+multiple of the maximum between eight and the cipher block size. This
+is quite strange, even if a stream cipher is used. So in any case, SSH
+is performing padding, even when padding is not absolutely needed and
+can be minimum. MAC, which is part of the authenticate and encrypt
+schema. You remember, I hope, from the last year that we have three
+ways of doing authentication encryption. Encrypt, then authenticate,
+authenticate, then encrypt, or authenticate and encrypt. And you
+should have seen clearly from the previous slide that this is
+authenticate and encrypt. Because you encrypt, but the MAC is not
+computed over the encrypted text. It's computed over the clear text
+packet, which is not optimal, because we already discussed in ISS that
+in this way, you need to decrypt before verifying the MAC. And this is
+leading to a possible denial of service, because you have to do some
+work for decryption before being able to eventually discard the
+packet, if that has been manipulated. In the transport layer protocol,
+we have a phase which is named the key exchange, which is quite
+complex. It includes algorithm negotiation. First of all, the message
+is SSH message key exchange in it. It contains one cookie, the list of
+key exchange algorithms supported, the server host key algorithm, that
+is the server host authentication algorithm. The encryption algorithm,
+client to server and server to client. This is quite peculiar, because
+in SSH, well you remember in TLS, we have different keys for the two
+directions, but we use the same algorithm. In SSH, there is the option
+to use different algorithms for the two directions. So not only
+different keys, but also different algorithms. The same for the MAC,
+MAC algorithms client to server and server to client, and the same for
+compression, compression client to server and server to client. Since
+SSH is, at least originally, oriented to text, because it was a
+replacement for Telnet, so for interactive communication, it is also
+negotiating languages. That is really Italian, Finnish, German, and so
+on, just to tell to the counterpart, beware, I'm sending text in this
+language, don't interpret it in a different way. And then there is
+this flag, first key exchange packet follows, that contains an attempt
+to guess the agreed key exchange algorithm. So algorithm
+specification. The key exchange algorithms are strange in
+specification, because they contain not only key exchange. For
+example, you see Diffie-Hellman Group 1, but then there is SHA-1. So
+inside the key exchange, you are also specifying the, well not the,
+one hash algorithm. Because as you will see, the key exchange is the
+key exchange, but the actual keys are created with a key derivation
+function. And the hash algorithm that you put inside there is the
+algorithm to be used in the key derivation function. So you're saying
+in one single thing, we will exchange or create keys in this way, and
+then the key derivation function must be based on this algorithm. So
+for example, Diffie-Hellman with SHA-1 or elliptic curve
+Diffie-Hellman with SHA-2, and you can specify also the OID of a
+specific elliptic curve. Server host key algorithm. This is the key or
+the algorithm corresponding to the key that the server will use for
+authentication. There is a challenge response for the server, so that
+the server is always authenticated, and here the server is telling to
+the client, I am using an RSA or ECDSA or DSA, purely for
+authentication. Encryption algorithm. There is nothing strange here. X
+to Y means client to server or server to client. Example, AS128CBC,
+AS256CTR or AAD AS128GCM, because the newest version of SSH2 support
+also authenticated encryption. MAC algorithm. And you see that in some
+cases you specify an HMAC, but in other cases you are specifying the
+same thing as encryption, because actually the MAC will be the tag
+created by GCM. GCM is encrypting the data, then creating a tag. Okay,
+the tag will be placed in the place reserved for the MAC. Compression
+algorithm. You can have none, you don't compress the data, or one
+supported system is Zlib. If you are curious about what is officially
+supported, you can go to IANA, visit that page, and you will see the
+many algorithms that have been specified, at least as values, that can
+be potentially exchanged. So again, all SSH as TLS may have an initial
+phase in which the connection fails if there is no common encryption
+or key exchange algorithm between the client and the seller. They are
+all negotiation protocols. And therefore, also in this case, we are
+subject to downgrade attacks, if I'm able to change that. Key
+agreement is only performed using DFL. And inside the key agreement,
+there is also the part of server authentication. This is similar to
+what we have done in TLS. In TLS, we don't have separate server
+authentication. The server authentication is implicit in the fact that
+the server can compute the correct premaster secret using the private
+key. And here, it is a similar thing. We exchange DFL, and you will
+see that we use the public and private key of the server. So if the
+server can create the correct key, it is automatically authenticated.
+So this is an implicit challenge response authentication for the
+server. The procedure is as follows. The client generates a random
+number, x, and computes, as usual, the public exponent g to the x
+modulus p. And then the client is sending the public exponent to the
+server. The server is doing the same, generates a random number,
+private y, and computes the public exponent f. Additionally, the
+server is also computing a key, which is computed in the following
+way. e, which is the received value, to the y modulus p. This is the
+shared key created with DFLman. So he, in this moment, already knows
+what will be the final key. And then creates the so-called exchange
+hash, which is this value, computed with the hash function that was
+specified in the key exchange. And then this is the hash computed over
+the version string of the client, concatenated with the version string
+of the server, concatenated with the key exchange initial message of
+the client on the server, concatenated with the public key of the
+server, concatenated with the public values e and f. And finally, we
+put the computed key in the end. So this is not really an HMAC, but
+this is a keyed digest, because we compute a digest of all those
+informations, and finally we concatenate the key. So it is actually a
+keyed digest. Then, server generates a signature, sig h, computed over
+h, using the private key, which may involve additional hash
+computation on h. So h is already a value, but we compute the
+signatures, and typically the signature is taking the hash of the
+value to be signed. Finally, the server is sending to the client its
+own public key in raw format. So this is the plain public key. It's
+not the X.509 certificate. Its value f, and the signature computed
+over the hash exchange. Now, C must verify in some magic way that that
+public key is really the public key of the host. And as we will
+discuss, this is one of the major points of attack for SSH, because
+each client must maintain a list of public keys of the server that
+they trust. I'm connected to 10 servers, I must have 10 public keys of
+those servers. And if those keys are manipulated, of course,
+authentication is not the true one. Then the client has received f, so
+it is able to compute the common key, because that is the missing
+public exponent on the server. And at that point, it can compute
+itself the hash, because all these values are public. The only thing
+missing is e, which he has just computed. And then, since you have the
+hash that should have been computed also by the server, and you have
+the public key of the server, you can verify if sigh is the correct
+signature or not. This is the step where we prove the server
+authenticity, because if the server does not have the private key
+corresponding to that public key, the server was not able to compute
+that signature. The h value computed by the client and by the server
+becomes the session identifier. Now, we have exchanged the basic key,
+but we have seen that we have different keys for the different
+directions, for the different operations, so we need some key
+derivation operations. If we are using any kind of sensible algorithm,
+maybe a mode, maybe CBC, maybe counter mode, maybe GCM, they all need
+an initialization vector. So the initialization vector is different
+client to server and server to client, and it's computed using that
+hash algorithm on the concatenation of those data. So it is actually,
+again, a keyed digest. One problem is that SSH is not using HMAC, but
+it's using this custom keyed digest. If you can find an attack on
+them, then the whole security of SSH is compromised. But anyway, you
+see that we are using the common key, we are using the session
+identifier, which is h, and then these strings a and b, sorry, the h
+value and the session identifier. Let me check. h becomes the session
+identifier. I have to double check that, because here, h seems to be
+the same as the session identifier. So it seems that it is inserted
+twice. One possibility would be that the session identifier is the
+identifier of the connection, and then the hash is the hash of the
+single channel inside the connection. That could be, but I'm not sure.
+It seems strange, but I have copied it from the RFC, so surely there
+is a good explanation for that. It should not be a duplicate, but we
+have to double check. And the same happens for the other. So the key
+derivation mechanism is always the same. Just using different letters,
+a and b for the initial vector, c and d for the encryption key, and e
+and f for the integrity key, the one used for computing the MAC. Here
+is the explanation. Session id is the h value computed for the first
+key in change, and remains such even when key re-exchange is
+performed. So that means that for the first exchange, we have the
+session identifier in two places, h and session identifier. Then if we
+perform the re-exchange, we need to perform again that procedure that
+will generate a new value h, but the channel has not been closed.
+There is an alarm. We have to stop temporarily the lecture. Okay, so
+we have seen as the various keys are derived. And now let's consider
+other aspects. For example, the encryption phase that, as we said, it
+is compulsory in SSH. So the encryption algorithm is negotiated during
+the key exchange, as we have seen. The algorithm can be different in
+each direction, and there is a basic set of supported algorithms
+specified in the original RFC, and then others have been added later.
+So it's required to support for backward compatibility triple dash cbc
+with three keys, although the recommended one is as120a cbc. And then
+there are several optional that you see listed there, and of course,
+many of them are others added. The key and initialization vector
+needed are established during the key exchange, as we have seen, and
+all packets sent in one direction is a single data stream. What does
+that mean? It means that the first packet sent has got an
+initialization vector, which is the one that was created with the key
+derivation function. But then the next packet is receiving an
+initialization vector from the end of the previous packet to the
+beginning of the next one. So that is a peculiarity and should be
+considered. The IV for the first packet is randomly generated, well,
+randomly, actually with that key derivation function. If cbc is used,
+then the IV for the next packet is equal to the last encrypted block
+of the previous packet. So the last encrypted block becomes the first
+one, which is usual, because if you remember, the IV is a sort of c0
+in cbc, because that block is missing the previous encryption. So it
+is like if encryption continues. In case you use CTR, counter mode,
+there is no passing, because in CTR you are typically encrypting a
+byte or anyway a group, not a block. So in that case, the
+initialization vector for the next packet is the IV of the previous
+packet incremented by one. That means you continue the counting. MAC.
+The MAC algorithm and the key are negotiated during the key exchange.
+They can be different in each direction. And the basic set is HMAC
+SHA-1, which is required for backward compatibility. The recommended,
+the original SSH, is HMAC SHA-1 96, so truncated to the most
+significant 96 bits. And it's optional the support for HMAC MD5, full
+or restricted to 96. Of course, even if that is the specification in
+the original RFC, we should all use algorithm in the family of SHA-2
+for security. The MAC is computed in the following way, using the
+specified algorithm, the specific key for that direction, and then the
+sequence number concatenated with the clear text packet. Again, the
+sequence number is implicit, as it happened also in TLS, and not sent
+with the packet. This is possible because we are layered on top of
+TCP, so we are sure that the packets will arrive in the correct
+direction. Okay, so sequence number is implicit, as it was in TLS.
+Okay, so the sequence number is represented on four bytes. It starts
+with zero and incremented after each packet. The sequence number is
+never reset, even if there is a new key exchange. So new keys or new
+algorithms don't break it. So that means that you have a limit to the
+maximum quantity. After that, you will need to reset the channel,
+because four bytes, so 2 to the 32, with a maximum of 32k for each
+packet. Peer authentication. For the server, there is this asymmetric
+challenge response, which is implicit, but also explicit. Explicit
+because the server performs the signature, but performs the signature
+of the key exchange. So there is not an explicit challenge, the
+challenge is implicit, the signature is explicit. The client locally
+stores the public keys of the server. Alarm, alarm, alarm. Because
+that is normally stored in your home directory for each user, so each
+user is trusting different servers. There is a specific folder .ssh
+and inside that folder there is a file known hosts, because you must
+store there the public key of the servers. If the key is absent, so
+you are starting a connection to a server, the server is sending you
+the public key. That public key and that server are not present,
+because if the server is present with a different public key, no good.
+The case is you are connected to a server which is not listed in your
+file. Then in that case the system is offering you, oh you don't have
+this key for this server, can I put it inside your file? That is named
+tofu, which is not a food in this case, but it's trust on first use.
+It means that you hope that the first time that you connect to that
+server, the things are correct. Otherwise, that is a big security
+problem. And it is anyway a security problem, even if initially it is
+correct, because if someone is able to enter your system and change
+that file, you will connect to the wrong server. Good practice? Well,
+you should have known hosts protected for authentication and
+integrity. Or, if you are a system manager, you have the right to read
+the files of all your users, so you periodically should collect all
+the files known hosts for your users, and then compare to the official
+listing. So you should have another listing in which you know that at
+least the nodes in your network have these keys, and you compare to
+what is the content of the file known hosts. For the client, client
+authentication is part of this separate protocol, the user
+authentication protocol. It can be based on username and password, but
+that is exchanged only after the protected channel is created, and is
+protecting from sniffing in this way, but it is still open to other
+attacks. So since it is encrypted, you cannot sniff username and
+password. But since it is username and password, you can try password
+guessing, password enumeration. So having username and password as
+authentication is not a problem for sniffing, but also for your stupid
+passwords selected by the users. Or, you have the option, you, it
+means the manager of the server, can configure the server to not
+accept username and password, but to accept only asymmetric challenge
+response. In that case, the server must locally store the public keys
+of the users allowed to connect. And that is not tough. The keys must
+be inserted by hand. So I meet someone, he gives me the public key, I
+check his identity, and then I put that public key on the server. In
+the file, authorize the keys. For a specific user, it means that that
+key can be used for authentication as that local user of the server.
+Again, also in this case, we have some good practice. Protect
+authorized keys for authentication and integrity. Confidentiality is
+never an issue. And periodic audit and review of all the authorized
+keys to detect added, deleted users or changed keys. Okay, so
+basically this is SSH, but I have a question. Let me check if I can go
+quickly because you accept everything that I'm saying and you are
+never challenging me. We said that after the key exchange, everything
+is encrypted. And you see here that the packet length is encrypted. If
+it is encrypted, how can I know how much data is encrypted? How big is
+the packet? Because this is not IP. There is not an external IP
+packet. This is a flow. The padding is also there. I don't understand.
+Yes, we know the algorithm, of course. We know the block size, yes.
+Have you understood what she's saying? I think you are closer. Maybe I
+have not understood exactly. But the point here is it seems absurd.
+No, this is not working. But it is not like that. Because as she said,
+we have negotiated one algorithm. For example, AES. AES has a block
+size of 128 bits. Okay, now we know the algorithm, we know the mode
+and we know the key. So the first 128 bits can be decrypted. That is
+the first block, right? And the first block includes the packet length
+and includes the padding length. So that part can be immediately
+decrypted. And now I know how many other data I have to get. So as a
+minimum, I get, for example, the first eight bytes. And I know that
+the first five that I will decrypt have this special meaning. Four
+plus one. Then the rest is data, but reading the first four, I know
+how much data to expect. Yes, basically. But basically, just to avoid
+the changing the structure, because otherwise with the stream
+algorithm, I should not have the padding length. So in order to have
+one structure that fits everything, we say, okay, we do padding, even
+if we don't have it. Since SSH can create a connection, and then
+inside that open various channels, SSH can be used for creating VPNs.
+But rather than creating a general purpose VPN, normally what we do
+with SSH is performing the so-called port forwarding or tunneling. And
+it works like this. It's a way to forward normal TCP traffic, so not
+protected, through an SSH connection. So in order to get protection
+for some unprotected traffic. For example, we want to use POP3, we
+want to use SMTP, or we want to use HTTP rather than HTTPS. But we
+want to protect that with SSH. So in general, insecure connection. So
+the client-server application will run their normal authentication,
+but over encrypted tunnel. There are two types of port forwarding. One
+is local forwarding, when you want an outgoing tunnel, and remote
+forwarding, that is when you want an incoming tunnel. Both are using
+the connection protocol to encapsulate one or more TCP channels inside
+just one SSH. So let's start with the local port forwarding. The
+concept here is that you have traffic from a local port to a remote
+port. For example, local port is whatever dynamic address, and you
+want to connect to port 25 external for sending mail in some way. And
+for some reason, that is not permitted. Because for example, you are
+behind the firewall, and the firewall manager says, no, only secure
+traffic can traverse the firewall. So plain SMTP is not permitted.
+Now, you are on the local server, great. You can say, okay, port
+local-l 1234 should be connected to the external mail server port 25.
+This is my purpose. But this connection should happen through this SSH
+server, where I have a valid user. So I will need to authenticate with
+password or with challenger response. And I'm using SSH. So the port,
+the traffic to port local-1234 will be forwarded to port 25 on the
+mail server by using a tunnel to the external SSH. Why this works?
+Because the firewall now does not see SMTP, they see SSH. Because from
+my port 1234, it will start an SSH channel outside. Now you configure
+your mail user agent not to connect to the external server. You
+configure it as outgoing server localhost 1234. Okay, of course, this
+requires a valid user. And this is the schema. If you try to connect
+directly to port 25, the firewall is blocking that. Okay, then you
+create this connection between your port 1234 secure SSH tunnel, which
+is permitted, to port 22 of the SSH server that must be outside the
+firewall. So now you have traversed the file. And now everything that
+is received on this port will be forwarded with some dynamic port, I
+don't care, to the destination. This second part is insecure, because
+traffic is secure until you reach the SSH server. Then you start again
+the normal protocol. Okay, but this permits you to escape and even to
+hide traffic. It's very much used. If SSH is permitted through a
+firewall, that's the ideal situation for you to escape. Oh, you don't
+want me to talk to my friends using this protocol? I don't care. Do
+you permit SSH? Great. I will have a friend having SSH outside. I go
+there and then from there on, I can do whatever I like. And you cannot
+inspect. You will not see what I'm doing. Yes or no? What? No, no, no,
+no, no. We don't give normally the keys. Especially because the SSH is
+mine, so I don't give you my key to the crypt. The point is, we should
+look carefully at the protocol where that string is given. Because if
+that string is given in clear, please connect port 1234. For going to
+that server, port 25, if that is clear text, then an intrusion
+detection will not see the real traffic, but will see that you are
+trying to connect to an external server, which is not the SSH one. And
+so, I give you as a task this. Try to find where in the protocol is
+that string set up. Because normally we have seen the protocol in
+which I connect, do key exchange, great. And then, where is the
+specification that the data that I'm sending are not for the SSH
+server, but should be forwarded to some other place? The comment is
+this one. It means that somehow you are creating a channel with SSH
+server, which user authentication. Now, inside that channel, you
+should send this specification, where the specification basically is
+just mail server 25. So, you are just telling to the external SSH
+server, the traffic is not for you. When you receive traffic from this
+local port, I don't need to specify that in the sense that SSH server
+is seeing in a TCP and SHAKE, which is the local port. That is
+important for me, because then I have to tell to my Outlook or
+Thunderbird, connect to this port. So, I need to put there. It's a
+dynamic port, so up above 1024, but I must select, because otherwise
+I'm not able to do this. So, basically, I'm telling to the server this
+thing. And there must be a specific packet, maybe in the binary
+protocol or in some other place. And that is the task that I'm giving
+you. Discover and report in the next lecture, not tomorrow, next week,
+where this message is sent, because that is a basic difference. I
+create a channel, if I don't tell anything, I'm talking to you.
+Otherwise, I should tell you something, all the traffic that you will
+receive here has to be forwarded outside. I don't think, because in
+the version string, you have seen that there is no specification of
+target host or something. I think it is something inside the transport
+protocol, but just check the kind of message. Of course, there is a
+part between the SSH server and the final server, which is insecure,
+because it's not protected anymore with SSH. So the best thing, if
+you're really doing that for security and not for escaping the
+control, is that the server is hosted on the same machine as SSH. So
+in this way, I'm trying to use normal SMTP, not protected, no problem.
+I connect myself, I create SSH server on the same machine as the main
+server. And when we go there, we connect to ourselves. So the
+specification is like this, local port 1234. When you receive traffic,
+you should connect to yourself. So this local host is not me, it's the
+same as the SSH server. Connect to yourself, port 25. So in this case,
+the traffic is internal to the SSH server, and there is hopefully no
+insecure path. So these kind of things are important, because these
+are the settings that we really use, and for which SSH continues to be
+used in practice. It's good system management. There is also the
+reverse, the remote port forwarding. In the remote port forwarding, I
+have an internal server, for example this HTTP, but it is behind the
+firewall, or has got an internal address, and I need to make it
+available to outside. But I don't want to make it available to
+everybody. I want to select that. So what I would like to do is to
+have an SSH server, this one, where I can select the users that can
+connect, and then create a protected channel between that server and
+this one. And in this case, the syntax here on this machine, because
+I'm creating this time a listening socket for receiving traffic, not
+for generating traffic. So now I'm saying SSH minus R remote. I want
+to offer me on the port 8000 on the SSH server. So you see that as a
+result of this command, the external SSH server will have a port 8000.
+And all the traffic received on port 8000 will be forwarded with SSH
+to my local port 80. So now this localhost and this 80 are myself. So
+I'm just telling to the server, create a port where you accept the
+traffic, and then forward it to me on this port. So now the client,
+for example, with the browser will connect to this server port 8000,
+but actually it will be connected to the internal server on the
+standard HTTP port. This is a way to offer a server. And of course, in
+order to do that, you must have a valid user here on the SSH server.
+So this typically is done, for example, when you want a company, which
+is a friend of you, to be able to access your server. So I keep this
+here. I put this, I don't know, in Politecnico di Milano, and then the
+internal users of the Politecnico di Milano will connect here, but
+actually they will connect to me. So in general, the biggest causes of
+insecurity for SSH are direct trust in the public keys. X.509
+certificates are not used, but some commercial versions do, and
+OpenSSH has special SSH certificates, which are not X.509
+certificates. This commercial company has created their own
+certificates, which is not very good. Then we said that trust on first
+use is bad, because if we have users that ignore warnings and blindly
+accept new server public keys, we can have, in the end, a man in the
+middle easily created. Weak server platform security. So if we have
+warms, malicious code, rootkits on the server, that can alter the
+keys, read the traffic, and so on. Or also client-side malware,
+keylogger, especially if you use username and password. One last point
+is that any connection to a local forwarded port will be tunneled,
+even if coming from another node. So if we go back to the first
+example, this one, I was telling who connects to this port will go
+outside. But if you specify only the local port, anybody connecting to
+that port, not only a process on your machine, but also a process that
+comes via network to your port, and then will go out. So someone else
+can use your tunnel, which is bad. So the correct syntax to avoid that
+problem is this one, minus L, localhost 1234. Any process which is
+connecting to localhost and that port will be forwarded. In that way,
+you avoid that people in your same company will use your tunnel to
+exit. Okay, so we stop here for the moment. You have 10 minutes break,
+and then we will continue with the exercises with Andrea, and we will
+meet again next week.
