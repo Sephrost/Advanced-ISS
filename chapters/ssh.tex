@@ -413,3 +413,147 @@ tunnel:
 \begin{minted}{bash}
   ssh -L 127.0.0.1:1234:mail_server:25 user@ssh_server
 \end{minted}
+\section{Attacks on SSH}
+\subsection{BothanSpy}
+BothanSpy is believed to be a CIA tool, according to information
+released by Wikileaks on July 6, 2017, as part of their Vault 7
+disclosure. This malware targets Xshell, a Windows-based SSH client
+widely used in the USA and South Korea. BothanSpy operates by
+injecting a malicious DLL into the Xshell process, enabling it to
+steal sensitive information from SSH connections. Specifically, it
+collects:
+
+\begin{itemize}
+    \item Usernames and passwords from password-authenticated
+      connections.
+    \item Usernames, private key filenames, and passphrases from
+      public-key authenticated connections.
+\end{itemize}
+
+BothanSpy is designed to work with the ShellTerm attack framework,
+featuring:
+
+\begin{itemize}
+    \item A covert communication channel with a Command and Control
+      (C\&C) server.
+    \item DLL injection capabilities for direct C\&C communication,
+      with no data written to disk, making it difficult to detect
+      using traditional anti-malware solutions.
+    \item An offline mode, where the collected data is written to
+      disk, encrypted with AES for later retrieval.
+\end{itemize}
+
+
+\subsection{Gyrfalcon}
+
+Gyrfalcon is another suspected CIA tool, as revealed by Wikileaks on
+July 6, 2017, in their Vault 7 release. This malware specifically
+targets OpenSSH on enterprise Linux systems, such as RedHat and
+CentOS. Gyrfalcon operates by pre-loading a malicious DLL to intercept
+plaintext traffic, capturing information both before encryption and
+after decryption. The tool is capable of capturing:
+
+\begin{itemize}
+    \item Usernames and passwords.
+    \item Actual data transmitted over SSH connections.
+\end{itemize}
+
+Key features of Gyrfalcon include:
+
+\begin{itemize}
+    \item An encrypted configuration file.
+    \item An encrypted file for storing captured data.
+\end{itemize}
+
+While Gyrfalcon requires root access for installation, it notably does
+not integrate with a Command and Control (C\&C) server. Instead, it
+freely reads and writes files on disk, potentially exploiting the
+limited use of anti-malware solutions on Linux platforms. Despite
+these capabilities, Gyrfalcon is not particularly stealthy or
+sophisticated compared to other tools.
+
+
+\subsection{Brute force attack}
+
+Brute force attacks can exploit the false sense of security provided
+by secure communication channels, especially when insecure
+authentication methods like reusable passwords are employed. In a
+typical brute-force attack, an attacker systematically attempts to
+guess a password by trying all possibilities from a dictionary of
+commonly used passwords.
+
+An illustrative example of such an attack occurred in September 2016:
+\begin{itemize}
+    \item Two servers, one with an IPv4 address and the other with an
+      IPv6 address, were activated in the cloud to test SSH
+      brute-force attacks.
+    \item The IPv4 server was immediately targeted and compromised
+      within just 12 minutes, primarily because the root password was
+      set to "password." 
+    \item Once compromised, the server was quickly used in a
+      Distributed Denial of Service (DDoS) attack.
+    \item In contrast, after one week, the IPv6 server remained
+      unscathed, as it had not even been attacked.
+\end{itemize}
+
+This example demonstrates the risks of relying on weak passwords and
+highlights the disparity in attack frequency between IPv4 and IPv6
+networks.
+
+
+\subsubsection{Protection from brute-force attacks}
+
+To mitigate the risk of SSH brute-force attacks on Linux systems,
+several strategies can be implemented:
+
+\begin{itemize}
+    \item \textbf{Account Lockout}: Automatically lock accounts after a
+      certain number of failed authentication attempts using tools
+      like \texttt{pam\_tally2} or \texttt{pam\_faillock}.
+    \item \textbf{TCP Wrappers}: Use TCP wrappers to restrict SSH access by
+      permitting or denying connections from specific hosts or
+      networks.
+    \item \textbf{SSH Rate Control}: Implement rate limiting for SSH
+      connections using IPtables, for example, by allowing only 5
+      connection attempts per minute.
+    \item \textbf{Disable Root Access}: Deny direct SSH access to the root
+      account to limit exposure.
+    \item \textbf{Change Default SSH Port}: Move SSH from the default port
+      22 to another port to reduce the chances of automated scans and
+      attacks.
+    \item \textbf{Fail2ban}: Use \texttt{Fail2ban} to monitor log files and
+      blacklist IP addresses after a defined number of authentication
+      failures.
+    \item \textbf{Two-Factor Authentication (2FA)}: Implement 2FA, such as
+      Google Authenticator, for an added layer of security.
+    \item \textbf{Disable Password-Based Authentication}: Disable
+      password-based authentication altogether in favor of more secure
+      methods like public-key authentication.
+\end{itemize}
+
+These measures can significantly reduce the effectiveness of
+brute-force attacks and improve the overall security of SSH services.
+\section{Main Applications of SSH}
+
+SSH (Secure Shell) is widely used for a variety of secure applications
+due to the encryption and authentication mechanisms it offers. The
+main applications include:
+
+\begin{itemize}
+    \item \textbf{Remote Interactive Access}: SSH allows users to securely
+      connect to remote systems with a text-based interface, enabling
+      command-line interaction.
+    \item \textbf{Remote Command Execution}: SSH facilitates the secure
+      execution of commands on remote systems, making it ideal for
+      system administration and automation tasks.
+    \item \textbf{Tunneling}: SSH can create secure tunnels for various
+      applications, such as forwarding network traffic, encrypting
+      data, or creating virtual private networks (VPNs).
+\end{itemize}
+
+Keep in mind that SSH is now natively available on Linux, macOS, and
+Windows, providing both client and server functionality on these
+platforms.\\
+All of these functions benefit from the security properties inherent
+to SSH, including confidentiality, integrity, and authentication.
+

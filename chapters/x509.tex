@@ -1,0 +1,590 @@
+\chapter{The X.509 standard and PKI}
+\section{Public-key certificate (PKC)}
+Lets begin with a definition:
+\begin{boxH}
+  A \textbf{public-key certificate} is a data structure to securely bind a
+  public key to some attributes
+\end{boxH}
+A PKC is said to "securely bind" a public key to some attributes
+because it is signed by a trusted entity, the \textbf{Certificate
+Authority}, but other techniques for certification exists (e.g.
+blockchain, direct trust and personal signature).\\
+The attributes in the certificate are those employed in the
+transaction being protected by the PKC, which are difficult to decide
+a-priori without knowing the context.\\
+PKC are most important to achieve \textbf{non-repudiation} and 
+\textbf{digital signature} in a secure way.
+\subsection{Key Generation in Public Key Cryptography (PKC)}
+
+Key generation in public key cryptography (PKC) involves complex
+algorithms and often relies on random number generators (RNGs) to
+ensure strong, unpredictable keys. Once a key is generated, the
+private key must be securely protected in various contexts:
+
+\begin{itemize}
+  \item \textbf{Storage}: The private key needs to be securely
+    stored to prevent unauthorized access.
+  \item \textbf{Usage}: The private key must also be protected when
+    being used, as it could be exposed during operations.
+  \item \textbf{Software Application}: In software environments
+    (e.g., web browsers), the trustworthiness of the computing
+    platform must be considered, as it may be vulnerable to malware
+    or weak implementations. This is true both for the context of
+    key generation and use.
+  \item \textbf{Dedicated Hardware}: Storing and using keys in
+    dedicated hardware, such as a smart card, offers enhanced
+    protection but comes with limitations in terms of algorithm
+    updates or vulnerability patching( which may be difficult or
+    even impossible).
+  \item \textbf{Key Injection}: Keys may be generated in software
+    and injected into hardware devices, a process that can be useful
+    for key recovery, but should be restricted to encryption keys to
+    maintain security. This is most important for the private key. 
+\end{itemize}
+
+PKC key management requires careful consideration of both security and
+operational challenges, especially when dealing with long-term
+security mechanisms.
+
+\subsection{Certification architecture}
+
+In Public Key Infrastructure (PKI), several key entities are
+responsible for managing the lifecycle of Public Key Certificates
+(PKCs):
+
+\begin{itemize}
+  \item \textbf{Certification Authority (CA)}: The CA is responsible
+    for generating and revoking PKCs. It also publishes PKCs and
+    maintains information about their status, such as whether they
+    are valid or revoked, or even suspended.
+  \item \textbf{Registration Authority (RA)}: The RA plays a
+    critical role in verifying the claimed identity and attributes
+    of a certificate requestor. It authorizes the issuance or
+    revocation of PKCs but does not generate them itself.
+  \item \textbf{Validation Authority (VA)}: The VA provides services
+    that allow third parties to verify the validity status of a PKC,
+    because some responsibilities or the RA may be delegated to it.
+    This may involve downloading Certificate Revocation Lists (CRLs)
+    or querying an Online Certificate Status Protocol (OCSP)
+    responder to check the certificate's status in real-time.
+  \item \textbf{Revocation Authority}: Although not an official
+    term, this role may be assigned to either the RA or CA. The
+    revocation authority is delegated to revoke certificates, often
+    on a more urgent basis than their issuance (they are available
+    most of the time), ensuring that compromised or invalid
+    certificates are promptly rendered unusable.
+\end{itemize}
+
+These entities work together to ensure the security and
+trustworthiness of PKC-based systems by handling key tasks such as
+certificate issuance, verification, and revocation.
+
+\subsection{Certificate generation}
+The general
+When an actor want to generate a certificate, it must first generate a 
+key pair (public and private key). The private key is stored locally
+and protected(encrypted) as strong as possible, while the public key 
+is sent to the CA with some attributes that help identify the actor.
+The CA then requires that the attributes are correct and are
+associated with the actor, which requires authentication of the actor.
+At this point the CA generates the certificate, signs it with its 
+private key and sends it back to the actor while also storing it in 
+its repository.\\
+As you may noticed, the verification is only on the attributes, and
+not of the possession of the private key, which will be discussed
+later.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/x509 certificate
+  generation.png}
+  \caption{Certificate generation}
+\end{figure}
+
+
+In addition to what just discussed, alternative architectures for
+certificate generation exist:
+
+\begin{itemize}
+  \item \textbf{Key Pair Generation by RA}: In some architectures, the
+    Registration Authority (RA) generates the key pair on behalf of
+    the user, obtains the Public Key Certificate (PKC), and securely
+    distributes the key pair and certificate to the user via a
+    secure device, such as a smart card. This approach is often used
+    in large companies where the employees are already known to the
+    organization.
+
+  \item \textbf{User Authentication via Code}: Another common method
+    involves the user visiting the RA to obtain a code that can be
+    used to authenticate their certificate request to the
+    Certification Authority (CA). The code is typically calculated
+    as a Message Authentication Code (MAC) using the shared secret
+    key between the RA and CA:
+
+    \[
+      \text{code} = \text{MAC}(K, ID)
+    \]
+
+    where \(K\) is a shared secret key between the RA and CA, and
+    \(ID\) is the user's identity. The user then submits this code to
+    the CA to validate the certificate request.
+\end{itemize}
+
+These alternative methods provide flexibility for organizations with
+different security needs, allowing for centralized key generation and
+secure certificate distribution.
+
+\subsection{X.509 certificates}
+
+X.509 is an ITU-T standard that defines the format of public key
+certificates used to verify the identity of a key owner in
+cryptographic systems. The development of X.509 certificates has
+undergone several versions:
+
+\begin{itemize}
+  \item \textbf{v1 (1988)}: The initial version of the standard.
+  \item \textbf{v2 (1993)}: A minor update with small improvements.
+  \item \textbf{v3 (1996)}: Added extensions and introduced version
+    1 of the attribute certificate.
+  \item \textbf{v3 (2001)}: Further enhancements, including version
+    2 of the attribute certificate, which are not used anymore.
+\end{itemize}
+
+X.509 is part of the larger X.500 standard for directory services,
+often referred to as "white pages," which are used for managing
+information about entities in a structured way(directory services).
+X.509 provides a solution to the problem of securely identifying the
+owner of a cryptographic key.
+
+The certificates and their structures are defined using \textbf{ASN.1}
+(Abstract Syntax Notation One), a standard interface for defining data
+structures exchanged in networking environments in a neutral and 
+platform-independent way. 
+
+\subsection{PKC Scope}
+A Public Key Certificate (PKC) contains information that uniquely
+associates a cryptographic key with an entity. This binding between
+the key and the entity is ensured by a \textbf{Trusted Third Party
+(TTP)}, typically referred to as a Certification Authority (CA), which
+digitally signs each certificate to guarantee its authenticity.\\
+
+The liability associated with a PKC may be restricted to specific
+applications or purposes, as outlined in the CA's certification
+policy. This policy defines the intended usage and limits the scope of
+the certificate, ensuring it is applied within the proper legal and
+technical contexts.
+
+\subsection{Certificate Policy (CP) and Certification Practice
+Statement (CPS)}
+
+According to RFC-3647, "Internet X.509 Public Key Infrastructure
+Certificate Policy and Certification Practices Framework," both the
+Certificate Policy (CP) and Certification Practice Statement (CPS)
+play key roles in defining the use and management of Public Key
+Certificates (PKCs):
+
+\begin{itemize}
+  \item \textbf{Certificate Policy (CP)}: A CP is a named set of rules
+    that defines the applicability of a PKC to a specific community
+    or class of applications with common security requirements. It
+    establishes the minimum requirements for the issuance and
+    management of certificates and can be followed by multiple
+    Certification Authorities (CAs). For example, a government CP
+    may apply to all certification providers issuing certificates
+    for official use.
+
+  \item \textbf{Certification Practice Statement (CPS)}: A CPS outlines
+    the specific practices that a CA follows when issuing PKCs.
+    While a CP specifies the general rules, the CPS provides
+    detailed implementation procedures. Each CA develops its own
+    CPS, which is tailored to its operations and describes how it
+    meets the requirements set forth in the CP.
+\end{itemize}
+
+\subsection{X.500 Directory Service}
+
+The X.500 directory service was the first application to use X.509v1
+certificates, providing a framework for managing information about
+entities in a network. However, three major problems were encountered
+with this early system:
+
+\begin{itemize}
+  \item \textbf{Lack of Guarantees on the Quality of the CA}: There were
+    no clear policies to ensure the reliability and trustworthiness
+    of the Certification Authorities (CAs), leading to concerns
+    about the security of issued certificates.
+
+  \item \textbf{Lack of an X.500 Infrastructure}: A fully developed X.500
+    infrastructure did not exist, making it difficult to access
+    certificates or distribute them effectively across networks.
+
+  \item \textbf{Difficulty in Establishing Certification Paths}:
+    Establishing a certification path between two arbitrary users
+    was challenging, as the relationships between different CAs were
+    not well-defined or standardized.
+\end{itemize}
+
+These issues hindered the widespread adoption of X.500 and highlighted
+the need for more robust certification frameworks.
+\subsubsection{Remedies for x.509v1}
+To address those problems, the X.509v1 standard was revised to include 
+the following features:
+\begin{itemize}
+  \item force the semantics in the application or in any case in the
+    context external to the certificate (eg: RFC-1422 (PEM))
+  \item make the certificate more flexible and expressive(more htan the
+    identifier and the key). This was solved in X.509v3.
+\end{itemize}
+
+\subsection{RFC-1422}
+RFC-1422 introduced a hierarchical certification infrastructure rooted
+at the \textbf{Internet Policy Registration Authority (IPRA)}, which
+oversaw the certification hierarchy. The framework defined special
+types of Certification Authorities (CAs) to manage and enforce
+certificate policies:
+
+\begin{itemize}
+  \item \textbf{Policy Certification Authority (PCA)}: PCAs were
+    responsible for establishing and enforcing the policies used to
+    issue certificates. They ensured that subordinate CAs followed
+    the defined security practices and policies.
+
+  \item \textbf{Name Subordination}: CAs were required to issue
+    certificates within a specific subset of the naming hierarchy,
+    ensuring structured and consistent name allocation. For example:
+    \begin{itemize}
+      \item \textbf{CA n.1}: C=IT (country-level CA for Italy)
+      \item \textbf{CA n.2}: C=IT, O=Politecnico di Torino
+        (organizational-level CA within Italy)
+    \end{itemize}
+\end{itemize}
+
+This hierarchical model helped structure the certification
+infrastructure, defining clear roles and responsibilities for issuing
+and managing certificates.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/x509 internet per
+  hierarchy.png}
+
+  \caption{Internet PEM hierarchy (RFC-1422)}
+\end{figure}
+
+Unfortunately this was a failure for many reasons:
+\begin{itemize}
+  \item the hierarchical infrastructure limits the flexibility
+  \item the name subordination introduces undesired limits to the
+    assignment of X.500 names
+  \item the use of the PCA concept is not flexible in commercial
+    applications, where the participation of an operator to take a
+    decision is impractical, because no-one was willing to trust a
+    global PCA.
+\end{itemize}
+
+\section{X.509 Version 3}
+
+X.509 Version 3 is a standard that was completed in June 1996 through
+a collaborative effort between ISO/ITU and the IETF. Its primary goal
+was to define certificates that are suitable for Internet
+applications. This version consolidates all modifications necessary to
+extend the definitions of certificates and Certificate Revocation
+Lists (CRLs) into a single document.\\
+Key features of X.509 Version 3 include:
+
+\begin{itemize}
+  \item \textbf{Types of Extensions}:
+    \begin{itemize}
+      \item \textbf{Public Extensions}: These are defined by the
+        standard and made publicly available for anyone to use.
+      \item \textbf{Private Extensions}: These are tailored to
+        specific user communities and are not publicly available.
+        Those are considered as blobs if not understand er and
+        discarded
+    \end{itemize}
+
+  \item \textbf{Certificate Profile}: This refers to a set of
+    extensions designed for a specific purpose, ensuring that
+    certificates meet particular requirements for different
+    applications. An example of a certificate profile is given by
+    RFC-5280, titled "Internet X.509 Public Key Infrastructure
+    Certificate and Certificate Revocation List (CRL) Profile,"
+    which outlines standard practices for X.509 certificates and
+    CRLs.
+\end{itemize}
+
+\subsection{Base syntax}
+
+\subsection{Critical Extensions}
+
+In the context of X.509 certificates, extensions can be classified as
+critical or non-critical, each affecting the certificate verification
+process differently:
+
+\begin{itemize}
+  \item \textbf{Critical Extensions}: If a certificate contains an
+    unrecognized critical extension, it \textbf{MUST} be rejected
+    during the verification process. This ensures that any essential
+    information required for proper validation is recognized and
+    handled appropriately.
+
+  \item \textbf{Non-Critical Extensions}: Conversely, a non-critical
+    extension \textbf{MAY} be ignored if it is unrecognized. This
+    allows flexibility in certificate processing, as non-critical
+    information does not impede the overall verification of the
+    certificate.
+\end{itemize}
+
+The responsibility for handling these extensions lies entirely with
+the entity performing the verification, referred to as the
+\textbf{Relying Party (RP)}. The RP must implement logic to correctly
+interpret and respond to both critical and non-critical extensions in
+accordance with their definitions.
+
+\subsection{Public Extensions}
+
+X.509 version 3 defines four classes of public extensions that enhance
+the functionality and applicability of certificates:
+
+\begin{itemize}
+  \item \textbf{Key and Policy Information}: Extensions in this
+    class provide additional information regarding the key usage and
+    policies applicable to the certificate, guiding how the key
+    should be used within specific contexts.
+
+  \item \textbf{Certificate Subject and Certificate Issuer
+    Attributes}: These extensions include attributes related to both
+    the subject of the certificate (the entity that the certificate
+    represents) and the issuer (the Certification Authority),
+    enabling more detailed identification and classification.
+
+  \item \textbf{Certificate Path Constraints}: These extensions
+    define rules and limitations regarding the certification path,
+    ensuring that certificates can only be used in certain contexts
+    or under specific conditions, enhancing security within the
+    certificate hierarchy.
+
+  \item \textbf{CRL Distribution Points}: This extension indicates
+    where the Certificate Revocation List (CRL) can be found,
+    providing necessary information for relying parties to check the
+    revocation status of the certificate efficiently.
+\end{itemize}
+
+\subsection{Key and policy information}
+
+\subsubsection{Authority key identifier}
+
+Key and policy information extensions in X.509 v3 provide crucial
+details about the public keys associated with certificates. One
+significant component is the \textbf{Authority Key Identifier (AKI)},
+which serves the following purposes:
+
+\begin{itemize}
+  \item \textbf{Identification of the Signing Key}: The AKI
+    identifies a specific public key used to sign a certificate,
+    ensuring that the verification process can accurately trace the
+    certificate's authenticity back to the correct authority.
+
+  \item \textbf{Identification Methods}: The identification can be
+    achieved through:
+    \begin{itemize}
+      \item A \textbf{key identifier}, typically represented as the
+        digest of the public key (PK).
+      \item The combination of \textbf{issuer-name} and
+        \textbf{serial-number}, allowing a clear reference to the
+        issuing CA's key.
+    \end{itemize}
+
+  \item \textbf{Usage}: The AKI is particularly useful in scenarios
+    where the same CA might utilize multiple keys (e.g., for
+    different assurance levels like low and high assurance).
+
+  \item \textbf{Non-Critical Extension}: While the AKI is classified
+    as non-critical, its presence can be vital in certain
+    applications, especially when building the certificate chain is
+    necessary for verifying trust and authenticity.
+\end{itemize}
+
+\subsubsection{Subject key identifier}
+The \textbf{Subject Key Identifier} (SKI) extension in X.509 v3 serves
+to identify a specific public key associated with a certificate. Key
+features include:
+
+\begin{itemize}
+  \item \textbf{Identification of Public Key}: The SKI uniquely
+    identifies a particular public key used in an application. This
+    is especially important in scenarios where the public key may be
+    updated or replaced over time.
+
+  \item \textbf{Non-Critical Extension}: The SKI is classified as a
+    non-critical extension, meaning that while it provides valuable
+    identification information, its absence does not necessarily
+    prevent the certificate from being considered valid.
+\end{itemize}
+\subsubsection{key usage}
+
+The \textbf{Key Usage} (KU) extension in X.509 v3 specifies the
+application domains in which a public key may be utilized. Key
+characteristics include:
+
+\begin{itemize}
+  \item \textbf{Application Domain Identification}: The KU extension
+    identifies the specific purposes for which the associated public
+    key can be employed, ensuring that it is used appropriately
+    within defined contexts.
+
+  \item \textbf{Critical or Non-Critical}: The Key Usage extension
+    can be classified as either critical or non-critical:
+    \begin{itemize}
+      \item If marked as \textbf{critical}, the certificate may only
+        be used for the specific purposes indicated in the Key Usage
+        extension. Any usage outside the defined scopes would render
+        the certificate invalid.
+      \item If marked as \textbf{non-critical}, the certificate can
+        be used more flexibly, potentially allowing usage beyond the
+        defined applications without invalidating the certificate.
+    \end{itemize}
+
+  \item \textbf{Permitted Cryptographic Operations}: The following
+    cryptographic operations can be defined within the Key Usage
+    extension:
+    \begin{itemize}
+      \item \textbf{digitalSignature}: Allowed for both Certificate
+        Authorities (CAs) and users.
+      \item \textbf{nonRepudiation}: Specifically permitted for
+        users.
+      \item \textbf{keyEncipherment}: Permitted for users.
+      \item \textbf{dataEncipherment}: Allowing encryption of data.
+      \item \textbf{keyAgreement}: Involves:
+        \begin{itemize}
+          \item \textbf{encipherOnly}: Restricting use to
+            enciphering operations.
+          \item \textbf{decipherOnly}: Restricting use to
+            deciphering operations.
+        \end{itemize}
+      \item \textbf{keyCertSign}: Specifically permitted for
+        Certificate Authorities (CAs).
+      \item \textbf{cRLSign}: Also permitted for Certificate
+        Authorities (CAs) for signing Certificate Revocation Lists
+        (CRLs).
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Private key usage period}
+
+The \textbf{Private Key Usage Period} extension in X.509 v3 specifies the
+time frame during which the associated private key may be used. Key
+features include:
+
+\begin{itemize}
+  \item \textbf{Usage Period Definition}: This extension defines the
+    period during which the private key can be actively utilized,
+    helping to enforce time-based restrictions on key usage.
+
+  \item \textbf{Non-Critical Extension}: The Private Key Usage
+    Period extension is always classified as non-critical, meaning
+    that its absence does not invalidate the certificate. However,
+    the information it provides can be important for managing key
+    lifecycles.
+
+  \item \textbf{Usage Discouraged}: While this extension is
+    available, its use is generally discouraged in practice.
+    Organizations often prefer to manage key lifetimes through other
+    means, such as regular key rotation, rather than relying on a
+    specified usage period within the certificate.
+\end{itemize}
+
+\subsubsection{Certificate policies}
+
+The \textbf{Certificate Policies} extension in X.509 v3 outlines the
+specific policies that were adhered to during the issuance of the
+certificate and defines the purposes for which the certificate can be
+utilized. Key aspects include:
+
+\begin{itemize}
+  \item \textbf{Policy Listing}: This extension provides a
+    comprehensive list of the policies that govern the certificate
+    issuance process, ensuring clarity regarding its intended use.
+
+  \item \textbf{Indication Methods}: Certificate policies can be
+    indicated using various formats, including:
+    \begin{itemize}
+      \item \textbf{Object Identifier (OID)}: A unique identifier for
+        the policy.
+      \item \textbf{Uniform Resource Identifier (URI)}: A link to a
+        location where the policy can be reviewed.
+      \item \textbf{Text Message}: A textual description of the
+        policy.
+    \end{itemize}
+
+  \item \textbf{Critical or Non-Critical}: The Certificate Policies
+    extension can be classified as either critical or non-critical:
+    \begin{itemize}
+      \item If marked as \textbf{critical}, the certificate must only
+        be used in accordance with the specified policies; otherwise,
+        it may be considered invalid.
+      \item If marked as \textbf{non-critical}, the certificate can be
+        used more flexibly, although the policies still provide
+        guidance for its intended use.
+    \end{itemize}
+
+  \item \textbf{Support for Authentication and Authorization}: The use
+    of this extension can enhance not only the authentication of users
+    and entities but also facilitate authorization processes,
+    providing a clearer understanding of the permissible actions
+    associated with the certificate.
+\end{itemize}
+
+\subsubsection{Policy mappings}
+
+The \textbf{Policy Mappings} extension in X.509 v3 establishes a
+correspondence between policies across different certification
+domains. Key aspects include:
+
+\begin{itemize}
+  \item \textbf{Mapping of Policies}: This extension indicates how
+    policies from one certification authority (CA) correspond to
+    policies from another, facilitating interoperability and trust
+    among different certificate frameworks.
+
+  \item \textbf{Presence in CA Certificates}: The Policy Mappings
+    extension is typically present only in CA certificates, allowing
+    certification authorities to define and communicate
+    relationships between their policies and those of other
+    authorities.
+
+  \item \textbf{Non-Critical Extension}: The Policy Mappings
+    extension is classified as non-critical, meaning its absence
+    does not invalidate the certificate. However, it serves as an
+    important tool for enhancing the understanding and usability of
+    certificates across different domains.
+\end{itemize}
+
+\section{Private extensions}
+
+The \textbf{Private Extensions} in X.509 v3 allow for the definition
+of extensions that are specific to a particular user community,
+facilitating tailored applications within closed groups. Key aspects
+include:
+
+\begin{itemize}
+  \item \textbf{Definition of Private Extensions}: Private
+    extensions are custom extensions that can be defined for use by
+    a specific community or group of users, enabling flexibility and
+    specificity in certificate applications.
+
+  \item \textbf{Examples from IETF-PKIX}: The Internet Engineering
+    Task Force Public Key Infrastructure (IETF-PKIX) has defined
+    three notable private extensions for the Internet user
+    community:
+    \begin{itemize}
+      \item \textbf{Subject Information Access}: Provides
+        information about how to access subject-related data.
+      \item \textbf{Authority Information Access}: Offers details on
+        how to access information related to the certificate
+        authority.
+      \item \textbf{CA Information Access}: Supplies information
+        about accessing resources associated with the CA.
+    \end{itemize}
+\end{itemize}
+
