@@ -1,0 +1,1229 @@
+ Okay, so today we start with a new topic which is an in-depth
+ analysis of the X509 standard and the PKI's that are built on top of
+ this certificate format. We have briefly introduced the certificates
+ in the previous course and we have seen that especially in TLS,
+ certificates are an important part of its security. So understanding
+ the details of these standards and how the certificates are managed
+ is vital for nowadays applications. So public key certificate and
+ data structure to securely bind a public key to some attributes. So
+ security is typically given by the fact the certificate is signed by
+ the certification authority and attributes are important because it's
+ not always said that we are giving a certificate to a human but maybe
+ other objects inside the system. In general we give a certificate to
+ any actor that is active agent that can control a private key because
+ the certificate contains the corresponding public key. So that can be
+ a human but can be also a server, a router or generically a program.
+ So securely bind typically with the signature by an authority but
+ other techniques are possible. There is currently a bit of interest
+ in using a blockchain to deposit the certificates which is raising
+ mixed reactions because blockchain is not completely trusted, it
+ depends on the majority, it's a public or private blockchain. So
+ mixing 509 blockchain seems as yet another attempt to make the
+ blockchain valuable because nowadays they have not yet found a real
+ place apart from Bitcoin. But there are also other certification
+ schemas like for example direct trust. If we perform an exchange out
+ of band you can verify the identity and then trust the certificate or
+ personal signature, I sign the key of another people that I trust.
+ Some attributes. As I said for any actor but the important point is
+ that the attributes that you are putting in the certificate are those
+ employed in the transaction being protected by a public key
+ certificate. If you put the electronic mail of the person owning the
+ certificate but then you want to use that to authenticate yourself to
+ a Windows domain that will not work because the identifier used in
+ the Windows domain is not the email address of that person. And
+ sometimes it's difficult to decide a priori what will be all the
+ possible applications because there is great variability. You may add
+ new applications in the future. So configuring correctly the data
+ inside the public key certificate is always a challenge and may
+ require revoking, reissuing certificates and so on. Anyway a
+ certificate is a vital component of many legislations because without
+ a public key certificate publicly recognized that with legal value
+ you cannot have no repudiation of a digital signature. So at least
+ for that application X.509 certificates are really vital. And finally
+ in general public key certificate is the public complement of the
+ corresponding personal private key where we stress the word personal.
+ If the actor is losing control of the personal private key the whole
+ schema of security is falling down. So let's start with the first
+ point. Before creating a certificate we need to create an asymmetric
+ key pair, private key and public key. So in general key generation
+ requires complex algorithms and often random number generation. You
+ have seen that I think in the cryptography course so you are aware of
+ how asymmetric keys are generated. But even if we do correctly that
+ step the problem is that after generation we need to protect the
+ private key when it is stored and in that case we could for example
+ protect it by encrypting it with another symmetric key which is
+ moving the problem protection of that secret key. But the other big
+ problem is protecting the private key when it is used. Because the
+ CPU in order to perform the computation needs to know the private key
+ in clear. So there can be in-memory attacks if inside the same CPU
+ it's running not only your digital signature program but also another
+ malicious program that program could get a copy of your private key.
+ With respect to generation there are various ways to generate an
+ asymmetric key pair. For example we can ask our preferred software
+ application for example a web browser to generate the key pair. So
+ that is moving the problem on the computing platform. Is there
+ malware in that platform in the moment in which you create the key
+ pair or maybe the browser has got a weak implementation because you
+ know that there are very stringent mathematical requirements on the
+ keys and the relations that they have and each algorithm has a list
+ of weak keys that you should never generate and if you generate them
+ then you should immediately discard and get a new key pair. So having
+ a correct implementation all these things is not trivial but you have
+ an alternative. You use a dedicated device such as a dedicated
+ hardware for example a smart card which is good in some sense because
+ of course during generation you cannot have another malware running
+ on the same card but you have other problems. For example in case at
+ a certain point we discover vulnerability in an algorithm that is an
+ hardware implementation you cannot replace it. You have to throw away
+ the card and replace it with a new one. This is for example the big
+ problems of a lot of smart cards issued in the past years that
+ operate just with an RSA often 1024 bits. All of them must be thrown
+ away and replaced nowadays. Also if a vulnerability is discovered in
+ the hardware implementation then again you have to discard the
+ physical card because it's not possible to patch hardware. Another
+ alternative is you generate the key in software with a special
+ dedicated software so not inside an application but you develop some
+ component which is able to perform the correct mathematical operation
+ and then you inject it into a device. That is another important
+ option because especially if the asymmetric key pair is used not only
+ for signature but you remember that we can use it also for encryption
+ or key exchange. So in that case we can achieve key recovery because
+ if we lose control of the private key we will not be able to decrypt
+ anymore the keys that were exchanged. So for signature keys key
+ recovery should be avoided. You have lost control of your signature
+ key no problem you generate another one and you just revoke the
+ certificate. But if you lose control of your private key and that was
+ used for encryption that's a disaster. You cannot read anymore any of
+ the data that were encrypted. So at least for private keys used for
+ encryption you need the key recovery and the best way for achieving
+ key recovery is this one. You generate the key externally and then
+ you inject them in those systems that need to use the private key but
+ as you see here but if that is if and only if this key recovery is
+ restricted only to encryption keys because if you apply key recovery
+ to a key which is used for signature then you lose one property can
+ you tell me which? No repudiation because the repudiation is based on
+ that you are the only one possessing the private key. If there is a
+ copy well it was not me it was the cop that did the work. So key
+ recovery but only for encryption keys. So if you are using the same
+ key for signature and encryption you are in trouble that's why in
+ most real life practical application each user has got two key pairs
+ one for signature and one for encryption and the one for encryption
+ may be subject to key recovery but the other one must not be subject
+ to key recovery otherwise you lose no repudiation. Okay let me start
+ considering now what is needed to create the certificate. So the
+ certification architecture we have already discussed in the past that
+ typically certificates are issued by an authority named the
+ certification authority or CA which is the task from the technical
+ point of view to generate and to revoke public key certificates and
+ to publish public key certificate and to publish also or make
+ available information about their status valid, revoked or you will
+ see in this lecture also suspended which is another third state not
+ always used but possible but typically the certification authority is
+ a structure hosted in a high security system but on the contrary we
+ need also some structure to be able to enter in contact with the
+ actors to perform not only technical but also administrative duties
+ like verifying the identity of a person if it is a person requesting
+ the certificate or even worse verifying the authority to request a
+ certificate for a server or for a router when you ask a certificate
+ for www.polito.it are you a delegate of director do you have the
+ power to request such a certificate it's not a trivial burden to
+ verify the administrative part and so for that reason typically that
+ is not done directly by the certification authority but by a
+ registration authority which can be distributed all over the
+ territory. So the role of registration authority is to verify the
+ claimant identity and attributes and then communicate with the
+ certification authority to authorize the issuing or ask the
+ revocation of public key certificates. Sometimes the role of
+ distributing information about the status of a certificate is not
+ performed directly by the certification authority but it's delegated
+ to a validation authority which is an authority that provides
+ services to verify the validity status of a PKC for example the
+ authority is hosting the CRLs or is operating an OCSP responder you
+ have a vague idea what those things are but now we will look at that
+ in more detail. And finally a fourth element that may exist or not is
+ the revocation authority. This term is unofficial while CA, RA and VA
+ you find them in a lot of documents revocation authority is does not
+ appear in any official document but it's an important role. The role
+ of revocation may be assigned to the RA or the CA but the important
+ point is the word timely it's a delegate to timely revoke a public
+ key certificate because there are two operations one is creating the
+ certificate and the other revoking. If the CA or the RA are working
+ only Monday to Friday nine to five and you want a certificate on
+ Sunday you wait there is no hurry to give you a certificate. But if
+ your private key has been stolen on Friday night you cannot wait
+ until Monday because a lot of things may happen during the weekend.
+ So you need someone which is operational 24 hours a day, 365 days a
+ year which is the same as those bodies that take care when your
+ credit card is lost. Maybe your bank is closed but you have a phone
+ number to call which is always operational to declare that your
+ credit card has been stolen and therefore should be blocked. So the
+ role of revocation authority even if it is not a separate authority
+ is an important one and must be noted and the word important is
+ timely someone which is always operational. Okay let's go and have a
+ look at certificate generation. We have one actor in this case this
+ nice woman that wants to get a certificate. So first of all she needs
+ to perform key pair generation and it is her choice may use a
+ software which is embedded in the browser may use a smart card or may
+ use a separate software and then inject wherever she likes but anyway
+ she has generated this key pair. Once the key pair has been generated
+ it takes two different roads. The private key is stored locally maybe
+ on a disk maybe on the smart card and it is protected so typically it
+ is encrypted with the password a key so as strong as possible to
+ avoid someone copying it. On the contrary the public key is sent to
+ the certification authority along with those attributes that help to
+ identify this actor. In case of a person maybe name surname if those
+ are meaningful maybe the email address maybe the tax code which is a
+ unique code for example for Italian citizens and so on. Now the
+ certification authority has received this request I would like to get
+ a certificate with this information associated to this public key but
+ there is no proof and we need two proofs one proof is that those
+ attributes are correct and second that those attributes are connected
+ to the actor which is controlling the private key associated to the
+ public key. So for the attributes typically that is the role of the
+ registration authority typically the actor must go physically if
+ possible in some cases they accept also a connection with a video
+ call and appropriate documents that depends upon the level of
+ security that you want to achieve but you know you do show some
+ documents demonstrating possession of the attributes to the
+ registration authority. The registration authority verifies all these
+ documents and if they are okay then she issues an okay for the
+ certification authority. Unless the identity or the claimed
+ attributes have been verified at this point the certification
+ authority can start creating the public certificate which is then
+ sent back to the requestor and contains the identity attributes and
+ the public key which is stored locally but it is also stored in a
+ repository because the effect of a public key certificate is achieved
+ only if it is made public and typically that repository may contain
+ the certificates sometimes it's also the repository for the
+ revocation so the CRLs okay. So as you can see from here we have a
+ schema in which we verify only one thing the identity attributes
+ there is no proof here but the requestor is really controlling the
+ private key associated to the public key and that will be discussed
+ separately okay but remember here you have only one verification you
+ need another kind of verification otherwise you run the risk to
+ associate some attributes with the wrong key which could create quite
+ a lot of problems. So that is one possible architecture but other
+ architectures are possible for example other possibility the
+ registration authority generates the key pair obtains the public key
+ certificate and then distribute them on a secure device for example
+ that is what is happening here at Politecnico we are a registration
+ authority for InfoCert which is a large certification authority in
+ Italy and we don't let the professors and the employees to create
+ their own key pair because not everybody has got the correct
+ information so we have an office in which when a professor needs a
+ public key certificate for signing for example the grades the
+ professor goes there and the registration authority uses a smart card
+ to create the key pair. So the key pair is created on card so there
+ is no problem about having a copy of the key pair the registration
+ authority gets the public certificate puts on the smart card and then
+ the smart card is delivered to the professor that has to enter a pin
+ for protecting the smart card. So since the smart cards are made in a
+ way in which you can use the private key but you cannot extract the
+ private key we have achieved security the private key is only in
+ possession of that professor thanks to possession of the smart card
+ and knowledge of the pin that is associated to the card that is
+ another possible architecture which is very common for large
+ companies, Politecnico is one of them, where the employees are known
+ so I don't let you put random attributes I know what is your name,
+ surname, I know what is your tax code, I know what is your email
+ address, maybe I know what is your identifier in the windows domain
+ if we want a certificate valid also for that and so on. But there for
+ public certification authorities that are not restricted to a single
+ company another possible architecture is the user first goes to the
+ registration authority to avoid an overload so we don't send the
+ certification authority does not accept records you have first to go
+ to the registration authority demonstrate your attributes and you get
+ a code which is a one-time authentication code for authentication of
+ the request when they will go back and send the request. So you go to
+ the registration authority the registration authority puts in the
+ database the attributes that have been verified and inserts also this
+ code this is a shared secret the shared secret is shared between the
+ certification authority and the user. When the user is making a
+ certification request that will be computed and in that way when the
+ certification authority receiving these requests then they will be
+ able to verify if that is good or not. So you see different
+ architectures great now we have discussed in general the
+ certification schema now let's start going more in detail in the
+ certificates themselves. First of all there are various versions of
+ certificates they originally were created by ISO inside the
+ international telecommunication unit body and the first version is
+ 1988 so well before the internet was like we know it today because
+ that was developed for OSI open system interconnect but you should
+ know that nowadays is only a model but in the 80s there was a fight
+ between Europe that was saying that networks should be implemented
+ with OSI that was not only theory but was also set of protocols and
+ the United States they said no networks should be TCP/IP. You know
+ how the story ended OSI is lost it's just a model we don't have any
+ real software. X509 was developed as a certification technology to
+ protect the x500 directory service which again is dead as well but
+ the certificates survived they survived because version 2 was an
+ attempt to improve the certificates but it's a minor version that we
+ discard. But in 1996 the ITF started understanding that certificates
+ are useful for internet security and so there was an agreement rather
+ than inventing yet another format for certificates can we use your
+ certificates extending them with those features that are needed for
+ internet security and ITU yes said yes okay let's work together. So
+ version 3 was published in 1996 and that is based on version 2 plus
+ extensions plus another feature which are named attribute certificate
+ that was an attempt to create some data structures in which there is
+ no identity but only attributes bound to a public key that has been a
+ failure. There was an improvement in 2001 there is a new version of
+ v3 which is v3 plus second version of attribute certificates nowadays
+ nobody is using attribute certificates so they remain history. So we
+ will concentrate here on x509 v3 I don't care if it is the version of
+ 1996 or 2001 because we discard attribute certificates and apart from
+ that there is no other difference between these two versions. So as I
+ said this standard was part of the standard x500 for directory
+ service the so-called white pages I don't remember if I have let me
+ check no okay. What is x500 do you know that from other courses or do
+ you need a bit of explanation okay. When we started to create
+ worldwide networks let that be the internet with TCP or the internet
+ with the OSI there was one problem we need to identify all the
+ objects that operate in these networks be that routers servers users
+ and so on. In general a directory service is a service in which you
+ go with an identifier and you know where that is located okay it's a
+ kind of pointer like when you enter a building and you have a
+ directory if you go in the United States in those big skyscrapers in
+ the interest there is written directory and you look and say the
+ office of google are on floor 35 the office of apple is floor 30 and
+ so on that is directory give a name I give you the location and x500
+ was a hierarchical structure that should have covered all the world.
+ So here is the top and then you add the part dedicated to USA the
+ part dedicated to Italy the part dedicated to France and then
+ internally each country could have for example the part dedicated to
+ towns and then you have people you have servers you have routers and
+ so on. So by telling the path you could immediately give a name to
+ those objects okay so you say from the top go to Italy go to Torino
+ then go to servers the server number 35 is the one that you are
+ looking for for example. That is one of the problems that he is very
+ well addressing immediately is that location based because it seems
+ that it's based on geography. What about if IBM wants to have a
+ directory is IBM in the US in Italy in France or wherever so that was
+ a first problem that geographically based organizations are not
+ always present in some cases you would like a hierarchy which is
+ different from this one and so they started to make some strange
+ things okay we can map this to that and so on so it was a nightmare
+ it was very complex. You must think this if you want like the DNS
+ more or less but the DNS is just for computer names this is for
+ everything and then you have the same problems who is managing this
+ who is managing that how do we connect all these things and so on. So
+ this was a complete failure never was adopted on large scale and the
+ end has finished but maybe you know that someone has survived for
+ this that we are currently using. In order to make a query here if
+ you are a computer and you want to make a question query this system
+ you use the one protocol that was named DAP directory access protocol
+ and nowadays most companies have LDAP which is lightweight directory
+ access protocol lightweight in the sense that there is no worldwide
+ thing there is one directory service for that company so here inside
+ polytech we have got an LDAP server in which all the students all the
+ personnel all the servers are mapped full stop no interaction if you
+ are inside polytechnical you can put a question if you are outside
+ polytechnical you don't put a question. So they are isolated things
+ nothing worldwide that will help to explain in a moment one
+ characteristic of x509. So x509 was developed as the number says
+ because each category of standards had their own purpose because x500
+ was for directory and everything but for example electronic mail was
+ anything in the series x400 and that is not a normal mail that you
+ know. So x509 was developed in order to give to any of those actors
+ the certification of the corresponding private and public key and
+ that is good just let's change the way in which organize the things
+ so x509 has been extended in the sense yes if you want you can
+ identify the actor with x500 if that is meaningful for you otherwise
+ let's use internet standards for identifying and now you need
+ flexibility because in internet you don't have x500 but you have the
+ DNS for network objects you have email for actors that can send and
+ receive email and so on okay. So that was the standard it offered the
+ solution to the problem of identifying the owner of a cryptographic
+ key and it is implemented with the technology of the time yet today
+ it is asn.1 abstract syntax notation number one which is something
+ well maybe an ancestor of xml or json or cbor and so on okay it's a
+ way to express data neutral in a neutral way with respect to any
+ programming language. So the scope of a public key certificate the
+ certificate contains information to uniquely associate a
+ cryptographic key to an entity binding guaranteed by a trusted third
+ party normally called the certification authority. Wait a moment
+ because then in some exam I have put the question can you tell me why
+ we call this a trusted third party because you listen to my work but
+ you never make questions so I put the question to you in the exam can
+ you answer? No just what you see trusted third party first of all it
+ means that there are three actors you must tell me the name of the
+ three actors which authority? Because insofar we have had a look just
+ at two actors you have the certification authority and then you have
+ the subject that requested the certificate and that now has got a
+ public key certificate so those are two actors and the third one is
+ the one which is interacting with this and if you go back to the
+ previous course and we will again repeat it because I think you don't
+ remember this one is named relying party and why trusted third party
+ because one and two trust the CA to behave correctly when they create
+ the certificate correctly in the sense that when the relying party
+ asks if the certificate is valid or not will say if it is valid or
+ not so the trusted third party is the CA which is trusted by the
+ subject that received the certificate we can open a bit but has
+ received a certificate and is trusted also by the one accepting the
+ certificate to protect the transaction okay anyway I trust you but
+ they want if we go to commercial cases maybe a limitation of
+ liability because remember when you sell something and when you buy
+ okay I paid you now you are responsible if there is something
+ happening bad if you have not revoked the timely if you have created
+ by mistake a wrong certificate oh then now I want my money back and
+ maybe also additional money because you created me a damage so you
+ must be very careful because when you get a certificate from a
+ certification authority you will see that each authority has got a
+ policy which clearly clearly says very well what are the limits of
+ its responsibility I only certify electronic mail and I only certify
+ if you say the electronic mail I don't check and in any case I will
+ not give you more than 100 euro even if there is an error that's also
+ why there are so many certification authorities because each one is
+ providing a different level of security and trust you should check
+ the CA certification policy okay where do we found them well there
+ are documents public on the internet better name in the CP and CPS
+ they follow these RFCs first one public infrastructure certificate
+ policy and certification practices framework because the policy is
+ the general thing the CPS is how that policy is implemented maybe the
+ policy is saying I will check the correctness of the email the CPS is
+ saying which way are you checking that for example by sending an
+ email and asking to send back or contacting the manager of the mail
+ server to ask if that one is really that person so one thing is the
+ theory but then CPS is the real implementation so CP a name and the
+ set of rules that indicates the applicability of a public certificate
+ to a particular community or a class of application with common
+ security requirements if I give you a certificate for electronic mail
+ if you are used for something else there is no warranty no guarantee
+ I don't take any responsibility for other uses for example the CPS on
+ the contrary is a statement of the practices employed by a CA in
+ issuing a public certificate. A CP specifies minimum requirements and
+ can be followed by many CAs for example there is a typically in each
+ country a government CP that says okay any certification authority
+ that operates in Italy must follow this certification policy which
+ then may be supplemented with other policies but as a minimum that is
+ compulsory so a certification policy may be just for one CA or maybe
+ for a group of CAs on the contrary the CPS is always singular it's
+ always the practice followed by that specific certification
+ authority. So as I displayed there X500 was the first application for
+ X509 version 1 certificates but there were three main category of
+ problems encountered. We had CAs but there was no guarantee on the
+ quality of the CA you just trust the CA but there was no formal
+ policy specification then if you want to retrieve the certificates so
+ if you want to have a repository the repository was inside X500 but
+ X500 never was implemented all over the world so you had the problem
+ at some time you get a certificate but you don't have access to the
+ corresponding information and finally since there were different
+ certification authority for the different part of that tree it was
+ difficult to establish a certification path among two arbitrary users
+ belonging to different certification authorities. So they tried to do
+ something to correct these problems first of all they said okay the
+ semantics is not in the certificate but it is in the application or
+ anyway in something which is external to the certificates. If you
+ want to look at a bit of history you should read RFC 1422 you see the
+ number quite an old one in which X509 version 1 certificates were
+ used for protecting electronic mail. PEM is the first version of
+ secure mail that means privacy enhanced mail okay in which they say
+ okay we need certificates and you must do the certificates in this
+ way if you want to use with PEM. So the semantics was not the
+ certificate but was external was in the fact that you were using them
+ in a certain way for electronic mail or since that was too much
+ difficult because then every application would have made their own
+ definitions not interoperable and if you change application your
+ certificate is no more valid. So now they said okay now let's do they
+ tried with that or sometimes PEM was implemented and then they saw
+ that there was another alternative and the alternative was make the
+ certificate more flexible and expressive. So the certificate must be
+ able to contain various things maybe present maybe absent but those
+ things should be more expressive should tell you more than just the
+ identifier and the key and that was X509 version 3. So let's have a
+ look at what was foreseen by RFC 1422 to solve the problem. RFC 1422
+ said okay we will have a certification infrastructure with one CA at
+ the top of the world which is named IPRA internet policy registration
+ authority that should create certificate not for CAs but for PCAs
+ policy certification authorities. I give you a certificate and I
+ state that you are a policy certification authority one that is the
+ right to certify the policy followed by other CAs so the PCAs were
+ used to establish the policies used to issue the certificates and
+ under that you had all the rest of the world of the CAs according
+ again to geographic tree. So for example CA number one was creating a
+ certificate for country equal Italy, CA number two was country equal
+ Italy, organization equal Politecnico di Torino and so on. So not
+ solving actually the real problem of having something which is not
+ geographically based. That was how it was deployed. The IPRA was
+ created. They had four PCAs, one high assurance. High assurance means
+ I create a certificate only if I really done quite a lot of tests.
+ For example that was used by BBN. BBN is one of the largest research
+ companies mostly working for military and government in the United
+ States. So if you want a certificate from them you need to give your
+ fingerprint and maybe even to test your DNA to be sure that it's
+ really you. That is one possibility. The MIT of Boston public
+ university may have some branches that are working for the military
+ and so maybe they can obey to two different PCAs. Some certificates
+ are issued under the high assurance, other certificates are issued
+ under the mid-level assurance. And for mid-level okay show me your
+ passport and I hope it is not a fake one. I trust your passport. And
+ of course you can have a hierarchy. Under the MIT for example there
+ was the laboratory of computer science CA to delegate creating
+ certificates. And there are two things that are very peculiar and
+ help us in understanding that when we are talking about certificates
+ at a worldwide level you must also understand that the culture and
+ the habits of the different countries. It's residential. What does
+ that mean? Policy certification authority residential. And you should
+ be aware that in the United States people don't have an identity
+ card. So how can I identify you? Oh, on my residence. For example
+ when you want to open a bank account you go to the bank and you take
+ the bill of the electricity to demonstrate that you are that Antonio
+ Lioi living in Torino Corso Vittorio Emanuele 95 for example. That is
+ a residential. I don't know if you are really Antonio Lioi or not,
+ but you are the person that is living in that place. But for us it's
+ completely absurd thing. But when you don't have the census, what in
+ Italy we call the anagrafe, that does not exist in the United States,
+ you don't have many other ways to identify people. Of course when
+ people move from one place to another, it's becoming really a
+ nightmare. So it's residential. This is the certification authority
+ for the people residing in California, here for those in
+ Massachusetts and so on. Because only each state can verify if people
+ is really a resident there or not. Of course if you apply that
+ outside the United States you may have other kinds of PCAs. And
+ finally we have persona. And persona requires a raised hand for
+ people that have done classical study here. Is there anybody? So what
+ is persona in Latin? Persona is a mask. It's the mask that the actors
+ were wearing in Latin, in Roman theaters. So persona does not mean
+ identifying the person. It means anonymous. You say what is the point
+ of creating certificate for an anonymous user? Well there are two
+ things when you have a certificate. One thing is okay I'm sure that
+ I'm talking to him if there are attributes. But let's suppose that he
+ does not want to disclose his identity. But he wants to talk with me
+ in a secure way. So he may be the anonymous user number 95. And that
+ is an important feature because I know that that key is associated to
+ user 95. I don't know who you are, but I'm sure that my communication
+ will always be with you. So public key certificates may also be
+ anonymous in some sense. You can put identifiers that are not related
+ to real actors. Well they don't disclose who is the real actor. And
+ so there are some concepts in this schema that are interesting also
+ nowadays for different applications. Unfortunately this was a
+ complete failure. Having a hierarchy limits the flexibility as we
+ already said for X500. If I am a company which is international based
+ all over the world I cannot go in that direction. Name subordination
+ also puts some limits. I cannot have any name but I must follow the
+ hierarchy. The use of PCA is not flexible in commercial application.
+ Where? Because you need the participation of a human operator rather
+ than an automatic machine to verify if the requester is following
+ that policy or not. And most of all this was a failure for another
+ reason. Where do we place the IPR, IPRA? In the United States of
+ course. Why in the United States? I want it in Moscow. No, no, no,
+ no, no. I want it in Beijing. Well no, Japan. Japan is the most
+ advanced country in the world. Who is at the top of the hierarchy can
+ create a fake hierarchy for everything. So no country was trusting
+ the other countries and so there was no way to have just one route at
+ the top of the world. And that said that the experiment has failed.
+ It was created. It stayed up for some time in the United States but
+ that was used mostly by the United States and no one else. And then
+ we add the evolution to X509V3 but we will talk after the break. So
+ as I said having a certificate version 1 or version 2 and putting the
+ semantics externally like they did with this attempt to create an
+ internet PEM hierarchy was a failure. And the solution has been to
+ change the things and to create X509V3. This standard was completed
+ in June 1996 and was a joint work between the ISO, ITU and the ITF
+ with the purpose to make the certificate useful to internet
+ applications since OSI applications partly did not exist. There is
+ only one application of OSI that has survived for a bit of time. And
+ it is this one. For at least until the year 2000 there were some
+ organizations specifically military applications such as the NATO in
+ which the email system was based on X4400 and not the normal internet
+ mail because that had at the time a bit more security that was based
+ also on having secure mail servers. So not only trusting the security
+ of the mail user agent that you are using but also the server
+ themselves had to be secure. And that is achievable if you are in a
+ military environment but that is not achievable in general civil
+ applications. But nowadays also that has transitioned and not
+ continuing. X509V3 groups together in a unique document all the
+ modifications needed to extend the definition of the certificate and
+ the CRL. There are two types of extensions and that is important
+ because the basic structure of the certificate has not been changed.
+ The basic structure remains the one of X509V1. Then there is what
+ apparently is a small field which is named extensions. But then when
+ you open it 1000 things and that is the part which is really
+ important nowadays the extensions. Inside that small field extensions
+ there are several extensions and each one can be labeled as public or
+ private. If an extension is public it means that was defined by the
+ standard and therefore anybody should be able to understand and
+ support it. So there are some standard extensions but they call it
+ public. But the standard permits also every organization to create
+ their own extensions. And in that case those are private extensions
+ which are private for the community of users that understand those
+ extensions. To the rest of the world if you get a certificate
+ containing a private extension that you don't understand that will
+ appear as a binary blob. You don't understand but you can discard it.
+ Since there are these extensions and there are so many of them after
+ defining all of them there was the need to create profiles. A
+ certificate profile is a set of extensions that should be used for
+ protecting a specific application. So for a specific purpose. For
+ example RFC 5280 Internet X509 public infrastructure certificate and
+ CRL profile. It is telling you yeah if you want to use X509 for
+ protecting Internet application you should create the certificates in
+ this way and you should create the CRLs in this way. So this is the
+ base syntax in abstract syntax notation one. Certificate is defined
+ like a sequence. So a data structure similar to a structure that
+ contains one field signature algorithm and it is the algorithm
+ identifier of the algorithm used by the CA to sign the certificate.
+ TBS to be signed certificate. So the part that is to be signed and it
+ is of type to be signed certificate. And then there is the signature
+ value which is a bit string. So that is basically the external
+ structure. Then the TBS certificate is defined again as a sequence.
+ First field version start numbering with zero but that means v1. So
+ now for version three we have that field that has got the value two.
+ Then we got the serial number of the certificate. The algorithm
+ identifier of the signature. And you should note wait a moment. We
+ already have it here. Why we have it also inside this field. Yes but
+ then why we put it also inside if we are ready to leave it outside.
+ There is no MAC. Compare. There is no comparison because you compare
+ something if you have two different data. No there is no MAC here. So
+ the external algorithm identifier you need it because you want to
+ verify that signature. So the signature value you cannot verify if
+ you don't know what is the algorithm. But there could be some attacks
+ not trivial but in general remember when there is a signature
+ especially if I'm able to change the name of the algorithm maybe I
+ can change the data and have a valid signature for that other
+ algorithm. So I have it externally unprotected just to compute the
+ signature but then I have the same name inside the certificate
+ because that is signed. So you do a first verification then you
+ extract the content and check the certified algorithm is equal to the
+ externally declared algorithm. If they are different this is an
+ attack. Don't trust this certificate. Then we have the issuer that is
+ the certification authority which is identified by a name and we will
+ see what are all the possible ways to have a name. Then we have the
+ validity valid from this date to this date. The subject again
+ identified with his name and then you have the subject public key
+ info. This field will contain the algorithm and the actual key public
+ key of the subject. Then we have two things the unique identifier of
+ the issue and the unique identifier of the subject that were
+ introduced in version 2 and maintained in version 3 that will go
+ along the usual general idea that in the world there is one unique
+ identifier for each act of failure. It's implicit never used anymore
+ so you can forget that. And then there is extensions which is
+ optional if the extensions field is present the certificate must be
+ version 3 because the previous versions don't have extensions. Okay
+ we said that the extensions can be public or private. Additionally
+ each extension has got an explicit flag so public or private is not a
+ flag. It's common knowledge. I know that this is public I don't know
+ this so it must be private. On the contrary critical is a flag that
+ is explicitly put inside the certificate. An extension can be defined
+ as critical or non-critical. When you receive the certificate and you
+ verify if this is a good certificate so in the verification process
+ if the certificate contains an extension that you don't understand
+ and it is marked critical then you must reject the certificate
+ because the certification authority is marking as critical those
+ extensions that are very important for the handling of the
+ certificates. For example if I want to limit my liability to use this
+ certificate for buying something on the web but no more than 100 euro
+ I will put this limit in the extensions and I mark it critical. If
+ you don't understand this limit don't use it. Okay of course remember
+ always that there is something written there must but it is like your
+ father your mother you must not go and I will go yes you go but then
+ the certification authority is discharged not my fault if you crash
+ with your car you did. Okay so every time you see must that is the
+ legal obligation. If you don't follow that then all the warranty is
+ void and I don't take any liability for what you are doing with that
+ certificate. On the contrary if you meet an extension that you don't
+ understand but that is marked as non-critical you may decide what you
+ want to do. It's not critical so the CA will say well it's not so
+ important for you to understand. If you want you may accept the
+ certificate but if you are very picky say no no no no if I don't
+ understand I don't accept you can do. Okay this different processing
+ is responsibility of the entity that accepts the certificate as for
+ protecting a transaction. So the subject is sending the certificate
+ that contains the extension to the relying party and it is the
+ relying party that must process the certificate and decide if that is
+ acceptable or not for protecting that transaction. So the processing
+ of the extension is entirely on charge of the relying party. They are
+ inserted by the CA the subject takes the certificate and then uses it
+ and in some cases the certificate will be accepted by a relying party
+ A and other cases the same certificate could be rejected by a relying
+ party B due to the different processing of these extensions. Okay
+ there are four classes of extensions. First one extensions that carry
+ information about the key being certified and the policies being
+ followed. Then additional attributes for the subject and the issuer
+ of the certificate. Then constraints about the certification path
+ going down from the route this certificate and finally extensions
+ about the CRL distribution points. Now we will look at each of them.
+ Let's start with the key and policy information. We see there are six
+ public extensions for this purpose. They are listed here. We will not
+ have a look at all of them but only to the most important ones. First
+ one authority key identifier also shortened AKI. Identify a specific
+ public key used to sign a certificate and may be identified by means
+ a key identifier which is typically the digest so the hash of the
+ public key of the certification authority or by identifying the
+ certificate that contains that public key. This seems really a stupid
+ thing. Yeah might be useful if the same CA using two different keys
+ one for signing things with low assurance other for signing things
+ with high assurance. It's always marked the non-critical but beware
+ that even if it is non-critical in my past experience because I
+ started working in PKI in 1996 I seen several cases in which the
+ certificates were not working. Nobody was understanding why they are
+ not working and it was missing this extension because there are some
+ applications so when you send the certificate here is an application
+ that accepts a certificate but you are sending this. The application
+ in order to understand if this certificate is acceptable or not must
+ create all the path up to a route and the way which application
+ starts from this certificate and go to the CA go to the CA up to the
+ route is by using this field in many cases. So if you are a CA and
+ you forget to put that inside the certificate that's possible it's
+ not critical so you are not obliged but then you run the big risk
+ that several applications will not work with your certificates. The
+ same thing for the user we have a subject key identifier but this is
+ really really meaningless because the key is inside the certificate
+ so yes if you want you can put an identifier but that is not useful
+ for creating any chain so typical non-critical and typically not
+ present in the certificates. On the contrary this one key usage is
+ very very important because it identifies the application domain for
+ which the public key can be used can be critical or non-critical. If
+ it is critical then the certificate can be used only for those
+ applications for which the corresponding option is defined. Again you
+ have a public key you have a private key I can do whatever I want
+ with my keys but since when you perform a signature you must attach a
+ certificate because otherwise no one understand if the certificate is
+ saying that you can use it only for web authentication and you are
+ using that for email yes you can do because the private key is yours
+ but the receiver will say no no no no this is not covered by the
+ policy of the certification authority so the problem is always the
+ same that you run the risk that the receiving application will reject
+ your certificate no out of scope this or that the certification
+ authority will not accept liability if something goes bad in that
+ respect. So it is important to respect these things and the key usage
+ describes not the end user application but the cryptographic
+ application that can be performed with the certificate and this field
+ can contain a combination of one or more of these values. Digital
+ signature that is valid in the certificate of a user but also in the
+ certificate of a certification authority. No repudiation is valid
+ only in the certificate of a user because no repudiation may happen
+ only for human beings and not for entities. Key encipherment this key
+ can be used not only for performing a signature but also for
+ encrypting a key for performing key exchange. Data encipherment there
+ is no limitation anybody can use if it is mad because you know that
+ for example RSA can perform data encryption but is very slow. Key
+ agreement in case this is not a typical RSA key but it is a
+ Diffie-Hellman kind of key and you can further specify if it can be
+ used for encipherment or decipherment only and then there are two
+ flags reserved to the certification authority. This key can be used
+ to sign a certificate or this key can be used to sign a CRL. So if
+ you get the certificate for a user that contains one of those flags
+ of course that should never happen is a clear violation. Then another
+ limit private key usage period defines the span of time for which the
+ same public private key can be used. This extension is always
+ non-critical and from the internet point of view the usage of this
+ extension is discouraged but you must understand that there are
+ different ideas. Internally say no no I don't want to put any limit
+ to the users. Let's imagine that you have a very strong key RSA 8000
+ bits you may use that for 20 years and every time you get a new
+ certificate but if you are in the military on the high government
+ they are more stringent. They say no no no no once you have using key
+ for one year you cannot use anymore you must change it and in that
+ case that is inserted there to tell no their private key that cannot
+ be reused for another certificate. Certificate policies we said that
+ we have taken out the complexity from the structure and put it inside
+ the certificate so that they can talk and that is the field in this
+ area we can have certificate policies which is an extension that
+ lists the policies followed when the certificate was issued and the
+ purposes for which it can be used. The indication of the policy is a
+ pointer because you don't have the policy inside maybe a 50 pages
+ document you can identify it with an OID a URI or a text message
+ telling you you may be looking at this. That can be critical or
+ non-critical in some cases the use of this extension may support not
+ only authentication which is the typical thing but also authorization
+ because if you know that this certificate was issued following the
+ policy that only professors of the Politecnico di Torino will receive
+ this certificate then you have an additional information which is
+ implicit but it's implicit in the policy. And then when the
+ certificate is not for a user but is for a certification authority
+ since as we will see we have so many certification authority across
+ the world following different policies we have this field policy
+ mappings which indicates the correspondence so the mapping of
+ policies among different certificate domains. This can only be
+ present in certificates for the CA and it's always non-critical. It
+ is helpful when you want to compare the policies of different
+ certification authorities. The problem is that then the comparison
+ needs a human being to be interpreted and be performed so it cannot
+ be done automatically because policies are technical. Okay, second
+ category. Certificate subject and certificate issuer attributes. This
+ is really fundamental because if we don't have this, the only names
+ that we can use are x500 names. Country, Italy, organization
+ Politecnico di Torino, common name Antonio Lioi and so on which is a
+ nightmare because it does not correspond to any real identifier. If
+ you want a real internet identifier you must insert these options.
+ Subject, issuer alternative name and subject directory attributes.
+ Let me start with some. Subject alternative name permits to use
+ different formalism to identify the owner of the certificate. For
+ example, I can identify the subject by email or IP address if it is a
+ network node or a URL if it is a web application and so on. This must
+ be critical if the subject in the old x509v1 structure is empty. You
+ can leave that empty. If you want you can avoid to write country,
+ italy, organization Politecnico di Torino. You leave that field empty
+ but in that case this must be present and must be marked critical to
+ tell hey here is the real name of the user controlling the private
+ key. The same applies to the issuer, to the certification authority.
+ You don't identify that with the distinguished name of x500 but you
+ identify that in other ways. Typically again email address, IP
+ address, URL and also in this case you can leave empty the issuer in
+ the original x509v1 structure and mark this as critical. Now the
+ interesting point is to see which names you can put here and you can
+ use RFC 802 name that is the normal email addresses of internet
+ application. DNS name in that case you identify a node by the name.
+ IP address you identify the node by the address or uniform resource
+ identifier. That is an entry point in the web so it means that on the
+ same node you could have a different certificate corresponding to
+ different entry points for the applications. Directory name you can
+ put there a name according to x500 but also according to LDAP because
+ by the way LDAP is using the same syntax so the LDAP of the
+ Politecnico di Torino is country T organization Politecnico di Torino
+ and then organization unit the department and so on. There is no one
+ managing country Italy so we have defined it by ourselves but the
+ syntax is that. So in directory name you can put an x500 or simply an
+ LDAP name. x400 address from that you see that for a long time x400
+ addresses were still in use when in 1996 we developed version 3
+ because this is the part related to internet and yet they have x400
+ because there were gateways transforming the mail from x400 to RFC
+ 802 and so they were in need to have the certificate associated to
+ the x400 address. Then ADI party name is that there anybody that
+ knows what is ADI? Means electronic data interchange and when you go
+ to a real company doing real work companies try to avoid as much as
+ possible processing data manually. So for example you are a company
+ that are building cars and you want to know if there is a supplier
+ that has got a certain kind of tires available. Yes you can make a
+ phone call you can send a fax you can send an email or you can send
+ out or you can create a link upon agreement in which you make a query
+ using ADI. Why using ADI? Because my information system may be
+ different from your information system. So ADI is a neutral language
+ in which making requests and receiving response about data in
+ electronic format. ADI is a general standard and it has then various
+ declination. For example Stellantis is using as many other car
+ manufacturer Edifact which is the ADI for factories for the one that
+ are producing goods to know when the needed items are available at
+ the company checking the prices making orders and so on. The fact
+ that that is important is reflected by the fact that you have
+ certificates for that. Yes binary format computer format so is a
+ language. Like SQL if you want but SQL is just for querying the
+ database. ADI is also for transporting data. It's a bit older in the
+ sense that nowadays we could think about other things like SML, JSON.
+ But the problem is that when you go in real companies they have
+ developed the system and oh don't touch it. If it works don't modify
+ it. That is the general rule. So don't go there say oh we can rewrite
+ it. Oh yeah you can rewrite three years a lot of failures and
+ meanwhile the system is not working. No no no no. So there are
+ several things that continue to work. I was surprised for example
+ about the request of COBOL programmers. COBOL? Yeah yeah because
+ there are thousands of applications for COBOL around the world and
+ there is no people that knows COBOL because no one is learning COBOL
+ anymore nowadays. And Edifact is the same is a surviving DDoS hour.
+ It's there but we use it. It works. Don't touch it. And so the
+ importance is there. ADI party name because that is the identifier
+ for my counterpart when I'm performing an ADI exchange of
+ information. Then a registered ID. For example the VAT number of a
+ company. So any kind of official registered identifier for an actor
+ we could put there for example the Italian tax number for people or
+ the VAT number for companies. Unique identifier. And then you have
+ the catch all other name. That should not be used because it's not
+ well defined. When you use other name then you need to define by
+ yourself what is the syntax of the content. And so that make it
+ nonstandard and it's very difficult to interpret. Finally there is
+ subject directory attributes which permits to store in the directory
+ some attributes related to the owner of the certificate. For example
+ the American Army is using this field for citizenship. So it says OK
+ you are such and such but you are an Italian citizen, you are a US
+ citizen, you are Mexican, Canadian and so on. And that corresponds to
+ some information that then you can find in one directory that will be
+ application dependent. So as you see its actual user heavily depends
+ upon the application because no standard definition exists and as
+ such it should be marked noncritical and will be interpreted only by
+ those applications that have been specifically developed for that
+ purpose. OK now let's go to the chain of trust that we should create
+ starting from. I have not yet used the correct name. Correct name for
+ these things. I always say the user but the user is wrong. The
+ correct term is EE which means end entity. So when you are giving a
+ certificate to someone which is not a CA that is an end entity
+ because the chain from the route stops there. And the end entity may
+ be a human being, may be a router, may be an application. So that the
+ generic term the correct generic term is not user but end entity if
+ we talk about x509. So we are trying to build a path and typically
+ the construction goes in the reverse order. You start from the end
+ entity and you have to work backwards CA, CA, CA, CA until you reach
+ the route. And in building this chain you have some constraints that
+ are related well basic constraints, name constraints, and policy
+ constraints. Let's have a look to that. Basic constraints indicates
+ if the subject of the certificate can perform action as if it is a
+ CA. So basic constraints equal true is the only way to mark that this
+ is a certificate belonging to a CA. Basic constraints equal false it
+ means the subject certified is an end entity. Furthermore in case
+ this is a CA we can have a field which is the maximum depth. For
+ example we have a certificate for Politecnico di Torino and the
+ certificate says yes you are a CA and you have level 2. It means you
+ can create a CA under you for example by the department then you can
+ create another CA maybe for a laboratory inside the department but
+ then stop. Then you cannot have another level. So you can limit the
+ number of levels or sub-CAs that can be created after that. It may be
+ marked critical or non-critical but since this is important to
+ understanding the hierarchy it is suggested to always mark
+ distinction as critical. Name constraints. Name constraint is an
+ extension that may appear only in CA certificates and it is the space
+ of names that can be certified by a certification authority. This is
+ very important because let's imagine that we have the CA for
+ Politecnico di Torino and the CA for Politecnico di Milano.
+ Politecnico di Torino can create a certificate for Rossi at
+ polyme.it? No. Or an Italian CA can create certificate for a French
+ citizen? No. But that must be clearly written otherwise how do we
+ know that? Because the fact that this is the Politecnico di Torino
+ even if it is written in words is not understandable by a program. So
+ you need to specify inside the certificate which is the syntax of the
+ names that can be certified. And we are using the same format as
+ alternative name. So we say this is Politecnico di Torino, name
+ constraint RFC 802 at Politecnico di Torino. So you can certify
+ whatever you want but it must be in this domain or IP address. You
+ are the certification authority for a certain internet service
+ provider you can certify all the routers but in this class 131.92
+ okay and so on. So you limit the certifiable names and you must give
+ at least one of two specifications with permitted subtree which is
+ the white list the kind of names that are permitted or you can say
+ you can do whatever you want but not this excluded subtree. Those
+ names cannot be certified. If both are present the white list is
+ processed first okay but we were if something is not specified in the
+ white list it is implicitly permitted. So it's much better if you
+ don't want for example to have directory name certified you just say
+ directory name star in the exclude list. So to say no you don't
+ certify those kind of things. Maybe critical or non-critical beware
+ if you mark it critical your certificate will not work with any Apple
+ product because even if this is a public extension the Apple
+ engineers have not studied the standard and they don't understand
+ this thing. So they don't understand is market critical project a
+ certificate. So unfortunately we are forced to mark it non-critical
+ just to please Apple. That is always the difference between theory
+ and practice of course. Last constraint policy constraint it is used
+ by SCA to specify the constraints that could require an explicit
+ identification by a policy or that inhibit the policy mapping for the
+ rest of the certification path. So it is telling okay you can have
+ your own policy but you cannot violate this thing or you cannot
+ create this kind of mapping. It's always typically non-critical even
+ if you can mark critical because the processing of these certificate
+ policies is not well performed by the various applications. So it's
+ an area that is there more as a legal precaution. Oh but it was
+ written there you have not read you have not processed but not really
+ used by the various applications. And finally we finish the standard
+ extensions with a CRL distribution point which is just one name it
+ also CRL DP or CDP and identifies the point in which you can go to
+ get a CRL for this certificate. So that is very important because you
+ have received the certificate you want to know if it is good or not.
+ Where do you get the CRL? So if the certification authority is a good
+ one inside the certificate will have put for you a pointer. If you
+ want to know if this certificate is good or not follow this pointer
+ and go there and that can be a directory entry typically in LDAP.
+ Most of the certification authority are managing their own LDAP just
+ for their users or can be an email you send a query and you receive a
+ response if it's good or not or a URL. But it's not for your CSP it's
+ only for downloading or receiving a CRL and can be marked critical or
+ non-critical as you like. If you are accepting a certificate for a CI
+ that you don't trust I don't care about the CRL you already screwed
+ it up. No because the CRL is not for the CA the CRL is for the
+ certificate so if you are she was saying if I receive a certificate
+ from a bad CA can I use the CRL to verify if the CA is good or bad?
+ You can use but not this CRL because this CRL here is for this
+ certificate so it was issued by that bad CA so you should look the
+ CRL above that who created the certificate for that CA because you
+ must always look at the father for the CRL. Okay let's have another
+ break and then we will finish. So we have now finished with the
+ public extensions and we are having a look at private extensions.
+ Well we should not because private extensions are private everybody
+ can do whatever they want but there is one category of private
+ extension that are particularly important because they are private of
+ internet in the sense that the IETF pkix working group of the IETF
+ that is the group which is taking care of creating pki with x519
+ certificates for internet application has decided to create some
+ private extensions that are published in RFCs so it's really
+ debatable from point of view strict standards they are not public
+ because they have not been published in the official standard but
+ they are public in the sense they are in the RFCs and everybody can
+ read that and it is for all the users of internet which is a very
+ large community. Okay and specifically they have defined the three
+ extension subject information access authority information access and
+ CA information access which are quite important at least two of them
+ and we will now consider them. Subject information access it permits
+ to retrieve additional information about the subject about the end
+ entity certified which is particularly important when the certificate
+ is not backed by a directory service. Yes we have this certificate
+ about this person but I would like to know something more about him
+ or about this application and the subject information access
+ typically contains a method that is a protocol HTTP, HTTPS, LDAP to
+ obtain the required information plus a name so you can point for
+ example to the web page of that person or to the local directory
+ entry of that person. This is of course non-critical because it is
+ informational so is additional methods. On the contrary this one AIA
+ is very very important. It is named authority information access this
+ is valid in any certificate may be of a certification authority may
+ be of an end entity and indicates how to access informations and
+ services of the certification authority that created this certificate
+ and in particular it has various subfields one is certificate status
+ and this may contain the URL for OCSP because we said for the CRL we
+ have the CRL distribution point you have the certificate go there if
+ you want the CRL but if we want to check with OCSP where should we go
+ and now we have the solution using AIA if that is present because
+ it's defined by internet only then we can follow that pointer so you
+ see the CA is the issue the CA offers some services AIA is in the
+ certificate and is telling you if you want to know the services
+ offered by the certification authority but create the certificate
+ follow this path and can be the pointer for OCSP can be the pointers
+ to the repository of certificates or forgetting the policy followed
+ by the CA or forgetting the certificates of the CA itself which is
+ again very useful when you want to create a chain because you have
+ this certificate as this user given you the whole chain or not
+ because in some application we send the whole chain like in TLS in
+ other cases may be to make the transaction more fast I just send my
+ certificate now you need to create by your own the chain so you go
+ there follow the pointer and take the certificate of the CA and you
+ hope that also in that there is an AIA so you can get the certificate
+ of the CA and so on until you reach a trusted route which must be
+ separate it can be critical or non-critical because again some
+ additional they are additional information that you may use or not
+ but this is the extension which is typically used for accessing an
+ OCSP responder. CAIA is the same thing but this can only be present
+ inside the certificate of the CA because this is the pointer to the
+ services of the CA that owns the certificate you see that this time
+ CA here is not marked as issuer this is subject so this is a
+ self-pointer if you have the certificate of this CA and you want to
+ know where its services are located here they are no I see a lot of
+ perplexity you must compare with this here you have a certificate
+ created by this CA and you go back but if you have this CA and you
+ want to know where is the certificate repository how can you do
+ because if you use the other pointer you will go to the father on the
+ contrary this is for example the policy of this CA this is the
+ certificate of this CA this is the OCSP responder of this CA so this
+ is containing this pointer to information about this CA information
+ access. These extensions and other things are defined in RFCs that
+ are periodically updated so 2459 was the first that is the profile so
+ say okay if you want to use it the certificate for IPsec PLS S/MIME
+ then here are the suggestions and all the extensions are defined with
+ an OID which has S base ID PKI X I assume that you know what is an
+ OID yeah but can you give me definition or how do we map them yeah
+ who is managing the OID managing the OIDs as usual for all the
+ numbers it's Jana and Jana if you go there maintains the roots and
+ then once you have given an OID to Politecnico Torino the rest of the
+ sub tree depends upon you but for example OID there are OIDs for
+ Cisco and then Cisco is defining okay this number is for this model
+ of our routers this is for this data inside that kind of router and
+ so on okay so you see that for example the PKI X group has requested
+ an OID which is inside ISO inside the organizations inside the
+ Department of Defense so the U.S. Army but actually it's only because
+ internet originally was generated as DARPA net then there is internet
+ then there is security then there are mechanisms and then there are
+ those mechanisms defined by the PKI X group so that is the root and
+ then they go on with creating sub trees maybe one sub tree for IPsec
+ one sub tree for TLS one for S/MIME and so on it mentions which
+ algorithms should be supported by all applications to achieve
+ interoperability plus additional implementation suggestions such as
+ the one that I told you don't use that otherwise Apple will not work
+ this is another one I said that there is validity this certificate is
+ valid from this date and time to this date and time but when we talk
+ about I'm in internet you must remember that we are in the world so
+ you need to define the time zone because if it is 12 o'clock 12
+ o'clock Rome, New York, Tokyo and normally there is no problem
+ because you say 12 o'clock time zone GMT plus 2 for example that is
+ Rome green which mean time and then two great but there is a problem
+ there is one manufacturer of software which is not able to perform
+ computations so whatever value you put there it is interpreted as
+ local without looking at the time zone and that manufacturer
+ unfortunately is named Microsoft and so we had to do something
+ because we cannot have certificates not working with Microsoft they
+ don't want to fix the software so the solution is when you put the
+ time you always put it with the so-called Zulu time the time of
+ Greenwich so if we want to say that now is 5 p.m. you say no it is 3
+ p.m. because that is the time in Greenwich okay and additional things
+ mandatory to put the seconds also and in case you specify the year
+ with only two digits which is a thing that is not recommended but is
+ permitted then we have a problem how to interpret that and the
+ interpretation is 1950-2049 that is after 2049 the X5-9 certificates
+ if they will still exist should always use four digits otherwise they
+ cannot be easily understood so that is a temporary solution we hope
+ that all the new software will use four digits for the year. One
+ important thing that the PKIx group has done is define other key
+ usages we have seen that the key usage defined in the basic standard
+ is just for cryptographic operations you can encrypt you sign you can
+ sign a certificate but that is a rather generic when we go to
+ applications we would like a certificate to be used for a specific
+ application only maybe only for email maybe only for the web and for
+ that reason they have created the extended key usage and you see we
+ start with the root ID PKIx in OID and then we have tree dot one that
+ is server authentication if you have this certificate you can use it
+ to perform challenge response asymmetric to authenticate the server
+ side on over communication in square brackets I have put you the
+ basic key usage which is equivalent if you want to achieve the same
+ effect using the normal key usage you should use digital signature
+ key encipherment and key agreement client authentication code signing
+ oh this is restricting quite a lot this is a certificate in which if
+ you are a developer you can sign the code that you created and maybe
+ you can only do that not signing certificates not signing documents
+ or not using for signing email just for code signing that is very
+ valuable because there are several things like drivers that needs to
+ be digitally signed by the developers. Email protection well this is
+ much more complex you see not only digital signature there is also no
+ repudiation you cannot deny if you sign a mail that you have created
+ it key exchange and key agreement time stamping a thing that we have
+ yet to discuss but it's important to put something in a signature
+ which certifies in which moment that signature was performed and you
+ require certificate of that kind and finally OCSP signing you are not
+ some signing something generic you are signing an OCSP response for
+ example that is important if I'm creating a server which is an OCSP
+ responder the OCSP responder must have a certificate with that
+ extended usage otherwise the signature will not be accepted by their
+ requestor. As I said 2459 was the original one from the next
+ iteration they decided to split in two different documents one for
+ the profile 3280 and one for the algorithm because the algorithms
+ change more frequently than the profile the profile are general use
+ but algorithms change over the time so let's make it in a separate
+ document so 3280 was then replaced by 5280 and 3279 is including but
+ also making obsolete another previous RFC. One of the important thing
+ nowadays is that RFC 3279 which is the most recent is permitting use
+ of legacy algorithm although they are not suggested so you see that
+ between the digest SHA-1 is the preferred for signing of certificates
+ and CRL RSA and DSA are permitted but ECDSA has been added and for
+ the keys of the subject you can have RSA, DSA, E-Exchange algorithm
+ which is a variant of Diffie-Hellman, Diffie-Hellman, ECDSA, Elliptic
+ Curve so we are also evolving in this respect. Other additions not
+ only the algorithm themselves but also the better signature schemas
+ and the usage of SHA-2 at last but you can see the interest for the
+ certificates by the fact that we see here some strange things. I
+ don't remember if in ISS I told you about GOST yes no GOST is the
+ Russian standard so even if the Russians don't want to use the
+ western algorithm because they don't trust us at least for the
+ certificates we are compatible okay so GOST is a category of
+ algorithms that can be used both for symmetric encryption and
+ asymmetric encryption then you see that we have other RFCs that
+ permit Elliptic Curve keys, DSA has been improved with SHA-2 and
+ various schemas including SHA-128 and SHA-256 so we are slowly
+ approaching SHA-3 family and then those are the profile in a new
+ version in particular a lot of the attention is paid to the path
+ validation algorithm because that is a sensitive part where attacks
+ may happen so having clearly specified how the path validation should
+ occur is important the previous version of the RFCs had only high
+ level description and now we specify the algorithm used for the
+ verification of a status of a certificate by using a CRL and also a
+ new thing which is use of a Delta CRL that we will discuss. There is
+ this other key usage that I have already listed in the table but was
+ inserted in these RFCs and then the subject information asset was
+ also inserted together with any bit any policy and freshest CRL this
+ freshest CRL is particularly important because that is not in the
+ certificates it's in the CRL let's imagine that you have downloaded
+ the CRL and you know okay this is the CRL for Politecnico Torino
+ great, it is expired no not expired because the CRL does not expire
+ if you remember the CRL has only one field that says "issued at" so
+ if you see a CRL that was created in 2023 is at least 10 months old
+ can we get a new CRL but normally the pointer is in the certificate
+ on the contrary with freshest CRL we have a pointer to the most
+ recent version of this CRL so when you have one CRL you can easily
+ update it to the latest version. So understanding this pointer is
+ pretty important to understand if you have all the capabilities
+ needed for performing verification. New RFCs we have a bit of
+ problems with the fact that now we are going really international and
+ so since inside the certificates there is text we need to support all
+ the alphabets in the world not only the western alphabets we need
+ support different alphabets in Japan, in China, in India and so on so
+ it's a need there is the need to have acceptable encoding for the
+ user notice policy the internationalized domain names I don't know if
+ have you had the course about DNS domain name system I18N that is a
+ shorthand for internationalization. It means that an algorithm or a
+ protocol is I18N ready if it can encode any kind of names and again
+ one of the recent attacks is using DNS names that are I18N because
+ there is a conversion I don't remember it what it is but if you write
+ it in kanji for example Japanese then you need to translate in some
+ sense to European characters but they are not just the same sound
+ it's a very complex string that is mapping the characters to eight
+ byte ASCII characters and then that becomes not understandable to
+ normal people and that oh yeah I can click here so anyway we need
+ that inside also the certificate because we have some fields that are
+ URI, DNS name, email all these things are becoming I18N so not easily
+ readable at least they should be certified and then there are some
+ clarification for self-signed and trust anchors you see here the 8398
+ internationalized email addresses inside and other updates like
+ internationalized domain addresses so this is not strictly about the
+ signature of the certificate but since the information being
+ certified must be reliable it's important that that information is in
+ the same language in which it will be used. So this freshest CRL
+ contains normally the delta CRL distribution point it means that when
+ you follow that pointer you don't get the whole new CRL but get only
+ the difference with the previous CRL that has been done because CRLs
+ over the time become bigger and bigger and bigger so maybe you don't
+ want to always download everything maybe I have downloaded the CRL
+ Monday now it's Thursday can I get only the differences rather than
+ downloading everything if there is the freshest CRL pointer you can
+ do because that may be a delta CRL and that can be inserted either in
+ a certificate or in a CRL themselves but it must not be present in
+ the delta CRL so you are not permitted to do the delta of a delta
+ it's always a base plus the differences okay and this is non-critical
+ in the sense that you have always the option to download the whole
+ CRL if you like. Okay let me see how much time yeah we have some time
+ so now it's time to start talking about explicit certificate
+ revocation and the certificate may be revoked before its natural
+ expiration upon request by the subject typically when it has had is
+ key compromised or lost they are not equivalent lost I don't know
+ where it is if you declare a key compromise means that you know that
+ someone else has got possession of your keys so they are not the same
+ declaration but the result is the same anything that would be signed
+ with the key is no more belonging to you or you can revoke
+ certificate upon request of the certificate sponsor the organization
+ for example because an employee is going out of the company or the
+ company is going out of business or maybe you have dismissed the
+ server there are several things when something is when something is
+ no more used than we should revoke that certificate or the revocation
+ may happen autonomously by the issuer when they made a mistake or
+ they were subject to a fraud someone persuading the certification
+ authority for example that he's a delegate of director and get a
+ certificate oh when you discover that you need to revoke with no need
+ to involve the polytechnic so that means that every time we use
+ certificate to protect the transaction the relying party must check
+ that the certificate has not been revoked and this is the role of the
+ relying party so for checking certificate status first of all you
+ need to consider the whole chain up to a trusted root is there any
+ certificate expired and are all certificates valid so expired is
+ different and beware they must be valid yes and not expired at the
+ time of the signature not today if not expired so you look at the
+ dates a certificate is valid unless otherwise stated and there are
+ two different ways to verify first of all crl so the list of revoked
+ certificates I give it and you check it by yourself which is assigned
+ by the issuer or as we have seen by a delegate the revocation
+ authority or OCSP which provides an answer about the validity of one
+ specific certificate at the current time you have an answer if now it
+ is valid or not and that is the critical point of OCSP and normally
+ it is assigned by the server not by the certification authority or
+ revocation authority and that is another issue do you trust that
+ server for signing those answers so let's start with the crl contains
+ list of revoked certificate along with the revocation date and the
+ reason that permits you to know when the certificate stopped its
+ validity in the past this is a thing that you cannot do with OCSP
+ because if for a vocus certificate you check with the OCSP you get
+ only the answer not valid but you don't know the history okay crls
+ are issued periodically maintained by the certificate issuer that
+ means that we need to reissue a crl even if there was no additional
+ revocation just to put a fresh date because if nothing has changed
+ but the date of the crl is still December 2023 you don't know is this
+ an old crl or really nothing has been revoked so for example here at
+ Politecnico we create a crl every month every 30 days even if nothing
+ has changed just to give a fresh crl. So crls are digitally signed by
+ the ca that issued the certificates or by a revocation authority when
+ it is signed by a revocation authority and not by the ca then this is
+ named an indirect crl or icrl okay and icrl is not the crl of apple
+ is indirect crl okay this is the abstract synth annotation for the
+ crl again it's a sequence containing to be signed at the certificate
+ list the algorithm and the value now you know that the algorithm must
+ also appear inside the part assigned for verification there is the
+ version if there is no version means crl version one otherwise you
+ have one and it is version two then you have the issuer who created
+ it maybe the ca maybe the revocation authority this update which
+ tells this has been updated creatively on this time so everything
+ that was revoked before this time will appear but there is also
+ another field which is optional next update it's a sort of promise I
+ have created it now and even if nothing changes at latest on this
+ data will create a new one at latest if tomorrow I need to revoke
+ certificate tomorrow we will create another crl but it's a promise so
+ if next update is present and it is before the current day you should
+ go and take the newest version and then you have the revoked
+ certificates which is a sequence and for each certificate you have
+ the certificate serial number the revocation date to know when it was
+ revoked and some extensions this is also the difference optional may
+ exist may not exist and the extensions can be for each certificate
+ that has been revoked or for the whole crl in both cases are
+ optionals but we have different extensions for the different things.
+ Okay I think we need to stop here because I have a call in a few
+ minutes but we have already put quite a lot of material so we will
+ continue tomorrow with this subject have a good evening. Thank you.
+ [BLANK_AUDIO]
