@@ -1295,3 +1295,153 @@ Key aspects include:
     process more straightforward.
 \end{itemize}
 
+\section{Certificate Revocation}
+
+A certificate may be revoked before its natural expiration due 
+to various reasons. The revocation can occur under the following 
+circumstances:
+
+\begin{itemize}
+  \item \textbf{Upon request of the certificate owner (subject):}
+    This typically happens due to:
+    \begin{itemize}
+      \item \textbf{Key compromise:} the subject knows that someone else has
+        gained possession of their keys.
+      \item \textbf{Key loss}: the subject cannot locate the key,
+        meaning that the certificate is no longer trustworthy.
+    \end{itemize}
+
+  \item \textbf{Upon request of the certificate sponsor
+    (organization):} some cases include:
+    \begin{itemize}
+      \item This occurs when an employee leaves the organization, 
+        the company goes out of business, or a server is dismissed,
+        among other reasons.
+      \item Any entity no longer in use should have its certificate 
+    revoked to prevent unauthorized usage.
+    \item This also applies if a company shuts down or transitions 
+    services, rendering previous certificates unnecessary or insecure.
+  \end{itemize}
+  
+  \item \textbf{Autonomously by the issuer}, for a few reasons:
+  \begin{itemize}
+    \item \textbf{Fraud}: convinces a certification authority to issue
+      a certificate based on false information. For example, a person
+      could impersonate an executive or delegate to receive an
+      unauthorized certificate.
+    \item \textbf{Error}: because mistakes may happen sometimes
+    \item In such cases, the issuer may revoke the certificate without 
+    needing approval from the original certificate owner or sponsor.
+  \end{itemize}
+\end{itemize}
+
+Once a certificate is revoked, it is marked as invalid, and any 
+transaction using that certificate must consider it untrustworthy.
+
+\textbf{Certificate status MUST be checked} by the entity that 
+accepts the certificate to ensure that it is still valid and has 
+not been revoked. This is the responsibility of the \emph{relying 
+party (RP)}. 
+
+\begin{boxH}
+  The RP must always verify the certificate's status to protect any
+  transaction (e.g., a commercial order) relying on the certificate
+  for security.
+\end{boxH}
+
+\subsection{Mechanisms for checking certificate status}
+When verifying a certificate's status, it is important to:
+\begin{enumerate}
+    \item Consider the entire chain of certificates up to a trusted root.
+    \item Check if any certificate in the chain has expired.
+    \item Ensure all certificates are valid.
+    \item If a certificate has not expired, a PKC (Public Key
+      Certificate) is considered valid unless otherwise stated.
+\end{enumerate}
+
+Two possible mechanisms exist to check the validity status:
+\begin{itemize}
+    \item \textbf{CRL (Certificate Revocation List)}, which is a list
+      of revoked certificates. You check the list manually to see if a
+      certificate has been revoked. The CRL is signed by the issuer or
+      a delegated revocation authority.
+    \item \textbf{OCSP (Online Certificate Status Protocol)} provides
+      the status of a specific certificate at the current time. It
+      returns an answer whether the certificate is valid at the moment
+      of the request. The response is typically signed by the OCSP
+      server, which may raise trust concerns.
+\end{itemize}
+
+\subsection{X.509 CRL}
+The \textbf{Certificate Revocation List (CRL)} is a mechanism 
+used to track revoked certificates. It contains:
+\begin{itemize}
+    \item A list of revoked certificates.
+    \item The revocation date and reason, indicating when the 
+    certificate ceased to be valid. Those details are not present 
+    in the OCSP response.
+\end{itemize}
+
+CRLs are issued periodically and maintained by the certificate
+issuer (CA), even if no additional revocations have occurred, a
+CRL must be reissued to ensure its "freshness" and prevent replay
+attacks with outdated CRLs.
+
+RLs are digitally signed by:
+\begin{itemize}
+  \item The Certificate Authority (CA) that issued the 
+    certificates.
+  \item A revocation authority delegated by the CA. When 
+    signed by the revocation authority, the CRL is referred 
+    to as an \textbf{indirect CRL (iCRL)}.
+\end{itemize}
+
+For instance, at Politecnico, a CRL is generated every 30 days 
+to ensure the CRL remains current, even if no new revocations 
+have taken place. This practice prevents ambiguity about whether 
+a CRL is outdated or if no certificates have been revoked.
+\subsubsection{x.509 CRL version 2}
+\begin{verbatim}
+CertificateList ::= SEQUENCE {
+    tbsCertList          TBSCertList,
+    signatureAlgorithm   AlgorithmIdentifier,
+    signatureValue       BIT STRING
+}
+
+TBSCertList ::= SEQUENCE {
+    version                Version OPTIONAL,
+                          -- if present, version must be v2
+    signature              AlgorithmIdentifier,
+    issuer                 Name,
+    thisUpdate             Time,
+    nextUpdate             Time OPTIONAL,
+    revokedCertificates    SEQUENCE {
+        userCertificate      CertificateSerialNumber,
+        revocationDate       Time,
+        crlEntryExtensions   Extensions OPTIONAL
+    } OPTIONAL,
+    crlExtensions          [0] Extensions OPTIONAL
+}
+
+
+\end{verbatim}
+The CRL structure consists of a sequence containing the list to be
+signed (\texttt{tbsCertList}), the algorithm, and the signature value.
+The version field determines whether it's version 1 (if absent) or
+version 2. The issuer can be the Certificate Authority (CA) or a
+revocation authority. 
+
+The \texttt{thisUpdate} field indicates the time of the latest update, 
+while the optional \texttt{nextUpdate} field suggests when the next CRL 
+will be created, serving as a promise to issue a new CRL by that date. 
+If the next update has passed, a new CRL should be obtained.
+
+The \texttt{revokedCertificates} field lists revoked certificates, 
+providing the serial number, revocation date, and optional 
+extensions. These extensions may apply to individual revoked 
+certificates or to the entire CRL, and are optional in both cases.
+
+
+\subsubsection{Extensions of CRLv2}
+\subsubsection{Certificate revocation timeline}
+\subsubsection{Efficient management of CRLs}

@@ -1,0 +1,1174 @@
+ Okay, welcome back. Yesterday, we were talking about certificates and the CRL,
+ and now we have to have a closer look to the CRL and other ways to validate
+ certificates. I said, this is the general structure of an X.509 CRL, in which
+ in version two, we have the two new things that are the extensions. Extensions
+ for each entry in the CRL and global extension for the whole CRL. So let's
+ have a look at those extensions. For each symbol to specify additional
+ information, such as the reason code. Reason code is something which is
+ helpful in the sense that if we know that the certificate is being revoked
+ because the private key was on a smart card and the smart card was eaten by my
+ dog, so the key is destroyed and therefore there is no problem. But if the key
+ was compromised, someone got my smart card with the PIN number attached, then
+ that is a different risk. So the reason code may help to identify the
+ criticality of the event which is behind the revocation. Hold instruction code
+ is, let me check if I have, no. Hold instruction code, it is deprecated by the
+ internet community, but it is being used in some high security environments.
+ So hold instruction code is a code which is telling to the validator that the
+ certificate is temporarily blocked. So it's not like a permanent revocation.
+ This is done, for example, if you are a military on duty and you take a
+ license, so you go away for one week, two weeks. They don't want you when you
+ are not in service to be able to use the private and public key if that is
+ associated with military duties. So rather than revoking the certificates,
+ they put it on the CRL with all the instruction code equal to hold, suspended.
+ And then when you go back in service, they in another CRL with the hold
+ instruction code and now active, you understand?
+ - The problem of the thing in the CRL because if the CRL has a hold, and I
+   have a date that is lower than the next CRL is obtained the system would
+   consider that certificate.
+ - The certificate is not valid until you don't say it's valid again. So if you
+   have that CRL and you see that it is on hold, then you can download the new
+   CRL even if there is no next update. And that is the problem. The fact that
+   when you use the hold instruction code, you have the need to continue. Think
+   if at some point you have something that was signed during the period in
+   which the certificate was suspended. How do you know that? Because after the
+   CRL in which it is said, now the certificate is again active, next CRL will
+   not contain that certificate anymore. So either you have a trace, you have a
+   log, you keep a copy of those two specific CRLs, the one that's suspended
+   and the one that made the certificate still active. You are losing the code
+   in that period. That is why it's deprecated because it forces the validators
+   to keep a lot of copies just for the suspended certificates. Then there is
+   an eValidityData in which you can specify, and then you have the certificate
+   issuer. Certificate issuer is particularly important in case of indirect
+   CRL, because normally the CRL is assigned by the certification authority and
+   the certificates belong to that certification authority. But if you have a
+   revocation authority, so a separate entity, the CRL is not signed by the CA.
+   It's signed by the revocation authority, which maybe is an authority which
+   is acting for me, but also for Politecnico Torino, Politecnico di Milano,
+   maybe the University of Bologna, and so on. So now when you see that there
+   is a certificate revoked, you need to know, okay, serial number this, but
+   for what or which CA and indirect CRL, you need to specify not only the
+   serial number, but also the issuer. So the CA to which that certificate
+   belongs. As global extensions for the CRL, also in this case, we have an
+   authority key identifier, which is a supplemental information, not really
+   very useful. We have an issuer alternative name to go along with the trend
+   of using internet identifiers and not X500 identifiers. Then you have a
+   serial number. That is important because in this way, you can have various
+   versions of the CRL. And then you have you, if this CRL is a delta or is a
+   base CRL, delta serial indicator is zero, if this is not a delta CRL. And
+   finally, you want to get another copy of this CRL, then you can go to that
+   specific point, okay? Now, is everything clear? No. You have not noted that
+   there is a big problem. Look carefully here, in the base part, the one which
+   is narrated by version one, you have a revocation date, which say, this
+   certificate is not valid anymore since date and time. And then you have
+   invalidity date for that same certificate. So what is that? Do we insert the
+   same date and time in these two places? Is that redundant? That is a sign
+   that there is something hidden behind that you need to understand, okay? So
+   of course it's not redundant. They did on purpose because otherwise we got a
+   problem. And the problem is the following one. This is the time on the
+   horizontal axis. We have a point in time in which my certificate is
+   perfectly valid, my key has not, private key has not been compromised, and
+   the CRL number N was issued. And there was no problem. My certificate does
+   not appear there. Then there is an unfortunate event in which my key has
+   been compromised, okay? That is a red area, very dangerous. It means that
+   starting from that time, someone else can make a signature or use my key for
+   responding to a challenge. Anyway, that person can impersonate me. At some
+   point, I understand that my key was compromised. Maybe a bit later, because
+   maybe I left my smart card in my office, I go for lunch, and when I come
+   back from lunch, the card is no more there. Uh-oh, when was the key
+   compromised? I don't know. I can only say that in this moment, I am aware
+   that I don't control anymore the private key. So now I rush to the
+   certification authority, and I ask, "Please revoke that certificate,"
+   because I lost control of the private key. And the certification authority
+   looks at the clock, say, "Okay, it's five o'clock, "and we will revoke your
+   certificate from now." It will say, "No, no, no, no, no." Before I went to
+   lunch, "Oh, I don't know." We are aware that now your private key is not in
+   your possession. All the rest is your own declaration. So when there is a
+   revocation date, you insert this time, the one that has been, in some sense,
+   certified by the certification authority. In the invalidity date, you put
+   the date and time claimed by that person. And you understand that this makes
+   a big difference. Because if something bad has happened in between, it's not
+   upon the certification authority, but it is upon the end user to demonstrate
+   what's happened. This is their life. There are some people that drink too
+   much on Saturday evening, and then they crash the car. Then next day, they
+   go to the police and say, "My car was stolen on Friday, so it was not me
+   "that caused the incident." The police is not accepting that. No, we know
+   that now you don't have the car. All the rest, you should demonstrate. And
+   this is the same. If you use your private key, for example, for buying some
+   shares or some Bitcoins, and then the Bitcoins go down, and you would like
+   to say, "No, no, no, it was not me, "so don't charge me." Yeah, you can do,
+   but I don't believe it. It's up to you to prove. So there are these two
+   different times, filed by the third party, and the other which is stated by
+   the end user. And everything in between is upon discussion. Cannot be
+   formally proved. I don't care. You declare whatever you want. Because
+   anything in that part, you can even claim three years ago, but then you
+   invalidate maybe your own signatures. So anything there is upon your own
+   declaration. Okay? So that is the dangerous area in the case that you are
+   not lying, because the private key can be used. But the risk is not
+   finished. Because you make this declaration to the certification authority,
+   which, if it is a good certification authority, will have the machine that
+   creates a signature and so on, in underground, very well protected, with
+   guarded arms on the door, and switch it off. So it will take a bit of time
+   for them to go down, pass the checks, switch on. The CRL will be produced
+   only after a certain time, which is yellow. Yellow because once this CRL, n
+   plus one, is created, it will contain this time. But if you query, if you
+   download the CRL in this moment, you still get this one. The new one has not
+   yet been created. So that is a risk. And for that reason, if you are a
+   relying party, and you are validating a transaction with a public key, if
+   possible, you should always wait for validation until the next CRL is
+   created. Because if you are selling something here, and this is CRL which is
+   one week before, does that apply to today? Or in some cases even 40 hours
+   before is too much. So if you can, for example, if you need to deliver some
+   good, say, okay, I accept your order, but I will ship the goods only after
+   next CRL is issued, and your certificate does not appear in that CRL. So you
+   see that that kind of processing is upon the relying party. After CRL n plus
+   one is issued, then we got to the green part, because everybody, if they
+   access the CRL, are aware that that certificate should not be accepted
+   anymore, okay? Now I have a question for you. If the private key is used by
+   an attacker in that period of time, the green one, can we detect that it is
+   invalid usage, should not be accepted, yes or no? And upon which conditions?
+   You are the relying party, in that period of time you receive something
+   signed with that private key, can you verify that it should not be accepted?
+ - You need to have the latest in the CRL.
+ - Okay, so that is a condition, you have to download the CRL n plus one. Okay,
+   is that enough?
+ - When?
+ - When?
+ - Now, but it arrives tomorrow.
+ - Okay.
+ - Okay. So it depends upon, you're right, if I can send messages back in the
+   time, that is the real problem. So you have to be very aware of that. For
+   example, if the private key is being used for email, then you just must be
+   smart, because if you are using web mail, you are fucked, because the date
+   and time will be the one of the web server, and you don't control that. But
+   if you are using your own mail user agent, then the date and time is the one
+   of your computer, and you can put that date and time back to here, and you
+   can put that date and time back to here. It was created before the key was
+   compromised. So you see that for the validation, you need not only to
+   download the most recent CRL, but you need also to have a strong proof of
+   the time when the key was used. Because if that can be faked, then we have
+   this kind of problem. Zulu time is only a way to avoid the people that can
+   compute the time zones.
+ - Passages sent from the globe, so we need to compute the time zones.
+ - That doesn't matter, because if you are the receiver, you can compute the
+   time zone, having Zulu or non-Zulu time makes no difference. The point is,
+   if the date and time document is good or is fake, so it's not your
+   processing, is how do you verify if that date is correct or not? (muffled
+   speaking) I not understood your question, can you repeat? (muffled speaking)
+   No, you cannot. (muffled speaking) Do that, he's saying everything before
+   the CRL, but first of all, before, can you demonstrate? And second, there
+   were documents valid signed in the past. So you can say that everything is
+   invalid before the CRL, because two years ago, that key was good. Otherwise,
+   you are invalidating everything in the past, and that is not correct, okay?
+   Is that clear, do you agree? Because otherwise, tomorrow my key is
+   compromised, and everything that I signed in 30 years is no more valid, no
+   good. So we need to have a strong identification of the time when the
+   operation was performed, okay? And we will discuss that in a moment. Let me
+   just finish discussing CRLs. CRLs have the problem that they are becoming
+   bigger over the time, because you never remove, there are all the
+   certificate. And so, become costly to download, to scan, to store, and so
+   on. So various solutions have been proposed, for example, the revocation
+   following the first CRL issued after the expiry date of the certificate. So
+   if the certificate expires on December 31st, in the first CRL that you issue
+   in 2014, in 2025, that revocation will not appear anymore. To keep a trace
+   also of the old CRLs, otherwise in the new ones, you will not see. Then, the
+   Delta CRL is another approach. Partial, you can publish complete CRL, and
+   then only the differences. That is improving the downloading for the Deltas,
+   but not the storage, because anyway, you will create again a huge CRL.
+   Probably the best solution is partitioning. So rather than having one CRL
+   only for the CA, you can say that the CA is creating N CRLs. For example,
+   one for certificates that have a serial number up to 1000, and the pointer
+   will be the CRL repository, then CRL1-1000.there. And then another one for
+   the serial numbers between 1000 and 2000, and so on. That implies that if
+   you want to have the complete list, you will need to download all of them.
+   But if you are checking for the valid, you are permitted to download only
+   that specific CRL. So as you see, a perfect solution does not exist. And
+   unfortunately, for legal validity of electronic, that at the time of
+   signature, the key was valid. And so typically, when you create an
+   electronic document, you store the document, you store the signature, you
+   store the chain of trust. So all the certificates from the one used for the
+   signature up to the root, and for each certificate, you also store the first
+   CRL that was issued for that certificate after the signature time. So you
+   see that that's quite a huge burden if you want to have electronic documents
+   with legal validity. In fact, there are a lot of companies that are making
+   money creating software for managing electronic documents, which is not just
+   putting a signature or verifying a signature. Because if you are a company,
+   then there is a, I don't remember the time, but it's a minimum five, maybe
+   10 years in which the finance and the tax officers can come and verify all
+   your documents, okay? And if you are a government body, that time period is
+   30 years, right? Okay, the alternative to CRL is OCSP, Online Certificate
+   Status Protocol, which is a client-server protocol to verify if certificate
+   is valid now. There is no reason for which it is now, but the protocol was
+   designed like that. So you can say, please tell me if the certificate was
+   valid three years ago. No, you can only ask, is the certificate valid now?
+   Yes or no. And the answer is good, revoked, or unknown. By the responder,
+   not by the CA, because the CA typically, if it is a strong CA, it is
+   offline, while on the contrary, the responder needs to be online. And of
+   course, the responder is signing to avoid fake responses. The responder,
+   optionally, to avoid the denial of services, may accept only signed
+   requests. Normally, the requests are not signed, but the standards say,
+   yeah, the request could be signed. In that way, you have a sort of
+   authentication plus access control. If this is the internal OCSP server of
+   Politecnico Torino, then you need to authenticate. We will not be able to
+   get an answer. The problem is that since there is a signature by the
+   responder, and that will be with the public key certificate, which of course
+   cannot be checked through the OCSP itself, because otherwise, we continue to
+   loop on that. And typically, therefore, the solution for that is that the
+   certificates for the responders are short-lived certificates. Typically, 24
+   hours. In other cases, even less than that. And that is introducing you, for
+   the first time, the concept that, okay, we need some kind of automation,
+   because every time performing all the steps needed for requesting a
+   certificate every 24 hours, including vacations, Saturdays, Sundays, and so
+   on, may not be feasible with human intervention. So if you really want to go
+   for short-lived certificate, that must go along with some kind of automation
+   in requesting and issuing the certificates. OCSP can be, basically, it's a
+   binary protocol, which is not running on any default port. So every
+   responder is telling in the URI, in the authority information access, I am
+   available on this port. Optionally, you can encapsulate it in HTTP or HTTPS,
+   but also in any other protocol that can transport binary data. For example,
+   LDAP, or SMTP. That is just a wrapper for transporting the information.
+   Okay. Yes. (audience member speaking indistinctly) The advantage is, solving
+   this problem, the certificate of the OCSP server cannot be checked by the
+   OCSP itself. So you receive something that is telling you, his certificate
+   has been revoked, signed by the server. Is that signature good or not? I
+   don't know. I have to check if the certificate is valid or revoked. And, who
+   are you asking? Again, to the OCSP server, does not work. Okay. And so we
+   say, okay, let's try to make, not revoking, but making it short-lived. So if
+   the certificate is valid or revoked, making it short-lived. So even if the
+   private key is compromised, the attack, because after 24 hours, we will
+   replace the private key, not only the certificate. Okay. We will generate a
+   new private key, and we will generate a new certificate. So we are reducing,
+   in some sense, the window of attack or window of exposure. Okay. So, of
+   course, OCSP is providing an answer, but must have some source of
+   information. And there are various possibilities. OCSP can download by
+   itself the CRLs, and offer an answer for all of them. So this is something
+   like a common access point to many CRLs, avoiding individual downloading.
+   Or, yeah, SQL to the database of the certification authority, with no need
+   to create a CRL. Of course, hopefully with a protected connection. Or, can
+   act as a proxy towards other OCSP server. You put a question to me, okay,
+   but I am just a proxy. I see that the certificate that you are requesting is
+   from Politecnico di Milano, and I will ask Politecnico di Milano, and then I
+   will pass along the answer. Okay. So, the protocol itself. In the request,
+   we have the protocol version, the target certificate identifiers, and
+   extensions. They're optional, so ignore. The response contains the version
+   of the response syntax, the name of the responder itself, and one response
+   for each certificate in the request. So, with one request, you can request
+   the status of multiple certificates. Again, some optional extensions. The
+   OID of the signature algorithm for the signed response, and then the
+   signature computed across the hash of the response. In the request, each
+   certificate is identified by its certificate ID. So, the hash algorithm, the
+   issuer name hash, the issuer key hash, and a serial number, that form. You
+   see that you don't have the explicit name. That is done in part to protect
+   the privacy, in the sense that we are saying, okay, I want certificate
+   number 33, to validate the state of certificate number 33, for the
+   certification authority, which has a key, whose hash is this one, and whose
+   issuer name has this hash. So, you don't tell explicitly the key and the
+   name, but you put the hash of them. The response contains a single response
+   for each cert in the request. The certificate identifier, the certificate
+   status, and if revoked, there is always the revocation time, that is
+   compulsory, and optionally, also the revocation reason. You see that there
+   is no trace of the one declared by the user. And then there is this update,
+   which is similar to what happens to the CRL. Okay, this response is based to
+   my knowledge of the revocation at this time, which is useful in case you
+   don't have a direct connection, but you download information, or there is
+   not an online access to the database, but only a periodic download, and so
+   on. And optionally, the answer may contain a next update, that is telling
+   when something more fresh will be available. Okay, models of the XCSP
+   response. But before going to the models, I would like just to make clear
+   the difference between CRL and OCSP. OCSP is designed in this way, and is
+   effectively used typically for things in which you need to validate the
+   certificate with no doubt about the date and time. Okay, that is typically
+   when you use the key for online operations, real time. For example, you are
+   using the key in TLS client authentication. I don't care if your certificate
+   was valid years ago, I want to know if it is valid now, in this moment. So
+   OCSP is very effective for that, because you need speed. You want to perform
+   the verification as part of the authentication procedure. Great, so you just
+   make one question and get an answer. You don't need to download all the CRL.
+   On the contrary, as we have already explained, the CRLs are very useful for
+   archival reason, when you need to validate the certificate a lot of time
+   after the signature. Okay.
+ - The OCSP is found from a wrong CRL, and then I saw a video patching and I
+   just discovered by another CRL was what's that?
+ - Yes, so if the OCSP is downloading the information from a CRL, then you have
+   the field, this update, which is telling you. So maybe you are using OCSP
+   because you would like to have real-time, and you are checking it now, but
+   when you get the response, the response is saying based on information
+   available on October 1st. So it's not enough that you have received the
+   answer now. You must check the field of this update, because that should be
+   as close as possible to the current time. Otherwise, you think that is a
+   subtle thing, so it's good that you noted it. Okay. If you discard this
+   update, you say, okay, it's valid. Oh, if it is based on all the
+   information, that is not valid. Okay. Okay, models. Okay. First of all, the
+   responder can be operated by the CA itself. That means that the CA should
+   use its private key for signing the responses, and this is not very good,
+   because it means that the key must be available in an online environment
+   connected to the internet, and that is very, very risky. So this model is
+   rarely adopted. I have not found in so far, not even one responder, which is
+   using the same key as the key used for signing the certificates.
+   Alternative, designated responder, also named the authorized responder. The
+   responder is operated still by the CA in some way. Maybe a trusted party,
+   but anyway, is someone which is authorized by the CA, and the authorization
+   comes in the form that the key used to sign the response has got an extended
+   key usage, OCSP sign. So you are another machine. You have your own private
+   key. You request a certificate to me, the CA for which you are operating,
+   and I will put an extended key usage, OCSP sign. That is the proof that I
+   can delegate you to give answers on my behalf. And if this is a machine just
+   for this CA, that's all. But beware, because that could be a trusted party,
+   which is offering OCSP responses for 10 different CAs. That means that the
+   OCSP responder should have 10 different keys, or at least 10 different
+   certificates, because the certificate, if it is saying yes, yay, so you have
+   got the authorization for that CA. If you are providing answers for 10
+   different CAs, you need to have 10 different certificates. If you want, they
+   can be, or may have 10 different private keys. But the important point is
+   one certificate giving authorization for OCSP sign for each certification
+   authority. And so you see, trusted third party operated or paid by the
+   certification authority. Finally, trusted responder. In the trusted
+   responder, we have a different configuration. We have one machine, which is
+   trusted by a group of users, and will sign all the responses with its own
+   private key and its own public key. That is more typical of company
+   responders. For example, the Politecnico di Torino could create a responder
+   and say, "Okay, when you want to verify anything, ask to that machine. That
+   machine will give you an answer with certificate issued by the Politecnico
+   di Torino, even if it is responding for VeriSign or for Microsoft or for
+   InfoChart and so on." So typically that is a proxy machine, a new trusted
+   proxy. Trusted proxy, that is the point. Of course, if the proxy is
+   misbehaving, that is bad, but that is the model. And that can be a company
+   responder, one company that wants to have a centralized point of validation,
+   or a trusted third party, not paid by the CAs, but paid by the users. The
+   group of people say, "Okay, please, I pay you 10 euro, each month, and then
+   I can ask you to validate everything in the world." That is a possible
+   commercial model. Okay, attacks against OCSP. Replay attack, a replay attack
+   is possible because I ask you one thing, the certificate is valid, I get it,
+   then the certificate is revoked, and when someone is asking the status of
+   that certificate, I replay the old answer by being faster than the real
+   responder, or by stopping with the denial of service the real responder. So
+   if in the past was good and now it's revoked, I replay the good one, so you
+   don't detect the revocation. For that reason, it is optional, but as you
+   see, suggested, that the client insert a nonce that has got that identifier,
+   among the data signed by the server. So this is a request quantified by this
+   client, and please insert this data. So in that way, you of course avoid the
+   replay. But there can be also denial of service attack. Please be careful
+   because every time I make the question in the exam about OCSP responder, you
+   say, "Okay, there is a denial of service attack, there are many requests,"
+   and I mark it as incomplete. Because of course, any server can be flooded
+   with denial of service. Yes, many requests. What is specific of OCSP? Why to
+   denial of service? It's the fact that the responses must be digitally
+   signed, and that takes a lot of time. So it's not a normal denial of service
+   attack. It's an attack which is more easy to be done because we have
+   real-time signatures. Defense, okay. We don't do any more real-time
+   signatures. We create pre-computed responses, which in that case, since they
+   are not computed now in the moment in which you put the question, should
+   contain three timestamps. This update, so this response is based on this
+   update, and that is like the ones, the next update, and also produced at. So
+   this response is based on information on October 1st, was produced on
+   October 10, and the next update is foreseen for October 30. So you have at
+   least some knowledge of the window of exposure, the window of attack, which
+   is possible. Of course, this kind of solution opened the door for the replay
+   attacks, because now you cannot use the nulls, because you insert the nulls,
+   but the response was created three days ago, and this is a generic response,
+   not containing the nulls that you have inserted, okay? So, the point is that
+   normally, in order to try to balance these two things, you don't insert the
+   nulls, but you make the response short-lived. So again, you don't use a
+   response that was created one week ago, but maybe every 24 hours, you
+   generate a good balance, okay? For me, it's unsatisfactory, but both things
+   are possible and are pretty bad. Okay, let me see if it is time for this
+   first break. Yeah, I think we can have a short break now, 10 minutes, and
+   then we'll pass to the next topic. Okay, there was one question during the
+   break, in which one student asked if the replay attack is specific of OCSP
+   or also of other. One of the things that you must keep into account is that,
+   as I said in the beginning, OCSP does not specify the transport protocol.
+   You can have a pure binary, you can have OCSP over HTTP, OCSP over HTTPS,
+   OCSP over MTP. So it depends also. Of course, if you are using OCSP over
+   HTTPS, you can get the answer because you open the channel, get the answer.
+   Now, if you want to replay that answer, you need not only to have the
+   answer, you need also to be able to impersonate the HTTPS server, which
+   makes the thing a bit more complex. Is that clear? Okay, great. Now, let's
+   go on to another topic, which goes back to the first slide, one of the first
+   slides that we discussed yesterday, about the fact that when an end user is
+   asking for a certificate, we have the registration authority, which is
+   performing administrative tasks, such as verifying the identity, claiming
+   the attributes and so on, but we don't have any proof that the requester is
+   controlling the corresponding private key. And it's named proof of
+   possession, POP. So it means that the certification authority has a
+   guarantee that the private key is in possession of the subject requesting
+   the certificate. If a certification authority creates a certificate without
+   proof of possession, then there are various attacks possible. There are
+   different situations, depending on the usage of the key. So proof of
+   possession is fundamental and should always be present if you want to
+   achieve no repudiation. You cannot have no repudiation if you cannot
+   guarantee proof of possession. On the contrary, if the asymmetric key pair
+   is used for encryption, then proof of possession is not so important. Let's
+   consider the case in which we don't have proof of possession and check what
+   are the possible risks. We have Alice up there. We have a certification
+   authority that does not verify possession of the private key. So Alice is
+   creating the private key. That one is saved. The public key is sent to the
+   CA. And the CA will send the certificate. Great, that is normal procedure.
+   But now, since that certificate is public, there can be Bob that reads the
+   public key of Alice and sends another request stating that that public key
+   corresponds to the private key of Bob. That is possible. And Bob, we receive
+   a public key of Bob. Now, you have a problem. You have two certificates for
+   two different end entities containing the same public key. So you cannot
+   distinguish among them. Now, let's imagine that Alice is using her private
+   key, because Alice is the only one that has got the correct private key, to
+   sign a document. There, okay? Now, if Alice discovers that there is another
+   certificate, can repudiate the signature. No, it was not me. You see, the
+   key is in possession of that other person. That is, you don't have
+   non-repudiation if you can't perform proof of possession, or vice versa. For
+   example, Alice is a successful author, has signed a song, or a book, or
+   whatever. And now Bob says, "My book, "as you can verify with my
+   certificate, "Alice has stolen my book." She has stolen that thing to me. So
+   the point is that with two different certificates, you can't perform
+   attribution, which means litigation, and means not possible non-repudiation.
+   So for any kind of key used for digital signature, you must use proof of
+   possession. The best solution for proof of possession is proof of possession
+   at signing time. That is, when you can create a signature, you also put the
+   hash or another reference to the certificate. So Alice say, "Okay, I sign
+   because I own this certificate." So in that case, there is no discussion,
+   okay? The certificate is among the things that are signed, okay? Does the
+   signature is a function not only of the data being signed, but of the
+   certificate, it depends on it. So Bob cannot say, "Oh, that is my
+   signature." Unfortunately, most of the security protocols do not perform
+   this kind of task. There are some custom protocols designed for protecting
+   electronic documents that keep this into consideration. But most of the
+   people tend to transfer that burden from the signer that would require the
+   signer to have a specific application to the certification authority. No,
+   no, it's not my task, it's your task. You should check, not me. In that
+   case, the certification authority changes the protocol for requesting a
+   certificate and includes private key. There are basically two things, two
+   ways. One is based on out-of-band, and the other is in-band methods. So
+   out-of-band, the keys are not generated by the user, but are generated by
+   the CA or the array and delivered in a secure token. For example, a smart
+   card, USB crypto token. This is what happens here at the Politecnico. We go
+   there, there is a smart card and the registration authority creates the key
+   and then gives the key to us, okay? It's considered as a proof of
+   possession, the possession of the token. Or we can have policies or create
+   your key pair. You voluntarily give your private key to the CA or to array,
+   hoping that they are keeping it very well protected and they don't abuse of
+   your key. In that case, it's very, very hard to demonstrate non-repudiation.
+   So the first solution can be used, then it is actually used. There are
+   companies that do exactly like that. The second one is rarely used. Online
+   methods. If the key that you are requesting to certify should be valid for
+   signing, but also for encrypting keys, then you can use a self-signed
+   format. There are two major ones, PKCS10 and SPKAC. In that case, the
+   requisite of the certificate is accompanied by a signature. And so the CA
+   verifies the signature before creating the certificate. If on the contrary,
+   the key that you are trying to certify is a purely encryption key, then the
+   requester cannot sign anything because that is not a valid usage. In that
+   case, you can use a challenge response protocol in which you request a
+   certificate. I send the certificate encrypted with your key. If you don't
+   have the corresponding private key, you will not be able to decrypt it and
+   you will fail in that phase. That can be a challenge response or it can be
+   direct encryption of the certificate. Of course, that would require a
+   certificate if you don't get the proof, but the end user was able to decrypt
+   it correctly. So let's concentrate on PKCS10, which is the most widely used
+   format nowadays. It is defined in two RFCs. One is the basic syntax and the
+   other is the application. You can see that even if it has become an RFC, it
+   still maintains the old numbering, public key certificates, and it's also
+   named CSR, Certificate Signing Request. The request basically contains the
+   distinguished name, the public key, and some optional attributes. Among the
+   valuable attributes, there is the challenge password, which is that kind of
+   one-time password that we said the registration authority can give you, and
+   that can be used either for registration or for revocation. Revocation is
+   also a mixture between administrative and technical, because if you think
+   carefully, if I have lost my smart card and I'm here in Torino, maybe I can
+   go directly to the office. But if I'm traveling and I lost it in Japan, I
+   cannot revoke. I cannot come to the office for personal identification. So I
+   should have some way to perform an online request. And someone will say,
+   "Okay, but no problem. "You make a phone call. "You connect to the website
+   and say, please revoke." That's stupid, because that means that then anybody
+   could make a call and block my certificate. So it means that when I do a
+   revocation request online, I must have a proof and submit a proof that I'm
+   the real owner of that key. And that is typically given in this challenge
+   password. You can use the one-time password, for example, the certificate
+   with the online procedure. Then there are additional attributes and
+   information about the requester. This is the format of the PKCS10. You have
+   a set of data to be certified. And the most important ones are
+   distinguishing name and public key. Among the attributes, there are all the
+   subject alternative names that you may want to insert. And those are the
+   first part of PKCS10. Then PKCS10 contains the signature created with the
+   private key. It means that when you create this format, you compute the
+   signature over this data using the private key of yourself. And you put
+   that. That is a proof that you own the corresponding private key that can be
+   verified by the certification authority. Okay. Now we have discussed quite a
+   lot. We can go back to the problem of CRL that are useful only if you have a
+   certain data in time that cannot be faked. And in order to achieve that
+   target, when it is important, we normally use timestamping, or in some cases
+   we call it secure timestamping because there are other kinds of timestamps
+   that are not secure. So the timestamping that we are discussing here is a
+   proof that data were created before a certain point in time. And the word to
+   be underlined three times is before because that is another common error.
+   The timestamp certifies that that operation was performed now. In the moment
+   of the timestamp says something was done before this date and time.
+   Timestamps are created by timestamping authorities, ESA, and typically they
+   use a protocol which complies with RFC 3161, the timestamp protocol, that
+   specifies also the data format. Well, for the request, I don't care so much,
+   but also of the proof which is being returned, which is named the TST,
+   timestamp token. And here, see the schema. We have a user on the left that
+   has got the document and you want to date that document with a certain time.
+   So you can go to a timestamping authority. First thing, you don't send the
+   document, not only for the time that it takes, but also for privacy reasons.
+   You don't want to disclose the document to the timestamping authority. So
+   you can send it to the authority. The authority is receiving it, receiving
+   the digest. The authority typically is very well synchronized with the
+   official date and time. That is very important, the accuracy of the date and
+   time. And then it will create the TST. This token is composed by the digest
+   of the document, the date and time computed by the TSA, not provided by the
+   user, and the digital signature computed by the TSA over those two data. Now
+   you can take that and attach it to your document. So you see that in this
+   way, we can demonstrate that this document, can you say it was created in
+   this moment? No, maybe this is a document that you created three years ago.
+   This is demonstrating that it exists in this moment, or at least that it was
+   created before, because maybe this document has been destroyed meanwhile.
+   You are just submitting a hash. For sure, the only thing is that this
+   document will not be created or changed in the future. Timestamping is very
+   useful, not only for verifying CRL, but for all kinds of public procedures,
+   also private procedures, in which there is a deadline. The typical thing is
+   tax declaration. You have to submit your tax declaration by June 30. And
+   then everybody to the last minute is trying to send, and the server is
+   overloaded. Oh, but we can't manage. It's your fault that the server was not
+   responding, it was not able to submit. It always happens like that.
+   Actually, I don't care. I want that you have completed your declaration by
+   June 30. So you can create your declaration locally, and then put the
+   timestamp before June 30. Because if you change your declaration after June
+   30, will not work, because the digest will change. And then you have six
+   months, send it whenever you want. Do you see the point? Good. But now, we
+   try to use timestamping for doing something different. We are on legal
+   grounds, and we are signing a contract, an agreement. And in that case, it's
+   important when the signature was made, not when the document was created,
+   when the signature was made, because that is the moment in which something
+   applies. For example, maybe there is a deadline for having some incentives,
+   like a tax reduction if you perform some works in your house before a
+   certain date and time. And you need to sell your house before that date and
+   time. So you go to the notary, and you sign. So if we have a document, and
+   we put a signature, we can say that the signature was performed before this
+   date and time. But can we say exactly when it was performed? No. Can we use
+   timestamp to say when it was performed? If we want to provide a certain date
+   and time. Sorry?
+ - This time?
+ - This one? So this is timestamp one, this is timestamp two.
+ - If you apply to the document plus the timestamp.
+ - But then the timestamp is only referring to the document, not to the
+   signature. So now you know that the signature was done after the timestamp,
+   but you don't care. You see, he's saying document, timestamp, and then you
+   sign everything. That is possible, but that is telling you that the
+   signature was done after the timestamp.
+ - Okay.
+ - The way to reason is, like this. If the timestamp is telling one point in
+   time, and you want to tell that the signature was done in a certain moment,
+   if the signature happens here, you need two timestamps, one before and one
+   after. And in that way, you can say that the signature was performed, not
+   exactly, but in that period of time. So that means that you take the
+   document, you put the first signature, and you get a timestamp for this.
+ - Okay.
+ - No, no, sorry, I said a stupid thing. You have the document. You put the
+   timestamp, then you sign, so the signature was done after that timestamp,
+   and then you request another timestamp. Okay? And now you can say that the
+   signature was performed in that period of time. If that period of time is
+   very short, you can be very accurate. It depends how fast you are in
+   requesting the timestamping and performing the signature. And that is the
+   way for using, because most people, when asked what is the timestamping,
+   demonstrating, they always respond, demonstrate the date and time when an
+   operation was performed. No, it was performed before that. If you want to
+   have more accuracy, you need to have two timestamps organized in this way.
+   Okay, now, other points. We concentrated on the public key currently, but we
+   said that we need also to protect the private key. No. And the private key
+   of the normal end user is typically protected with the PSC, personal
+   security environment. That means, in the normal understanding, that the user
+   is protecting its own private key. Great, that must remain secret and should
+   be used only by you. But what most people forget is that you should also
+   protect the certificate of the trusted root CAs, which don't require
+   confidentiality, but they require authenticity, because a common attack is
+   not getting a copy of your private key, that is difficult, but just
+   inserting new root CAs in your environment. And that is possible. If you use
+   the normal operating systems, that is a feature which is permitted. The
+   normal operating systems have a set of commonly defined roots, but you can
+   add other roots. Here we are, for the time in Torino, we normally add our
+   own root among the trusted ones, okay. And that is possible. Among the
+   trusted ones, okay. You can have a software PSE, which is typically an
+   encrypted file containing the private key, and typically also the chain of
+   the certificates up to the root. But that is your private key and your
+   chain. Nothing is said about the other roots that you are trusting or not.
+   If you want to have a hardware base of the PSE, it can be passive. So just a
+   storage, no problem. Same thing as a file encrypted. You have the file
+   encrypted on external memory, or you can have an active hardware PSE. And
+   that is the storage for the protected keys, but also the device itself is
+   performing the operations. And as an additional security features, the
+   private key should not be exportable. So once the key is inside the device,
+   there should be no command and no way to get it out. So if you want to
+   perform an operation, you must use that device. Mobility, so using the same
+   key over different devices is possible, but there are problems of
+   portability. So for physical devices, typically we use a cryptographic smart
+   card. A cryptographic smart card is a card that has got memory, typically
+   protected memory, and also typically autonomous cryptographic capacity.
+   There are some very simple smart cards, such as the ones that are based on
+   symmetric algorithms. The most complex ones that are also better for
+   security features are RSA, VSA, or SCVSA. The point is always on the cost of
+   these devices, which is a feature not only of the algorithm and the quantity
+   of memory, but also the length of the key and the generation of the private
+   key. The best cards, of course, have long private keys and have the feature
+   that the private key is generated on board rather than injected from an
+   external source. Remember that these cards have a very small memory,
+   permanent memory, four to 64 kilobytes. And the architecture is the one that
+   you see here. They got a read-only memory for the card OS, the operating
+   system of the card. They got a microcontroller, which is a mixture between a
+   small CPU and then input/output. They have a bit of RAM for the computation,
+   and then they have the two security features. The cryptographical processor,
+   so some specific hardware for performing the cryptographic operation,
+   because the microcontroller is terribly slow. And the eSquare PROM, which is
+   the permanent memory, which is typically used for protecting the private
+   keys. Of course, if you are using that not for personal use, but for
+   protecting the server, then a smart card does not scale. A smart card is
+   terribly slow, not only as CPU operations, but a smart card is a serial
+   channel, which does not reach high speed. It cannot manage not even one
+   megabit per second. And beware, because there are some cases in which they
+   sell you a USB. You say, "Oh, but that will be fast." Yeah, the USB
+   interface is fast, but if inside it contains just the same chip as the smart
+   card, then the heart is still a serial line, okay? On the contrary, for a
+   server, you can use an IHSN, hardware security module, which is not only
+   performing secure storage of the private key, but again, performing
+   cryptographic operations. As always, a symmetric is the first target,
+   because it is the most heavy thing. Sometimes they are used also as an
+   accelerator for symmetric as a help by the fact that now you are not
+   limited. You can have a real board with a very strong CPU. Yet, you are not
+   using the CPU for performing the cryptographic operation, but you have a
+   very capable portion of hardware for cryptographic operation, the protected
+   memory for the keys. But thanks to the fact that you have a very strong CPU
+   and a lot of RAM, then you can decide to offload also symmetric operations
+   to the IHSN. But in that case, typically you implement the whole protocol
+   and not only the cryptographic operation, because otherwise the bottleneck
+   is the fact that you need to pass the data to be encrypted and decrypted
+   between the main system and this accelerator. There are various formats that
+   can be used with USB, with SCSI, with PCI nowadays, or you can even have a
+   net HSM. And in that case, you have another risk. You need access control,
+   because if this board is not a board, but it's a device, who has the right
+   to ask to perform a signature or to decrypt some data? And in fact,
+   typically when you have a net HSM, you have a dedicated network. So the
+   servers that are using the net HSM have two interfaces, one for the internet
+   and one dedicated to a closed network only with the net HSM. Okay, there are
+   several standards for smart cards. ISO 7816, the most important ones from
+   the security point of view are number 8, 11, and 15. Okay, now let's go to
+   the software PSE. The most widely used system for creating a software PSE is
+   to use the PKCS12 format, which is a security bank for 92. And the purpose
+   is transport, so not to operate, but to transport in a neutral way, personal
+   cryptographic material among different applications or among different
+   systems. So it can contain private key and one or more certificates for
+   transporting the digital identity of the user. It's very commonly used. Any
+   Java application, Microsoft, Mozilla, Google, we are all using PKCS12. And
+   that is also typically a backup format if you want to save a copy of your
+   own keys. Typically, the file has got a .P12 extension if you are the rest
+   of the world. If you are Microsoft, that is named .PFX. Okay, actually the
+   same thing because the standard, as all standards, has many options. And the
+   problem is that Microsoft is implementing the PKCS12 standard in a weak way.
+   There is a certain number of operations, a round of operations that should
+   be performed, and Microsoft has opted for speed rather than for security. So
+   for that reason, my advice is always, if you need to generate a PKCS12, do
+   that on Mozilla, Google, other systems. And then you can use that on
+   Microsoft. The vice versa would create a weak PKCS12 file. Okay, well, I put
+   here as a reference, but you will see that in the laboratory that you will
+   do. Okay. Now, we said that PKIs must be organized in some way in which you
+   can verify if a CRCA is trusted or not. And typically, that takes the form
+   of a hierarchy. And that is possible. The hierarchical PKI is a tree rooted
+   at a self-signed root CA. And as we have already discussed, that
+   self-signature is indeed a bigger risk. The advantage of hierarchy, it is
+   very easy to build a certification path between any two end entities,
+   because you go up until you reach one common point. This model is supported
+   by all applications. All applications that use 659 certificates are called
+   PKI. But due to legal, commercial, political problems, we already discussed
+   that there is not one hierarchy in the world. So talking about a
+   hierarchical PKI is limited. Typically, what we have is a forest. That is,
+   we have several hierarchies. And that is the reason for which, in our
+   system, we must have several root of trust, several root CAs, because each
+   one is creating its own hierarchy. You understand that having different
+   hierarchies creates a problem. When you want to have trust between end
+   entities that belong to different hierarchies. So in order to solve that
+   problem, mesh PKI has been proposed. And mesh PKI means that two
+   hierarchical PKIs may decide unilaterally or bilaterally to trust each
+   other. And for that purpose, there is a special X.509 certificate, which is
+   named a cross certificate. A cross certificate is a certificate issued by
+   the root CA for another root CA. So for example, H3 is creating a
+   certificate for H2. So the root of H2 will have two certificates, one
+   self-signed and one issued by H3, by the root of H3. And you should use them
+   wisely according to the kind of verification that you want to do. So if a
+   user inside H2 wants to be trusted by someone in H3, he should send this
+   certificate, the one created by H3, and not putting the self-signed root CA
+   for number two. Okay, so that requires some changes in the application that
+   must be able to handle the fact that is possible when you clearly identify
+   the peer of the communication. So if I know that I'm H2 and I know that you
+   are in H3, I have the ability of doing that. But if I'm creating a document
+   and I don't know who will be the verifier, here, then that is a problem. The
+   only thing that I could do could be, I put the self-signed root and I also
+   put all the other certificates that I have for my own root, hoping that you
+   are in one of those other hierarchies. So unfortunately, cross-site
+   certificates are not automatically recognized. And the problem is that which
+   certificate chain should the application consider? And additionally, there
+   is also another problem. Since typically we don't have one, two, or three
+   hierarchies but quite a lot of them, if we want to have a complete trust
+   among all hierarchies, we need a number of cross-certificates which is
+   proportional to the square of the number of roots, which makes handling a
+   bit more complex. So due to these problems, typically in the application
+   problem, this model remains theoretically and it's rarely used in practice.
+   On the contrary, the model which is used in practice in some sectors, so
+   most of the applications use the forest, but some sectors go from the forest
+   to the bridge model. And in the bridge model, in order to simplify just
+   management, so addition or cancellation of a CA and trust transitivity,
+   there is a new CA being created, which is a bridge CA. And the bridge CA is
+   trusted by all the hierarchical CAs and will cross-certify with each root.
+   The bridge CA does not certify any CA or any other end-end. She's also only
+   managing root CAs. So you see that when you want to add a new CA, you just
+   add two certificates, one by the bridge CA for H3 and one by H3 for the
+   bridge CA. In that way, you have bidirectionality and all the users can
+   reach all the other users. Again, this is not automatically recognized by
+   standard applications, but if you are powerful enough, you can ask to change
+   your applications. And so, for example, the most notable example of this
+   model is the US federal PKI, in which each department, maybe each local
+   government has got its own hierarchy and then there is one federal PKI,
+   which is issuing all these cross-certificates and you have a modified
+   version, so Chrome modified the versions of Edge that are able to manage
+   this mesh PKI. Okay, okay. Now, we have addressed the true problem of
+   certificates that have been revoked due to e-compromise, but we face
+   nowadays another problem. Someone which is able to talk to a certification
+   authority and make a fake request for a certificate. Someone which is going
+   to verify and say, "Oh yeah, I am a Delegate of Director "of the Politecnico
+   di Torino, "give me a certificate for the Politecnico di Torino." And that
+   is really trivial to be done. The reason for that is the origin in cultural
+   problems. I have mentioned already, if I'm not wrong, the fact that, for
+   example, in the United States, there are no identity cards, right? But that
+   is common, not only in the United States, also in the United Kingdom, also
+   in Australia, also in Canada, also in South Africa. What do have in common
+   these countries? They were former British colonies, okay? And in Britain, we
+   applied a common law. And the common law compared to the Roman law that we
+   follow in Italy and in several European countries is very vague. It
+   establishes some principles, and then the rest is left as an implementation
+   detail, okay? So the point is that you don't have identity document because
+   the government is trusting its citizens. When you come to me to do the exam,
+   I don't ask your card. You declare what is your name and surname. But you
+   understand that that is a big risk. So the point is that if you give false
+   data, then you are not just saying, "Ah, bad guy, don't do that guy again."
+   You can go to jail. That is a problem, a real problem. And it's happened.
+   It's happened in my experience, at least to a couple of person. Now, there
+   is a lot of opportunities for you. We had one thing that was named the
+   School of Brighton. That was the first attempt in which students stayed six
+   months here, and six months in the Politecnico Brighton for doing this kind
+   of exchange, okay? And we had also, of course, British students. So when the
+   first Italian class went to the Brighton Politecnico, they had a problem in
+   the exam because at the exam time, the professor distributed the text with
+   the questions and said, "Okay, you have one hour, goodbye." And so the
+   British students started to answer the question. The Italian students said,
+   "Whoa, professor not here." And they started taking out notes, books, and so
+   on. Okay? And most of them were keeping hidden on their legs. But one
+   student put the book here and started copying the answer. Unfortunately, the
+   professor came back. He said, "Oh, sorry, I forgot, what is that?" "Oh, no,
+   no, no, it has remained here, but I'm not looking." "No, no, no, come with
+   me, please." So the student was taken to the dean, and they said, "Okay, the
+   student has been found "with an open book." "No, no, I'm sorry, you know,
+   I'm Italian, it's first time." "Yeah, we know you are Italian." And at that
+   point, the dean said, "Don't worry, "we have a standard procedure for this
+   kind of things." "Ah, thank you. "And what is the standard procedure?" "You
+   are expelled for all the schools "in the United Kingdom for your life,
+   "because you have broken the trust that we put in you." So that student had
+   to be re-taken, the Politecnico, as a pure Italian student. He was not
+   admitted, will not be admitted to any school in the United Kingdom. You see
+   the point? And this is similar, I had a colleague of mine that went to the
+   United States, got a rental car, was speeding on the highway, and the police
+   came and stopped. "No, you are fined, you have to pay $200. "What is your
+   name?" "Oh, sorry, I forgot my passport in the hotel, ha ha. "I'm Mario
+   Rossi, ha ha, and we have to pay. "Tomorrow I'm going." So he did not pay
+   the fine, gave fake information to the police, and went back to Italy. Three
+   years later, he was arriving at New York Airport, and the immigration
+   control said, "Oh, welcome, Mario Rossi, but that is not my name." "No, but
+   this is the name that you gave to the police, "because the police also noted
+   the plate of your car." So now we know that you gave false things. "Oh,
+   yeah, yeah, I will pay the fine." "No, no, no, no, you go to jail, "and then
+   tomorrow the judge will decide what to do to you." So it was jailed for one
+   night in the JFK Airport, and the next day he had to pay the fine and go
+   back to Italy. Because that people is no opportunity for doing bad things,
+   because you don't have valid documents. I got a son that has a driver's
+   license, valid documents. I got a son that has lived for six years in
+   Oregon, and he showed me the driver's license. I said, "Are you joking? "The
+   driver's license is a piece of plastic "with the written name, surname, and
+   birth date, "but no photo." That is the driver's license in some of the
+   United States, because they trust you. But you see, if you break the trust,
+   I hit you strong. Yet there is this opportunity. And so there are people
+   going around in those countries that have a different culture than ours, and
+   they take a piece of paper with written, "Oh yeah, this is from Politecnico
+   Torino. "You can copy the logo, you can copy the signature "from something."
+   You say, "Okay, give me a certificate." And you cannot. So the answer, the
+   question that we are trying to answer now, I am a domain owner. I am the
+   valid owner of Politecnico.it. How can I detect if some CA among these
+   thousands of CAs that we have in the world has been tricked and created a
+   fake certificate for me? Because if they have done, that is a problem. It's
+   a real problem, okay? Browsers in general are not very good at detecting
+   rapidly malicious websites. If they receive, for example, a certificate
+   issued by mistakes, or a certificate issued by a compromised CA, because
+   that is another point. Hackers, but also governments sometimes break into a
+   CA to create fake certificates. For example, we have the proof that several
+   dictatorial states have broken into the CAs just to create fake certificates
+   for mail.google.com. And at that point, all the citizens trying to connect
+   securely to mail.google.com were connected to the government website that
+   was then able to spy the otherwise protected email, okay? So, when this
+   situation occurs, it takes time to detect the problem, revoke the
+   certificate, make the browser aware of that thing, and so on. Until then,
+   until that authentic site, and the connection is secure. So we have fake
+   servers, or man-in-the-middle attacks that are possible. So that is the
+   thing that we need to address and we'll try to find a solution for this kind
+   of problem. Okay, so the problem to address is how to permit to the browsers
+   and also to the owners of the domain to detect certificates that have been
+   illegally issued for a certain domain. We can see some examples. 2011, an
+   intruder managed to issue itself a valid certificate for google.com and its
+   subdomains, so root and a lot of subdomains, from DigiNotar, which was a
+   very important Dutch certificate authority. Certificate was issued in July
+   2011, but it may have been used maliciously for weeks before it was detected
+   on August 28, for a large-scale man-in-the-middle attack on multiple users
+   in Iran. So you can easily suspect who was behind this kind of attack. 2011
+   was a bad year. The Commodore Group issued nine fraudulent certificates for
+   domains, so even for communications, voice communication and others. 2014,
+   an unknown, we don't know everything bad that has been issued, was issued by
+   a sub-certification authority of the India CCA, which is the Indian Network
+   Information Center, so the coordinator of all network operations in India.
+   The incident was so big that rather than revoking the certificate, the whole
+   certification authority was revoked. And India CCA was constrained for the
+   future to a subset of India top-level domains, so they cannot issue anymore
+   any kind of certificates. In order to avoid some of these things, we can
+   resort to a part in the certification infrastructure itself. So HTTP
+   key-pinning is a modification of HTTP in which a site specifies the digest
+   of its own public key and/or one or more of the CAs in its chain. The user
+   agent, so typically the browser, but also the app, will cache this key and
+   will refuse connecting to a site with a different key. Note that this is
+   what is named the TOFU. Trust on first use. Because the first time that you
+   connect to the server, you get to the key. So if your first connection is to
+   a fake site, now you will refuse to connect to the correct site. So you
+   hope. Secondly, even if the first connection is to the correct site, you
+   have a problem. If the key, then no one else in the world will ever connect
+   to you when you change your private key. For example, your HSM is broken.
+   You need to replace it with a new one, but the old private key is lost. And
+   hence, no one will trust your new private key. And also, with key updates,
+   when periodically, even if we have not lost control, we change keys on the
+   servers. So the point is, if you want to implement HTTP key pinning, then
+   always transmit not one, but at least two keys. The current one, and you
+   already provided the next one. So in order to have always at least one key,
+   good. As part of the declaration, you can also insert a URI to report
+   violations. It reported in enforcement mode. I report that I refused to
+   connect to this other server that had a different key, or report only. I
+   notify you that I am connected to this other server that claims to be you,
+   but has got a different key. So that is offering some protection, apart from
+   this TOFU, against fake website that try to impersonate the real site using
+   a PKC fraudulently obtained, because that would have a different public key.
+   This thing is nowadays deprecated, even if sometimes it's still used, in
+   favor of a more modern approach, which is a certificate transparency that we
+   will discuss. So, certificate transparency. Because that is a common concern
+   of the certification authority and the browsers. So, that is creating an
+   open global auditing monitoring system, based on public log of issued
+   certificates. So, while in the past, the certificates issued were only
+   visible by scanning all the repositories, now we got a log, which is
+   available to everybody in the world by all the certification authorities
+   that go along with certificate transparency. In this way, the domain owners
+   of, for example, the Politecnico Torino, can scan this log and check, oh, is
+   there anything for Politecnico Torino? Is that the one that happened, okay?
+   So, we scan that to verify that no fraudulent certificates have been issued
+   for my domain. It was originally then later standardized by the IETF Public
+   Notary Transparency Working Group. The issuance and the existence of TLS
+   certificate becomes open to analysis by the domain owners, but also of the
+   CAs and the domain users. So, now that requires also modification in the
+   browsers and the apps. The web clients, so not only the browsers, but apps
+   as well, should only accept certificates publicly logged. So, now you have
+   one taskbar. You receive a certificate. You must cryptographically validate
+   the chain. You must check the revocation status for each element in the
+   chain. And see, because that things could be valid, you have also to check
+   the public log. Because typically, if someone has entered the certification
+   authority, maybe they have created the certificate, but not put in the
+   public log. But that also requires a bit of change in the issuance
+   procedures of the certification authority, because it should be impossible
+   for a CA to issue a certificate without it being publicly visible to avoid
+   that kind of problem. So, main ideas. This last one, make it impossible or
+   very difficult to create a public key certificate without making it visible
+   to the domain owner. Then provide an external system, external to the CA,
+   that lets any domain owner or CA determine if these fraudulent certificates
+   have been created. Protect users also from being given certificates that
+   were fraudulent. TLS certificate framework is composed of several actors.
+   Submitters, loggers, monitor, and auditors. So, let's start with the log
+   servers, which are the core of the Certificates Transparency System. They
+   are servers that maintain a secure log of the TLS certificates. Note the
+   point, TLS certificates. We are not requesting this for any certification
+   authority, even for certificate user to sign documents. This is specifically
+   targeted to the TLS environment. So, these logs should have the property of
+   being append-only. Certificates can only be added to a log. Cannot be
+   deleted, cannot be modified, cannot be retroactively inserted. There is a
+   sequence, and you can only put new things at the end. Cryptographically
+   assured, they are protected by a Merkle tree hash to prevent tampering and
+   misbehavior. Have you seen Merkle trees in other courses? Yeah, you know
+   that. And they should be publicly auditable. Anyone can query log. No
+   permission is required. Via HTTPS, GET and POST, and verify that it's
+   well-behaved, or, so you have two verifications. One, that the Merkle tree
+   is correct. And second, that the TLS certificate has been correctly inserted
+   in the log. So, logs must be digitally signed. Version 1.0 certificate
+   transparency required RSA 2048, or ECDSA with curve P. For version 2.0,
+   ECDSA, or ED2550, P500N19. What is this deterministic ECDSA? We already
+   discussed that when we have the Edwards curve, which is one of the novelty
+   of TLS.3, that helped to solve the problem of the random number generation,
+   which is the problem of the number generation which is required in ECDSA.
+   Now, deterministic ECDSA is a way to, in some sense, retrofit the same
+   concept, because if the value used in computation is not random, the private
+   key can be computed from the signature, which is a problem, especially in
+   embedded systems that don't have very good sources of randomness, okay? But
+   now, with that modification, we can do. And, Paul, rather than using a real
+   source of randomness, you generate a random number, computing the hash of
+   some specific data. Certificate transparency is supported in Chrome,
+   Chromium, and Safari. With one SCT that is signed the certificate
+   transparency from a currently approved log. The point is that, duration is,
+   if duration of the certificate is less than 180 days, then you need the
+   certificate to be approved and inserted in at least two different logs. If
+   duration is more than six months data for the logs to accept the
+   certificate. So that is also an indication that we are going, in general,
+   towards short-lived certificate, maybe not short-lived as 24 hours, but in
+   the past, when we created a certificate for a web server, we created it for
+   five years, then we went down to three years. Now, if you look at the
+   certificate of the Polytechnic itself, it's one year. And there is a push
+   going shorter and shorter than that. You can see here that for one year, we
+   need a triple assurance. For six months, double assurance. And only if it is
+   very short-lived, one. Certificate transparency support in Firefox is
+   pending implementation. It's a bit late in this area. So, operations. Anyone
+   can submit a certificate to a log server. Although most certificates will be
+   submitted by the CAs and the server operators. So the logs are not something
+   which are managed only by a CA. Logs are public and there are various
+   sources that can put the information inside. The log server provides to each
+   submitter a promise to log the certificate within a certain amount of time.
+   Okay. The promise is called the SCT, Signed Certificate Timestamp. So yes,
+   I've signed this certificate and I promise that in five minutes, five hours,
+   that will appear in the log. So you can, after that time, verify if that has
+   happened or not. So how can an SCT, which is created by the log servers,
+   delivered with a CA, the certificate, which on the contrary is created by
+   the CA? Because you have the log server. One that must be delivered to the
+   user requesting the certificate. And there are three ways. East509B3
+   extensions, TLS extension, and OCSP step link. Okay. Let's start with the
+   case of X509B3 extension. We have the certificate authority, which needs to
+   create a certificate for a certain web server. So it will send a submission
+   to the log server with the press certificate. So this is an information. I
+   am going to create a certificate for this web server with this public key
+   and with this serial number. The log response is this signed certificate
+   timestamp. Now, the certificate authority will create the certificate. Code
+   will be delivered to the web server that will operate that. So when there is
+   the TLS and SHAKE, the SCT will become automatically part of the SHAKE, just
+   because it's inside the certificate. So the browser needs just to take this
+   out and go to the log server and verify if it is true or not, because this
+   is a promise. It's a promise because the certificate authority cannot create
+   the certificate first, otherwise could not insert the SCT inside the
+   certificate. So the certificate authority creates the certificate without
+   any specific extension. Other option, via TLS extension. So the authority,
+   the CA, creates the certificate without any specific extension. Now, it's
+   the owner of the web server that will send the real certificate and will be
+   delivered to the client inside the TLS and SHAKE with a specific extension,
+   not of the certificate, but an extension of the and SHAKE. And again, the
+   point is always that in the end, the browser must have that information in
+   order to verify the correctness of the certificate. Or we can put that in
+   OCSP. Again, in this case, the certificate authority first creates the
+   certificate and submits it to the log server. Now we got the SCT. Next step
+   for doing stapling, the web server is asking, creating this OCSP response,
+   we put the SCT inside the OCSP response. And again, the SCT will be
+   delivered as part of the TLS and SHAKE when we have the pre-computed OCSP
+   response for that server. So three different ways to deliver the SCT to the
+   final browser, which is the one in charge of verifying if that certificate
+   has been issued correctly or not. So if you receive something which is not
+   accompanied by an SCT, you guess that that is a fraudulent certificate
+   because the website was not able to demonstrate that the certificate was
+   regularly inserted inside the log. Submitters and monitors. Submitters
+   submit certificate or parse case to a log server and receive an SCT. The
+   certificate monitors that do not appear in the schemas that we have seen
+   insofar are public or private services that watch for misbehaving logs or
+   suspicious certificates because they periodically contact and download
+   information from the log servers and inspect new entries, keep copies of the
+   entire log and verify the consistency between publish the revisions of the
+   same log. So auditors are not persons but typically lightweight software
+   components that perform to function. Verify the overall integrity of the
+   logs by periodically verifying the log proofs. And the log proof is just a
+   signed cryptographic hash of the log and verifying that a particular
+   certificate appears in the log because the certificate transparency
+   framework requires all certificates to be registered. If a certificate has
+   not been registered, it's a sign that the certificate is suspect. And as I
+   told you, TLS clients may. They are not forced, it's still optional, but as
+   a minimum, they should give you a warning. Beware, you are connecting to a
+   website which cannot provide the certificate transparency. Do you want to
+   proceed? Yes or no? Because the certificate as a minimum is a suspect one.
+   If a TLS client determines via an auditor that the certificate is not in the
+   log, it can use the SCT from the log as evidence that the log has not
+   behaved correctly. Auditors and monitors exchange information about logs
+   through a specific protocol, which is a gossip protocol. So there are
+   various configurations possible. We have the log server here and we have the
+   monitor, which in this case is inside the certification authority. The
+   monitor watch the logs for suspicious charts and verify that all logged
+   charts are visible. So two things, I am a CA, I want to check that all the
+   certificates that are created do appear because someone could have removed
+   them, which would be bad for me. And I want to check that no other
+   certificate that I have not created appears as created by me. So they are
+   looking for a missing certificate or additional certificates not issued.
+   Certificate owners, so example.com, query the monitors to verify there are
+   no illegitimate cells logged for their domain. So that is a specific
+   question. Don't revise everything, just check please on my behalf if there
+   is an extra certificate for polytechnic auditorium. Auditors on the
+   contrary, stand on the client side and they verify that logs are behaving
+   properly. So checking Merkle tree, the signatures and can also verify that a
+   particular cert has been logged. They have received the certificate so they
+   can double check that. Monitors and auditors, the exchange information about
+   logs to detect if someone forked or created a branch of a log in order to do
+   some bad action. Certificate Transparency Working Group does not prescribe
+   any possible configuration. A possible configuration could be that CA
+   obtains SCT from a log server and incorporates it, okay. Yeah, this is a
+   duplicate of what I've explained to you about including the SCT inside the
+   X.509v3 extension. Other points, monitors operated by the CA, auditors built
+   in into the browser, that is why it is taking time to Firefox to extend its
+   browser. And browsers periodically can send a batch of SCT to its integrated
+   auditing component and ask whether the SCT has been legitimately added to
+   the log or not. And the auditor can asynchronously contact the log and
+   perform the verification. Monitors, which may provide paid or unpaid
+   services to the CAs and server operators. So another possible configuration
+   is taking the monitor and the auditor outside, because in the previous
+   schema, we had them inside the CA and the browser. That requires changing
+   those things, but that is not compulsory. We may have the monitor and
+   auditor as independent entity in order to try to minimize the modifications
+   to the current certification authority and the current browsers. This is all
+   the kind of interactions that happen among the different elements. And this
+   is the status. Well, I took it one year ago, I forgot to update it. But if
+   you get Transparency Dev Logs, you will find them. There were six valid log
+   servers in the world at that time. Some of them are managed by certification
+   authorities. DigiChart is a big one. Let's Encrypt, Sectigo and Trustasia.
+   But one is also managed by Google and one by CloudFare, so two big cloud
+   providers. And there were 10 public monitors. Some of them operated by the
+   same companies, but other managed by independent entities. Many only for the
+   domain server by themselves. For example, CloudFlare is not monitoring the
+   rest of the world, but they are monitoring only the things that belong to
+   CloudFare domain. Okay, let me check if we have still some time. Yes. Okay,
+   we now try to solve yet another problem, the one that I told you. If we want
+   to go for short-lived certificate, we need some automation. Because
+   otherwise, creating certificate every 24 hours or each day of the year is
+   impossible. And there are some pressure for going even less than 24 hours.
+   There is some people which is completely advocating cancelling a revocation
+   from X.509. We never revoke certificate, because we make the certificate so
+   short-lived, but it's useless. So even if you attack my key, the key is
+   valid only for one hour, or maybe it's valid only for five minutes. That is
+   a possibility to perform revocation, but you need a very automatic issuing
+   of a certificate. So for that purpose, the ACME protocol was invented. ACME,
+   Automated Certificate Management Environment, is a protocol for managing
+   public key certificate, request and response, between the end entity and the
+   CA that will provide the certificate. It is created by a specific working
+   group, but maybe you are not aware. Inside the IETF, there is the ISRG,
+   Internet Security Research Group. And that was created with another purpose.
+   Typically in the past, we have not widely adopted the IETF protocol. We have
+   not widely adopted the TLS, because certificates are expensive. You need to
+   pay. If we want really to achieve security, it's a minimum cheap, if
+   possible, free of charge. And then the internet community said, "Yes, let's
+   manage our own certification authority for internet, and anybody will be
+   able to request a certificate for free." Of course, operating a
+   certification authority has got a cost, so it's free of charge for the
+   users, because there is someone which is funding these operations. But of
+   course, we would like to minimize the cost. So if we operate a traditional
+   certification authority, with all the security levels, so all the people
+   involved, the cost would be very, very high. They said, "Okay, we will try
+   to give a free certificate, so we need to minimize the cost in order to be
+   supported, in order to minimize the cost." And so they said, "Okay, we need
+   automation to involve the least number of people in our operations." So to
+   foster TLS adoption, it's free of charge. And the certification authority is
+   named, Let's Encrypt, because the purpose was to enable automatic encryption
+   through TLS. So this protocol, ACME, permits public key certificates to be
+   automatically requested and issued. So not only automatic issuing, but also
+   automatic requests, because if I want to change the key to my OCSP server
+   every hour, I can't have a man doing that operation manually. Based on
+   exchanging JSON documents over HTTPS connections. Details. The agent is
+   installed on a web server or any other component that needs to have a TLS
+   certificate. And it proves to the certification authorities, in this case,
+   specifically Let's Encrypt. So I will continuously refer to Let's Encrypt
+   because that was the first application. But nowadays there are many other
+   certification authorities that support ACME. Now it's a protocol, so between
+   the web server and someone else. Once the CA verifies that that is a valid
+   client for that domain, it will allow the client to create at will. So there
+   is a first initial phase, which is a sort of valid client for the
+   protocol.it, for whatever. And maybe we have one of them. That requires a
+   bit of interactions, but after that, we can request one certificate every
+   five minutes. So the client, after this initial phase of registration is
+   passed, can be programmed to perform certificate operations at fixed
+   intervals. Every five minutes, every hour, every 24 hours. So no need to
+   manually generate the individual PKCS10 requests. And prove domain
+   ownership. So go into the registration authority, download and configure the
+   server certificate using ad hoc procedures. So this is the biggest
+   simplification. In this moment, there are over 100 open source ACME clients.
+   You go there and you can get. The first one, but many others. How to
+   exploit. If you want to use ACME for your own certificates, first of all,
+   you must create an account at Let's Encrypt or the CA that supports ACME.
+   Then you must perform domain validation once and for all. You must
+   demonstrate that you have the right to request certificate for polito.it.
+   And then you will get a certificate and you will be able also to manage the
+   revocation of certificates. So account creation needs to perform only once
+   and needs to be performed before asking issuance and revocation of
+   certificates. In this phase, the ACME client generates an asymmetric key
+   pair used for authorization purposes. Well, actually it's authentication and
+   authorization, but it is named authorized. The request assigned with this
+   key pair will be accepted. The authorized public key is associated to the
+   account registered at Let's Encrypt. And the authorized private key will be
+   used to sign the certificate request. While the authorized public key will
+   be used by Let's Encrypt to validate the received certificate request. A
+   single account may be associated to one or more domains. One domain is the
+   minimum, but I can have an agreement with maybe also the University of
+   Torino and I will request also for them. Domain validation. That is the most
+   tricky part because without human intervention, the ACME client must prove
+   to the CA the control of the domain for which it is claiming I control
+   Polito.IT. And the CA challenges the client in this way. Okay, if you
+   control Polito.IT, then put this value in a specific path inside the domain.
+   So create a web page with this name for the page and the page must contain
+   this value. So you demonstrate that you are controlling that web server. Or
+   alternatively, please create a record in the DNS since the domain is
+   associated to a DNS and again, put this value. So you have two options.
+   Either you put the value in your web server or you put that in your domain.
+   And additionally, you need to sign a nonce with the authorized private key.
+   So we associate that proof. We have already solved it, so let's encrypt say,
+   okay, yes, I verify that. The client sends a signed nonce to the CA to start
+   the validation process. The CA downloads the responses from the domain and
+   verifies the correctness and the signature. If everything is correct, the CA
+   approves the domain ownership by putting that in a database and the client
+   is enabled to request certificates. So let's see the domain validation. This
+   is an example. I'm claiming that I control example.com and then let's
+   encrypt say, okay, then please put this value, ED98, in the page HTTPS
+   example.com 80303 and when I access that page, it must contain only this
+   value. Additionally, sign this nonce, okay? So you already have a web
+   server, but that web server does not, sorry, yes, you have the web server
+   because the web server is here, okay? But you are not signing with the key
+   of the web server. You are signing with the key of the client. Now, the
+   administrator put ED98 in that webpage. So let's encrypt, we'll be able to
+   verify step three and four. Meanwhile, you are also sending that value
+   encrypted with your private key and that will contain also the public key.
+   Now let's encrypt, we'll verify all this, associate your public key with
+   this domain. So this public key A is associated with example.com and we'll
+   be able to make any kind of request. Here is the database. Example.com
+   corresponds to this key. This key is the authorized key for that domain.
+ >> But the private key of the sentiment
+ is used to sign the message sent from Let's Encrypt. Is the one that the web
+ server already owns?
+ >> No, no, no, no.
+ It's of the client. So the client is a software, like the chatbot that I have
+ mentioned. So the chatbot creates a sequence of the sentiments. And a sequence
+ of the server, okay? And he will be the one that can request certificates for
+ anything inside the example.com. So next, once it has been registered, the
+ client uses the authorized key pair to request, renew, and revoke
+ certificates. The client constructs a PKCS10 request. You don't have to do
+ that manually. And ask the CA to issue a certificate with a specified public
+ key. So now it takes the public key for one server, puts that in the request,
+ and the request is signed by its own public key. So the CSR includes a
+ signature by the private key corresponding to the public key. So PKCS10
+ structure is not changed. That is the normal one. But that request is signed
+ by the client because he's the only one that can send those kind of PKCS10
+ request. So in some sense, it is double-signed. So you see that here you have
+ example.com. This is the PKCS10, example.com. This is the public key of the
+ server. And this is signed by the private key of the server. Everything is
+ signed by the authorized key. So you are demonstrating that you are performing
+ a valid request. Now Let's Encrypt will return a certificate for example.com,
+ that public key. And this is signed by the certification authority because
+ this is the certificate. So this is the certificate. And this is the PKCS10
+ signed by the authorized key also. For certificate revocation. Again, the
+ client, not the server, signs a revocation request with the authorized private
+ key. The CSR verified the key certificate and automatically will put that
+ revocation information inside CRL or OCSP. So that is certificate revocation.
+ The client asks to revoke the certificate and the certificate is the one that
+ was created by the CA. And this request again is signed by the authorized key.
+ So you see, you must always use the authorized key to show that you have the
+ right to request that operation. This signature is verified. And if it is
+ correct, we send back an acknowledge. It has been revoked, but most important,
+ this revocation information is put forward to CRL and OCSP. So relying parties
+ in general will get the same information from when they ask to receive it.
+ Okay. And that's all for the moment. Have a nice weekend and we will meet next
+ week. (clicking) [BLANK_AUDIO]
