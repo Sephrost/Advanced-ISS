@@ -1443,5 +1443,595 @@ certificates or to the entire CRL, and are optional in both cases.
 
 
 \subsubsection{Extensions of CRLv2}
+In CRLv2, there is an extension for each entry of the CRL or a global
+for the whole CRL.
+
+\begin{itemize}
+    \item \textbf{crlEntryExtensions}:
+    \begin{itemize}
+        \item \textit{Reason Code}: Helps clarify the cause of
+          revocation (e.g., key compromise vs. key destruction).
+        \item \textit{Hold Instruction Code}: Marks a certificate as
+          temporarily suspended, not permanently revoked. Though
+          deprecated, because it forces the validators to keep a lot
+          of copies just for the suspended certificates. 
+        \item \textit{Invalidity Date}: Specifies when the certificate
+          became invalid.
+        \item \textit{Certificate Issuer}: Identifies the issuer in
+          case of an indirect CRL (i.e., the CRL is signed by a
+          revocation authority rather than the CA).
+    \end{itemize}
+    
+    \item \textbf{crlExtensions}:
+    \begin{itemize}
+        \item \textit{Authority Key Identifier}: Supplemental
+          information about the key used to sign the CRL.
+        \item \textit{Issuer Alternative Name}: Provides additional
+          issuer identification, supporting internet-based
+          identifiers.
+        \item \textit{CRL Number}: Tracks different versions of the CRL.
+        \item \textit{Delta CRL Indicator}: Specifies if the CRL is a
+          delta CRL (shows only differences from the base CRL). If
+          it's 0 it's not a delta CRL.
+        \item \textit{Issuing Distribution Point}: A pointer to the
+          location where the latest CRL can be found.
+    \end{itemize}
+\end{itemize}
+
 \subsubsection{Certificate revocation timeline}
+A key issue arises with the \textit{revocation date}(CRLv2) and
+\textit{invalidity date}(CRLv2 Extention), which are both included for
+revoked certificates. Although they might seem redundant, they serve
+to solve a problem.\\
+Take a look at figure \ref{fig:certificate revocation timeline}, we
+have a point in time (before the red part) in which everithing works
+fine and the CLR number $n$ has been issued. At a certain point the
+private key has been compromised, meaning that someone can impersonate
+someone else. A certificate revocation in requested after the user
+became aware of the issue, which would like to revoke the certificate
+with a prior date or time of the one that would be issued by the CA.
+Now the two dates come into play. The \textit{revocation date} is the 
+date certified by the CA, while the \textit{invalidity date} is the 
+date claimed by the ee.\\
+The risk is not yet over, because the CA, to issue a new certificate
+needs some time(the one in yellow), meaning that every request made 
+in that time slot will still get the old certificate back. For this
+reason any good relying party should wait to get the next issued CRL
+for any important operation, while also having a strong proof of the
+time when the key was used.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/x509 certificate
+  revocation timeline.png}
+  \label{fig:certificate revocation timeline}
+
+  \caption{Certificate revocation timeline}
+\end{figure}
 \subsubsection{Efficient management of CRLs}
+The major issue with CRLs is their size. They can become quite large
+over time, especially in large organizations. For this reason many
+solution have been proposed.\\
+One of those is to eliminate the revocation following the first CRL
+issued after the expiry date of the certificate, but required an
+archive in which all the past CRLs are stored.\\
+Another solution is to use the \textit{Delta CRL}, by publishing the
+base CRL and, from that one on, only the changes. This solution is
+good for the download time, but still doesn't solve the problem of the 
+storage.\\
+The best solution is probably the \textbf{partitioning of the CRLs}.
+For example, one CA could partiotion them in buch of 1000 certificates 
+each, and to download one you need to download the whole partition.\\
+In the end, a perfect solution does not exist.
+
+\subsection{OCSP}
+OCSP (as defined in RFC-6960) is an alternative to CRLs and is used to
+verify if a certificate is \textbf{valid} at the \textbf{current
+moment}. The protocol follows a client-server model where the server,
+known as the responder, returns one of three possible responses:
+\textit{good} (the certificate is valid), \textit{revoked} (the
+certificate has been revoked), or \textit{unknown} (the status of the
+certificate cannot be determined).
+
+Responses from the OCSP responder are digitally signed to prevent fake
+responses. Optionally, the responder may accept only signed requests
+from clients to provide authentication and restrict access.  
+\begin{boxH}
+  Keep in mind that, because the OCSP response is signed with the
+  certificate of the OCSP server, it is not possible to verify the 
+  signature using OCSP itself. 
+\end{boxH}
+
+As a result, OCSP responders usually operate with short-lived
+certificates, typically valid for 24 hours, requiring automation to
+manage frequent certificate requests.
+
+
+It is implemented as a binary protocol and does not have a 
+default port. The URI, provided in the Authority Information 
+Access, specifies the port on which the OCSP responder is 
+available. OCSP can be encapsulated in various transport protocols 
+such as HTTP, HTTPS, LDAP, and SMTP, which act as wrappers for the 
+binary data exchange.
+
+OCSP provides a real-time mechanism for checking the validity of 
+certificates, but managing the responder’s certificates, especially 
+with short lifetimes, often requires automation to ensure 
+continuous availability and security.
+
+\subsubsection{OCSP source of information}
+OSCP, to provide an answer, must have a source of information. This
+data can be aquired in different ways:
+\begin{itemize}
+  \item \textbf{download i form CRL repositorie}
+  \item \textbf{querying the CA database}
+  \item \textbf{ask another OSCP server(chaining)}
+\end{itemize}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/x509 OCSP query.png}
+  \label{fig:OCSP source of information}
+
+  \caption{OCSP source of information}
+\end{figure}
+
+\subsubsection{The protocol}
+Lets now go over how the protocol works.
+
+An OCSP \textbf{request} contains three parameters:
+\begin{itemize}
+  \item the \textbf{protocol version}
+  \item the \textbf{target certificate identifiers}
+  \item the \textbf{extension}, which are optionals
+\end{itemize}
+In the request, each certificate is identified by its certID:
+\begin{itemize}
+  \item hashAlgorithm (AlgorithmIdentifier)
+  \item issuerNameHash (hash of Issuer's DN)
+  \item issuerKeyHash (hash of Issuer's public key)
+  \item serialNumber (CertificateSerialNumber)
+\end{itemize}
+As you can see, in this section, no explicit information about the 
+certificate is provided, and this is done for privacy reasons.
+
+The response contains:
+\begin{itemize}
+    \item the version of the response syntax.
+    \item the name of the responder itself.
+    \item one response for each certificate in the request, allowing
+      the status of multiple certificates to be requested with one
+      query.
+    \item the extension, optional again
+    \item The OID of the signature algorithm for the signed response.
+    \item The signature, which is computed across the hash of the 
+          response.
+\end{itemize}
+The SingleResponse of each certificate contains:
+\begin{itemize}
+The certificate identifier
+\item the certificate status, and if revoked, the revocation time
+    and optionally, also the revocation reason.
+\item the thisUpdate field, which indicates the time of the response
+  to indicate which is the knowledge of the responder.
+\item the nextUpdate field, which is optional
+\end{itemize}
+
+\subsubsection{Models of OCSP responder}
+There are some types of models:
+\begin{itemize}
+  \item \textbf{CA Responder} (operated by the CA): the CA signs the
+    response with its own private key, which is quite risky because
+    the private key of the CA must be online, so it is rarely adopted.
+    It is possible to mitigate this problem by using a key dedicated
+    only to OCSP signing (remember ExtendedKeyUsage). Even if the OCSP
+    responder is operated by the CA, it can use different keys: one
+    for creating certificates and one to sign them. That goes also in
+    the direction of “Authority Key Identifier” because a CA could
+    have 3 keys: certificate sign, CRL sign, OCSP responder sign. This
+    because they are different functions and maybe different machines.
+    This last method is the most used one.
+  \item \textbf{Trusted responder}: the OCSP server signs the
+    responses with a pair key:cert independent of the CA for which it
+    is responding. The company responder is something like that. It
+    can be also a trusted third party (TTP) paid by the user.
+\item \textbf{Delegated responder}: the OCSP server signs the
+  responses with a pair key:cert which is different based on the CA
+  for which it is responding. It’s a TTP paid by the CA for who it is
+  responding. An external server is delegated to provide the answer on
+  the CA behalf by providing a pair key:cert where the cert contains
+  OSCP responder as extended key usage, and this will show that the
+  responder is delegated by the CA to provide OSCP answers. There
+  could be one responder that answers for multiple CAs.
+\end{itemize}
+As we have seen, OSCP is faster but for real time transactions they
+are quite the same. For delayed verifications we have problems because
+we need to store the information at the time of the signature.
+\subsubsection{Attacks against OCSP}
+There are two main attacks possible against OCSP.
+
+The first one is obviously a \textbf{replay attack}: one can ask for 
+the validity of a certificate, store the response and replay it when
+its not valid anymore by being faster then the OCSB server or stopping
+the real response via a denial of service. For this reason, optionally
+but encouraged, the client could send a
+\textbf{nonce}(\texttt{id-pkix-ocsp-nonce}) in its request to the
+server, which will be included in the response signed by the server.
+
+Another possible attack is a \textbf{denial of service} one,
+accomplished by flooding the OCSP server with many requests. One
+little detail is esclusive of an OCSP dos attack: requests have to be
+digitally signed, which takes a lot of time to verify for the server
+and makes the attack easier. The obvious defence is to remove the
+real-time signature and replace it with a pre-computed responses,
+which requires three timestamps:
+\begin{itemize}
+  \item thisUpdate – the response is based on revocation information
+    available now
+  \item nextUpdate – is again a promise.
+  \item producedAt – this answer was created in this moment.
+\end{itemize}
+These answers are created even if no question is made. Since we are
+creating the answer without waiting for the request there is no nonce.
+In order to protect from DoS attack a problem about the replay attack
+is created. What some companies do is to use pre-computed responses
+and try to make them fast enough (e.g, the response is valid only for
+30 minutes. Again there is the need to look at the policy).
+
+\section{Proof of possession(POP)}
+One of the issues we discussed in this chapter is the fact that, in
+the registration protocol that we explained, the identity of the ee is 
+verified by the CA, but the CA is not sure that the private key is 
+really in its possession.
+
+\begin{boxH}
+  Having a Proof of possession means that the certification authority
+  has a guarantee that the private key is in possession of the subject
+  requesting the certificate.
+\end{boxH}
+If a certification authority creates a certificate without proof of
+possession, then there are various attacks possible, meaning that it
+is imperative to achieve non-repudiation. On the other hand, POP is
+not critical for encryption.
+\subsection{Risks in the absence of POP}
+Let's consider the case in which we don't have proof of possession.
+
+Alice creates a private key and stores it locally then sends a public
+key and an identifier to the CA. The CA verifies Alice’s identity and
+creates a certificate associating Alice to that public key. Then
+there’s Bob who sends to the same CA the same public key of Alice
+(copied from another certificate) and his identifier. If the CA
+doesn’t perform POP, it will create another certificate with the same
+public key associated to Bob and here’s the problem. When Alice signs
+a document, it may happen that when someone is contesting that
+document, she could claim that Bob signed it, so there is no
+non-repudiation. Another case may be that Alice claims that she signed
+a document, but Bob may say it was him signing it. So, Alice can deny
+a signature or Bob can claim his signature. That means that POP for
+any case of non-repudiation and attribution, especially in legal
+matters, is a very important thing.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/x509 pop absence.png}
+  \label{fig:risks in the absence of POP}
+
+  \caption{Risks in the absence of POP}
+\end{figure}
+\subsubsection{Countermeasures}
+\begin{boxH}
+  The best solution to demostrate the POP is at signing time.
+\end{boxH}
+The signer inserts a reference to the certificate (e.g. a hash) among
+the signed information, thus the signature value is a function of the
+certificate too (depends on it).
+Unfortunately, most of the security protocols do not perform this kind
+of task. There are some custom protocols designed for protecting
+electronic documents that keep this into consideration.\\
+
+Another solution is quite simple: the CA issues a certificate only if
+it has the proof that the certificate requester owns the private key.
+POP with this method can be achieved in two methods:
+\begin{itemize}
+  \item Out-of-Band: the keys are not generated by the user, but are
+    generated by the CA or the array and delivered in a secure token,
+    for example a smart card. (This is what happens at politecnico).
+    The possession of the token is proof enough
+  \item In-Band/Online: the CA will keep a copy of all the private keys, but
+    the problem is how to protect them efficiently. This is better but
+    it requires a secure device or online methods. If the key is used
+    for both signature and encryption, then could be possible to use
+    the self-signed formats like PKCS\#10 or SPKAC.  When a request is
+    performed there must be also a signature (which means using a
+    private key), even if there is no certificate. the CA verifies the
+    signature before creating the certificate. If on the contrary, the
+    key that you are trying to certify is a purely encryption key,
+    then the requester cannot sign anything because that is not a
+    valid usage. In that case, you can use a challenge response
+    protocol. The CA sends a challenge to the requester, sending an
+    encrypted certificate with the public key of the requester. 
+\end{itemize}
+
+\section{PKCS\#10}
+
+Focusing on PKCS10, it represents one of the most commonly used
+formats today. It is specified in two RFCs: one detailing the basic
+syntax, and the other focusing on its application. Despite its status
+as an RFC, the format retains its original numbering and is also
+referred to as a Certificate Signing Request (CSR).
+
+A typical request includes:
+\begin{itemize}
+    \item The distinguished name
+    \item The public key
+    \item Several optional attributes
+\end{itemize}
+
+One of the notable optional attributes is the \textit{challenge
+password}. This serves as a one-time password that may be provided by a
+registration authority and can be utilized during both registration and
+revocation processes. Revocation, in particular, involves both
+administrative and technical aspects.
+
+For instance, if a smart card is lost while in Torino, the individual
+might visit the office to have their identity verified and initiate
+revocation. However, if the loss occurs while abroad, such as in Japan,
+physical presence at the office may not be feasible. In such
+situations, an online method for initiating revocation is necessary.
+
+While it may seem that simply making a phone call or using a website to
+request revocation would be straightforward, this approach could lead
+to unauthorized individuals blocking certificates. Therefore, when
+submitting a revocation request online, there must be some means of
+verifying that the request comes from the legitimate certificate owner.
+This is often done through the use of the challenge password, providing
+proof of ownership.
+
+In addition to these elements, the request may also contain further
+attributes and information pertaining to the requester.
+
+\subsection{PKCS\#10 format}
+The format of a PKCS\#10 request is shown in figure 
+\ref{fig:PKCS10 structure}. The data to be certified, made up of the
+DN, the public key and the optional attributes, is inserted at the
+beginning of the certificiate. We know that the certificate contains a
+signature generated by the private key of the requester, and this is
+computed over the data to be certified. The signature is then inserted
+at the end of the certificate. This is also a proof of possession.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/x509 pkcs request.png}
+  \label{fig:PKCS10 structure}
+
+  \caption{PKCS\#10 structure}
+\end{figure}
+
+\subsection{Time-stamping}
+In certificates, time handling is one of the most important aspects.
+For that purpose we use time-stamping.
+\begin{boxH}
+  A time-stamp is the proof of creation of certain data
+  \textbf{BEFORE} a certain point in time.
+\end{boxH}
+It demonstrates that data existed in that moment, but it doesn’t tell
+anything about when it was created, certainly was created before but
+it is not known when, and this is wrongly assumed by many people.
+
+Time-stamping is normally performed by a \textbf{time-stamping
+authority} (TSA) that uses a specific protocol and data format for its
+operation. The RFC-3161 is defining the request protocol (TSP,
+\textbf{Time-Stamp Protocol}) and the format of the proof (TST,
+Time-Stamp Token).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/x509 time stamping.png}
+  \label{fig:time-stamping}
+
+  \caption{the time-stamping process}
+\end{figure}
+
+The user has some data created at some point in time, which he wants
+to time-stamp to demonstrate that those data existed in that moment.
+The user computes a hash (it does not send data for privacy reason)
+and sends it to the TSA. The authority receives the digest and
+consults a very precise clock(timing is fundamental for this
+procedure) and will create the TST, a document that will contain the
+digest, the date and time and the digital signature of this data
+performed by the time-stamping authority.
+
+This is demonstrating that it exists in this moment, or at least that
+it was created before.\\
+
+As we just sait, the timestamp does not certify a moment in time, but
+it is possible to do so with a little trick. Assume that one wants to
+certify the time of a digital signature, with one timestamp $T_1$ we can
+only certify that it was applied before the timestamp, but we can 
+add another timestamp $T_2$ to certify that the signature was not
+applied before $T_1$ to narrow the time frame, meaning that $T_2 <
+\text{signature time} < T_1$. If this time frame is small enough, it
+can be very accurate.
+
+\section{Personal Security Environment (PSE)}
+Let's talk for a second about something else than the public key. Most
+people remember that the private key should be protected and be
+secret, of course, but they forget that also the certificate of the
+trusted root CA should be protected, not for confidentiality but for
+authenticity. After all, a common attack is to substitute the
+certificate of the trusted root CA with another one. As an additional
+security features, the private key should not be exportable, meaning
+that the device in which the private key is stored should be the one
+used to do the operations.\\
+
+For all those reasons, the protection mechanism are performed trough a 
+\textbf{Personal Security Environment (PSE)}.
+
+It is possible to implement PSE in software: typically it’s an
+encrypted file because it contains also the private key and typically
+also the root CAs. Root CAs would not require encryption but it is
+done anyway since there is also the private key.
+
+PSE can be also hardware. There are here two options: passive system
+which is only a memory (like a USB pen) so it is the same as a
+software PSE but hardware; active system which means that not only
+protects the keys but also performs cryptographic operations using
+those keys.
+\subsection{Cryptographic smart-card}
+Typically, the used device is a \textbf{cryptographic smart-card},
+which is a chip card with memory and autonomous cryptographic
+capacity. The keys need to be managed by a trusted system, if there is
+an encrypted file but then the CPU is used to perform the computation
+it means that the key must be put in clear in RAM for the CPU to be
+used and if there’s a malware then the key could be stolen. On the
+other hand, if there is a secure smart card, when the signature is
+needed the CPU is sending the hash and the smart card is returning the
+signature, because the smart card has the capability to perform the
+computation. That is a cryptographic smart card and the difference
+from a smart card for collecting points, for example, is that those
+are only memory card, unlike the Polito smart card which is a
+cryptographic smart-card.
+
+These cards have microcontrollers (CPU+IO), RAM and especially an
+E$^2$PROM and a cryptographic coprocessor. The E$^2$PROM is a
+protected permanent memory where is typically stored the private key,
+while the cryptographic coprocessor is the one that can use the key to
+perform the computation. The card will never give out the key but
+instead will perform the computation itself. Depending on the costs,
+it is possible to have various algorithms of various lengths, the keys
+can be generated on board or can be generated outside and then
+injected. Typically, the memory has not lot of space. Nowadays we’re
+moving from smart card to smartphones, which has both pros and cons.
+The smart-card is a dedicated device that is not affected by malwares,
+while smartphones are used also for other purposes and might be
+affected by viruses.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/x509 cryptographic smart
+  card.png}
+  \label{fig:smart-card}
+
+  \caption{Cryptographic smart-card}
+\end{figure}
+
+A smart card is typically used by an individual and is quite slow, it
+takes 1-2 seconds to perform one signature because of the small CPU
+inside that works at MHz speed and because the I/O interface is
+serial, one bit a time, so usually is like 9000 bits per second. This
+is good to perform just a signature, but for example, a server that
+needs to perform a signature needs an HSM.
+\subsection{Hardware Security Module (HSM)}
+A cryptographic accelerator, commonly known as a hardware security
+module (HSM), provides enhanced security by offering protected memory,
+where cryptographic keys are stored securely. Even if an attacker were
+to access the memory, the keys cannot be extracted. In addition to
+protected storage, these modules typically feature a cryptographic
+coprocessor, which is responsible for performing cryptographic
+operations. These are especially useful in servers for handling both
+asymmetric encryption (e.g., RSA) and symmetric encryption, thanks to
+their high-speed I/O capabilities.
+
+HSMs can come in various forms, such as PCI boards, external devices
+(e.g., USBI, SCSI), or network devices (e.g., netHSM). They are
+essential in environments that require strong cryptographic
+protections, such as electronic commerce, where TLS servers benefit
+greatly from having an HSM.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/x509 hw security
+  module.png}
+  \label{fig:HSM}
+
+  \caption{Hardware Security Module (HSM)}
+\end{figure}
+
+However, integrating HSMs into cloud infrastructure presents
+challenges. Cloud servers, being virtual, can be moved between
+physical nodes, but HSMs are tied to specific hardware. This raises
+the question of how to ensure secure key management for virtual
+servers. Different cloud providers have developed various solutions,
+such as virtualized HSMs, to address this issue and maintain the
+necessary security level in cloud environments.
+\subsection{ISO 7816-x standards for smart-card}
+The ISO 7816-x standards define the physical and logical
+characteristics of smart cards, there are many standars:
+\begin{enumerate}
+  \item Physical format
+  \item Contact characteristics
+  \item Electrical signals and protocols
+  \item Inter-industry commands
+  \item Application identifiers
+  \item Inter-industry data elements
+  \item SCQL (SC Query Language)
+  \item Inter-industry security commands
+  \item Commands for card management
+  \item Electronic signals and answer to reset for sync cards
+  \item Personal verification through biometric methods
+  \item Cards with contacts — USB electrical interface and operating procedures
+  \item Commands for application management in multi-application environment
+  \item Cryptographic information application
+\end{enumerate}
+The most important ones are 8, 11 and 14.
+
+\section{PKCS\#12}
+If it is wanted to implement PCI in software, one of the solutions is
+PKCS\#12, also called Security Bag. It is defined in RFC-7292 and it
+is used to transport/store cryptographic material among different
+applications and different devices. It contains a private key and one
+or more certificates, both personal and root ones. Normally, it is
+used to transport the digital identity of a user. In this way it is
+possible to move data from Google to Firefox, for example, exporting
+that key using PKCS\#12 and importing it in system that is wanted.
+Beware that the extension is “.p12” but for Microsoft the files are
+named “.pfx”, which has the same content with just a difference.
+Microsoft has preferred speed over security, so since PKCS\#12 has a
+certain number of rounds to make exhaustive attacks impossible, the
+Microsoft implementation is using the lowest possible number of rounds
+(more easily attackable). The suggest is to create PKCS\#12 with
+another system (Mozilla, Google) and then use it on Microsoft (for
+importing) but do not export from Microsoft because they will create a
+lower security version of the PKCS\#12.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/x509 pkcs12.png}
+  \label{fig:PKCS12}
+
+  \caption{PKCS\#12}
+\end{figure}
+
+
+\subsection{How-to display a X.509 certificate}
+The following are some useful commands to manage certificates with 
+OpenSSL:
+
+\begin{itemize}
+    \item \textbf{openssl asn1parse}
+        \begin{itemize}
+            \item Displays the actual ASN.1 structure in abstract 
+                  syntax notation.
+            \item May convert from the input format (PEM or DER) 
+                  to DER.
+        \end{itemize}
+    \item \textbf{openssl x509}
+        \begin{itemize}
+            \item Signs/verifies a certificate.
+            \item The \textbf{-text} option displays the content 
+                  of the certificate in text format.
+        \end{itemize}
+    \item \textbf{dumpasn1}
+        \begin{itemize}
+            \item It is not part of OpenSSL but displays the content 
+                  of the certificate in a similar way to \textbf{asn1parse}.
+        \end{itemize}
+\end{itemize}
+
+Note that when managing certificates, it is possible to have the 
+ASN.1 format of the certificate stored in two different ways:
+
+\begin{itemize}
+    \item \textbf{DER} (Distinguished Encoding Rules), which is a 
+          binary encoding of ASN.1 (a subset of \textbf{BER}, Basic 
+          Encoding Rules).
+    \item \textbf{PEM} is the armoured base64 encoding of DER.
+\end{itemize}
+
