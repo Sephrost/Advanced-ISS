@@ -1608,12 +1608,12 @@ The response contains:
 \end{itemize}
 The SingleResponse of each certificate contains:
 \begin{itemize}
-The certificate identifier
-\item the certificate status, and if revoked, the revocation time
+  \item The certificate identifier
+  \item the certificate status, and if revoked, the revocation time
     and optionally, also the revocation reason.
-\item the thisUpdate field, which indicates the time of the response
-  to indicate which is the knowledge of the responder.
-\item the nextUpdate field, which is optional
+  \item the thisUpdate field, which indicates the time of the response
+    to indicate which is the knowledge of the responder.
+  \item the nextUpdate field, which is optional
 \end{itemize}
 
 \subsubsection{Models of OCSP responder}
@@ -1634,14 +1634,14 @@ There are some types of models:
     responses with a pair key:cert independent of the CA for which it
     is responding. The company responder is something like that. It
     can be also a trusted third party (TTP) paid by the user.
-\item \textbf{Delegated responder}: the OCSP server signs the
-  responses with a pair key:cert which is different based on the CA
-  for which it is responding. It’s a TTP paid by the CA for who it is
-  responding. An external server is delegated to provide the answer on
-  the CA behalf by providing a pair key:cert where the cert contains
-  OSCP responder as extended key usage, and this will show that the
-  responder is delegated by the CA to provide OSCP answers. There
-  could be one responder that answers for multiple CAs.
+  \item \textbf{Delegated responder}: the OCSP server signs the
+    responses with a pair key:cert which is different based on the CA
+    for which it is responding. It’s a TTP paid by the CA for who it is
+    responding. An external server is delegated to provide the answer on
+    the CA behalf by providing a pair key:cert where the cert contains
+    OSCP responder as extended key usage, and this will show that the
+    responder is delegated by the CA to provide OSCP answers. There
+    could be one responder that answers for multiple CAs.
 \end{itemize}
 As we have seen, OSCP is faster but for real time transactions they
 are quite the same. For delayed verifications we have problems because
@@ -1761,9 +1761,9 @@ referred to as a Certificate Signing Request (CSR).
 
 A typical request includes:
 \begin{itemize}
-    \item The distinguished name
-    \item The public key
-    \item Several optional attributes
+  \item The distinguished name
+  \item The public key
+  \item Several optional attributes
 \end{itemize}
 
 One of the notable optional attributes is the \textit{challenge
@@ -1977,11 +1977,10 @@ The most important ones are 8, 11 and 14.
 If it is wanted to implement PCI in software, one of the solutions is
 PKCS\#12, also called Security Bag. It is defined in RFC-7292 and it
 is used to transport/store cryptographic material among different
-applications and different devices. It contains a private key and one
-or more certificates, both personal and root ones. Normally, it is
-used to transport the digital identity of a user. In this way it is
-possible to move data from Google to Firefox, for example, exporting
-that key using PKCS\#12 and importing it in system that is wanted.
+applications and different devices in a neutral way.\\
+It contains a private key and one or more certificates to transport
+the digital identity of a user. It's very commonly used, for example 
+by Java, Microsoft, Mozilla, Google, etc.\\ 
 Beware that the extension is “.p12” but for Microsoft the files are
 named “.pfx”, which has the same content with just a difference.
 Microsoft has preferred speed over security, so since PKCS\#12 has a
@@ -2005,33 +2004,721 @@ The following are some useful commands to manage certificates with
 OpenSSL:
 
 \begin{itemize}
-    \item \textbf{openssl asn1parse}
-        \begin{itemize}
-            \item Displays the actual ASN.1 structure in abstract 
-                  syntax notation.
-            \item May convert from the input format (PEM or DER) 
-                  to DER.
-        \end{itemize}
-    \item \textbf{openssl x509}
-        \begin{itemize}
-            \item Signs/verifies a certificate.
-            \item The \textbf{-text} option displays the content 
-                  of the certificate in text format.
-        \end{itemize}
-    \item \textbf{dumpasn1}
-        \begin{itemize}
-            \item It is not part of OpenSSL but displays the content 
-                  of the certificate in a similar way to \textbf{asn1parse}.
-        \end{itemize}
+  \item \textbf{openssl asn1parse}
+    \begin{itemize}
+      \item Displays the actual ASN.1 structure in abstract 
+        syntax notation.
+      \item May convert from the input format (PEM or DER) 
+        to DER.
+    \end{itemize}
+  \item \textbf{openssl x509}
+    \begin{itemize}
+      \item Signs/verifies a certificate.
+      \item The \textbf{-text} option displays the content 
+        of the certificate in text format.
+    \end{itemize}
+  \item \textbf{dumpasn1}
+    \begin{itemize}
+      \item It is not part of OpenSSL but displays the content 
+        of the certificate in a similar way to \textbf{asn1parse}.
+    \end{itemize}
 \end{itemize}
 
 Note that when managing certificates, it is possible to have the 
 ASN.1 format of the certificate stored in two different ways:
 
 \begin{itemize}
-    \item \textbf{DER} (Distinguished Encoding Rules), which is a 
-          binary encoding of ASN.1 (a subset of \textbf{BER}, Basic 
-          Encoding Rules).
-    \item \textbf{PEM} is the armoured base64 encoding of DER.
+  \item \textbf{DER} (Distinguished Encoding Rules), which is a 
+    binary encoding of ASN.1 (a subset of \textbf{BER}, Basic 
+    Encoding Rules).
+  \item \textbf{PEM} is the armoured base64 encoding of DER.
 \end{itemize}
 
+\section{PKI organization}
+PKI is a complex system that requires careful organization, in fact it
+must be organized in such a way that allows for verification of the 
+CRCA (Certificate Revocation Certificate Authority) trustworthiness.
+
+\subsection{Hierarchical PKI}
+
+A hierarchical Public Key Infrastructure (PKI) is structured as a tree
+rooted at a self-signed root Certificate Authority (CA). This root CA
+provides the foundation for trust within the hierarchy, but its
+self-signature introduces a degree of risk due to its central role as
+the root of trust.\\
+One of the primary advantages of a hierarchical PKI structure is the
+ease with which certification paths can be established between any two
+End Entities (EEs). By traversing up the tree to a common point, a
+certification path can be constructed, making this model highly
+compatible with applications that natively support it. Applications
+that use X.509 certificates are referred to as using PKI.\\
+However, due to a range of legal, commercial, and political
+challenges, there is no single global PKI hierarchy. Instead, the PKI
+ecosystem is better described as a forest, with multiple independent
+hierarchies or "trees." Consequently, systems often require several
+root CAs, each serving as a distinct root of trust and creating its
+own separate hierarchy.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/x509 hierarchical pki.png}
+  \label{fig:hierarchical PKI}
+
+  \caption{Hierarchical PKI}
+\end{figure}
+
+\subsection{Mesh PKI}
+
+Mesh PKI is a model designed to enable trust between entities in
+different PKI hierarchies. In a standard PKI setup, different
+hierarchies usually don't trust each other, which can be a hassle when
+entities from one hierarchy need to communicate securely with those in
+another. To solve this, Mesh PKI introduces the concept of a
+\textbf{cross-certificate}, a special X.509 certificate that allows
+two PKI hierarchies to trust each other either unilaterally or
+bilaterally. Essentially, a root CA in one hierarchy can issue a
+certificate for the root CA in another. For example, if the root of
+hierarchy H3 issues a certificate for H2, then H2's root has two
+certificates: one that's self-signed and another from H3. In this
+case, when someone in H2 wants to be trusted by H3, they’d ideally use
+the certificate issued by H3 instead of the self-signed one.\\
+This setup requires applications to handle cross-certificates and pick
+the right certificate chain based on who they’re communicating with.
+So, if an entity in H2 knows it's sending information to someone in
+H3, it can use the H3-issued certificate for smoother verification.
+However, if it doesn’t know the verifier’s hierarchy, it might need to
+include multiple certificates, hoping one matches the verifier’s trust
+path.\\
+Although Mesh PKI seems practical, it has some drawbacks. Applications
+generally don’t recognize cross-certificates automatically, so they
+may struggle to pick the correct chain. Plus, if there are a lot of
+hierarchies, achieving universal trust would require a ton of
+cross-certificates—about \(\frac{N(N-1)}{2}\), where \(N\) is the
+number of hierarchies. Due to these limitations, especially in
+applications, Mesh PKI is mostly theoretical and isn’t widely used.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/x509 mesh pki.png}
+  \label{fig:mesh PKI}
+
+  \caption{Mesh PKI}
+\end{figure}
+
+\subsection{Bridge PKI}
+
+In certain sectors, some organizations have opted for the bridge PKI
+model over a traditional forest of hierarchies. The bridge PKI
+approach introduces a special entity called the "bridge CA," which
+serves as a central hub to simplify management tasks—such as adding or
+removing a CA—and streamline trust transitivity across organizations.
+In this model, the bridge CA is trusted by all the root CAs and
+establishes cross-certification with each one. Importantly, the bridge
+CA doesn’t certify any other CA or EE; it only manages
+trust relationships between root CAs.\\
+Adding a new CA in this model is straightforward: only two
+certificates are needed, one issued by the bridge CA for the new CA
+(e.g., H3) and another by the new CA for the bridge. This arrangement
+enables bidirectional trust, allowing all users within the network to
+reach any other user. However, like with mesh PKI, standard
+applications often don’t recognize the bridge PKI model automatically,
+so modifications to applications may be required to manage these
+cross-certifications.\\
+A prominent example of bridge PKI in practice is the U.S. Federal PKI.
+In this setup, each department or local government manages its own
+hierarchy, and a federal bridge CA issues the necessary
+cross-certificates to link them. Additionally, some browsers, such as
+modified versions of Chrome and Edge, support this model to enable
+compatibility with the federal PKI. You can learn more about it at
+\url{https://fpki.idmanagement.gov/}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/x509 bridge pki.png}
+  \label{fig:bridge PKI}
+
+  \caption{Bridge PKI}
+\end{figure}
+
+\section*{Handling Public Key Certificates Issued Mistakenly or by
+Compromised CAs}
+
+Detecting fraudulently issued certificates for a domain is challenging
+for domain owners. Imagine managing servers for an institution like
+Politecnico di Torino. Under normal circumstances, a valid certificate
+ensures secure communication. However, if an attacker manages to
+obtain a certificate for this domain from a different CA, and this in
+some instances is unexpectdly easy ( think about the Common Law and
+its trust system), this fraudulent certificate would still appear
+legitimate, as no notification mechanism exists to alert the domain
+owner of unauthorized certificate issuance. This poses a risk, as
+clients connecting to a compromised or fake server using this
+certificate would see it as trustworthy. \\
+Browsers are also not well-equipped to detect these malicious
+certificates in real-time. Specifically, in a TLS connection, a
+browser may not flag:
+\begin{itemize}
+    \item Certificates mistakenly issued to an unauthorized entity
+    \item Certificates issued by a compromised CA
+\end{itemize}
+
+When such certificates are detected, revocation is required to alert
+browsers. However, this process takes time, leaving a window during
+which a browser may continue to trust a compromised certificate. This
+vulnerability can lead to severe attacks, such as:
+\begin{itemize}
+    \item Connections to a fake server masquerading as the legitimate
+      site
+    \item Man-in-the-middle (MITM) attacks, where an attacker
+      intercepts and manipulates data in transit
+\end{itemize}
+
+\subsection*{Some examples of mistakenly issued certificates}
+
+Instances of mistakenly issued certificates highlight the risks of
+unauthorized certificate issuance by certificate authorities (CAs).
+Notable cases include:
+
+\begin{enumerate}
+  \item \textbf{2011: DigiNotar Incident} \\
+    In July 2011, an intruder acquired a valid certificate for the domain \texttt{google.com} and its subdomains from the prominent Dutch Certificate Authority DigiNotar. This certificate may have been used maliciously for weeks before its detection on August 28, 2011, enabling large-scale MITM attacks against users in Iran. Some suspect the involvement of state actors aiming to spy on users of Google services. By setting up a fake website, attackers could intercept traffic to legitimate Google servers, facilitating covert surveillance.
+
+  \item \textbf{2011: Comodo Group Incident} \\
+    Also in 2011, the Comodo Group suffered a security breach that resulted in the issuance of nine fraudulent certificates for domains owned by Google, Yahoo!, Skype, and others. This attack underscored the vulnerability of even well-established CAs to unauthorized certificate issuance.
+
+  \item \textbf{2014: India CCA Incident} \\
+    In July 2014, a sub-CA of India CCA, specifically the Indian NIC (Network Information Center), misissued a substantial number of certificates. Given the incident's scope, with numerous unauthorized certificates generated, the sub-CA was fully revoked. Additionally, India CCA was restricted to issuing certificates solely for specific domains within India’s namespace. For example, it could no longer issue certificates for general domains ending in ``.in'' but only for designated domains within that scope.
+\end{enumerate}
+
+\section{HTTP Key Pinning (HPKP)}
+
+HTTP Key Pinning (HPKP) is a security feature designed to protect
+HTTPS websites from impersonation attacks by modifying the HTTP
+protocol. In this approach, a site specifies the digest of its own
+public key and/or one or more Certificate Authorities (CAs) in its
+chain, excluding the root CA.\\
+When a user agent (UA), typically a browser or an application,
+accesses the site, it caches the specified key(s) and subsequently
+refuses to connect to the site if it presents a different key. This
+mechanism employs a Trust On First Use (TOFU) technique, meaning that
+trust is established during the initial connection. However, if the
+first connection is made to a fake site, the UA may refuse to connect
+to the legitimate site afterward.
+
+While HPKP provides some protection, it also poses several risks and
+challenges:
+
+\begin{itemize}
+  \item Losing control of the key can lead to significant security
+    vulnerabilities. For instance, if a hardware security module
+    (HSM) is broken and the old private key is lost, no one will
+    trust the new private key.
+  \item Key updates can be problematic, especially if keys are
+    changed periodically. If the current key is lost without a
+    backup, it can lock users out from connecting to the server.
+  \item To mitigate these risks, it's advisable to always include at
+    least two keys: the current key and a backup key that is already
+    provided for future use.
+  \item A URI for reporting violations can be specified, allowing
+    the site to operate in either enforcement mode (reporting
+    refused connections) or report-only mode (notifying about
+    connections to servers with different keys).
+\end{itemize}
+
+The primary purpose of HPKP is to protect against fake websites
+attempting to impersonate legitimate sites using fraudulently obtained
+public key certificates (PKCs). However, due to its limitations and
+potential risks, HPKP has been deprecated in favor of Certificate
+Transparency, which offers a more robust mechanism for monitoring and
+validating the authenticity of certificates.
+
+\section{Certificate Transparency (CT)}
+
+Certificate Transparency (CT) is an open, global auditing and
+monitoring system designed to enhance the security of digital
+certificates. More information can be found at
+\url{https://www.certificate-transparency.org/}. CT is based on a
+public log of issued certificates, allowing domain owners, such as
+Politecnico Torino, to verify that no fraudulent certificates have
+been issued for their domains.
+
+In the past, certificates issued were only visible by scanning various
+repositories. Now, with CT, there is a publicly available log that
+enables domain owners to scan and check if any certificates have been
+issued for their domain. This transparency helps prevent issues
+arising from maliciously issued certificates.
+
+Originally proposed by Google, CT was later standardized by the IETF
+Public Notary Transparency Working Group. Key features of Certificate
+Transparency include:
+
+\begin{itemize}
+    \item The issuance and existence of TLS certificates are made open
+      to analysis by domain owners, Certificate Authorities (CAs), and
+      domain users.
+    \item Web clients, including browsers and apps, should only accept
+      certificates that are publicly logged in CT.
+    \item It should be impossible for a CA to issue a certificate for
+      a domain without it being publicly visible in the CT logs.
+\end{itemize}
+
+Implementing Certificate Transparency requires modifications in both
+browsers and apps. When a web client receives a certificate, it must:
+
+\begin{itemize}
+    \item Cryptographically validate the certificate chain.
+    \item Check the revocation status for each element in the chain.
+    \item Verify that the certificate is present in the public log.
+\end{itemize}
+
+These requirements necessitate changes in the issuance procedures of
+CAs to ensure that no certificate can be issued without being logged
+publicly, thereby mitigating the risk of fraudulent certificate
+issuance and enhancing overall web security.
+
+\begin{boxH}
+  The main idea of certificate transparence is to make impossible (or
+  at least very difficult) for a CA to issue a PKC for a domain
+  without making it visible to the domain owner.
+\end{boxH}
+It also aims provide an external system to the CA that lets any domain
+owner or CA determine if these fraudulent certificates have been
+created while also protecting the users from being given fraudulent 
+certificates.
+
+\subsection{CT – Log Servers}
+Log servers are the core of the Certificate Transparency (CT) system.
+They play a crucial role in maintaining a secure log of TLS
+certificates. Key characteristics of log servers include:
+
+\begin{itemize}
+    \item \textbf{Append-only}: Certificates can only be added to a
+      log; they cannot be deleted, modified, or retroactively
+      inserted. This design ensures the integrity of the log.
+    \item \textbf{Cryptographically assured}: Log servers utilize
+      cryptographic techniques to ensure that the logs are
+      tamper-proof.
+    \item \textbf{Merkle Tree Hashes}: These hashes are employed to
+      prevent tampering and misbehavior within the log, providing a
+      structured way to verify the integrity of the data.
+    \item \textbf{Publicly auditable}: Anyone can query a log using
+      HTTPS GET and POST requests. This feature allows users to verify
+      that the log is functioning correctly and to check that a
+      specific TLS certificate has been legitimately appended to it.
+\end{itemize}
+\subsubsection{CT – Log Signature and Support}
+
+Log entries must be digitally signed to ensure their integrity and
+authenticity. The specifications for log signatures include:
+
+\begin{itemize}
+  \item \textbf{Signature Algorithms:}
+    \begin{itemize}
+      \item For version 1.0: NIST P-256 or RSA-2048
+      \item For version 2.0: NIST P-256, Deterministic ECDSA, or
+        Ed25519
+    \end{itemize}
+
+  \item \textbf{Deterministic ECDSA:} 
+    \begin{itemize}
+      \item Based on RFC-6979, titled “Deterministic Usage of the DSA
+        and ECDSA.”
+      \item If the $K$ value used in the computation is not random,
+        the secret key ($SK$) can be computed from the signature,
+        which poses a problem particularly in embedded systems.
+    \end{itemize}
+
+  \item \textbf{CT Support in Browsers:}
+    \begin{itemize}
+      \item In Chrome/Chromium/Safari:
+        \begin{itemize}
+          \item 1 Signed Certificate Timestamp (SCT) from a currently
+            approved log.
+          \item Duration $<$ 180 days: Requires 2 SCTs from
+            once-approved logs.
+          \item Duration $>$ 180 days: Requires 3 SCTs from
+            once-approved logs.
+        \end{itemize}
+      \item In Firefox: CT support is pending implementation.
+    \end{itemize}
+\end{itemize}
+
+\subsection{CT – Operations}
+
+In the Certificate Transparency (CT) system, anyone can submit a
+certificate to a log server, although most submissions will typically
+come from Certificate Authorities (CAs) and server operators. Upon
+submission, the logger provides each submitter with a commitment to
+log the certificate within a specified time frame. This commitment is
+known as a Signed Certificate Timestamp (SCT), which accompanies the
+certificate throughout its lifetime, ensuring ongoing verification.
+
+The SCT, created by the log servers, is delivered alongside the
+certificate issued by the CA through various mechanisms. One common
+method is using an X.509v3 extension to include the SCT directly in
+the certificate. Alternatively, the SCT can be integrated as a TLS
+extension during the handshake process, or it can be stapled to the
+OCSP response, providing real-time validation of the certificate's
+status.
+
+\subsubsection{SCT via X.509v3 extension}
+Before issuing a certificate, the CA contacts the Log servers and sends a
+pre-certificate to it. Log server accepts the pre-certificate and returns the
+SCT by logging that the CA promised to issue a certificate for a web server.
+The SCT is ready, then the CA will attach the SCT to the pre-certificate as
+an X.509v3 extension, then it is signed and sent to the web server. From
+this moment, the web server when performing the TLS handshake will
+send its certificate together with the SCT. That means that the browser does
+not have to look for the SCT.
+\subsubsection{SCT via TLS extension}
+In this situation, CA issues a normal certificate to the server, and
+server operator (the owner of a website) submit it to the log server.
+Log server sends the SCT directly to the server operator and now the
+web server can deliver it to the client, this time separately, using the
+\texttt{signed\_certificate\_timestamp} TLS extension and it is delivered
+during the TLS handshake.
+\subsubsection{SCT via OCSP Stapling}
+In this case, the CA informs the Log server of the creation of the
+certificate and will get the log response, but this SCT is not part of
+the certificate, since it has already been issued to the web server.
+When the website will perform OCSP stapling (when it will require
+an OCSP response from the CA) the OCSP response from the CA will
+contain also the SCT. Now, the SCT will be transmitted to the
+browser as part of the OCSP response.
+They are different strategies that depend on the specific situation.
+There is no reason to use the TLS approach if the CAs is providing
+the service, for instance.
+
+% 3 subfigures in a row 
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.2\textwidth}
+    \includegraphics[width=\textwidth]{img/x509 stc v3.png}
+    \caption{SCT via X.509v3 extension}
+    \label{fig:ct x509}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{img/x509 sct tls.png}
+    \caption{SCT via TLS extension}
+    \label{fig:ct tls}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{img/x509 sct oscp.png}
+    \caption{SCT via OCSP Stapling}
+    \label{fig:ct ocsp}
+  \end{subfigure}
+  \caption{SCT delivery methods}
+  \label{fig:ct delivery}
+\end{figure}
+
+\subsection{Submitter and Monitors}
+
+In the Certificate Transparency (CT) ecosystem, submitters are
+responsible for submitting certificates, or partially completed
+certificates, to a log server, after which they receive a Signed
+Certificate Timestamp (SCT). This SCT serves as proof that the
+certificate has been logged. 
+
+On the other hand, Certificate Monitors, which are public or private
+services, play a critical role in maintaining the integrity of the
+system. These monitors, not previously detailed in the schemas we've
+discussed, actively watch for misbehaving logs or suspicious
+certificates. They periodically contact log servers to download the
+latest information and inspect new entries. Additionally, they
+maintain copies of the entire log and verify the consistency between
+the published revisions of the log. This vigilant monitoring helps
+identify potential issues, ensuring trust in the certificate issuance
+process.
+
+\subsection{ Submitter and Monitors}
+
+In the Certificate Transparency framework, submitters play a crucial
+role by submitting certificates, or partially completed certificates,
+to a log server in exchange for a Signed Certificate Timestamp (SCT).
+This SCT serves as proof that the certificate has been logged
+properly.
+
+Certificate Monitors, which may be public or private services, are
+responsible for ensuring the integrity of the system. These monitors
+actively watch for misbehaving logs or suspicious certificates. They
+periodically contact log servers to download the latest information
+and inspect new entries, while maintaining copies of the entire log.
+They verify the consistency between published revisions of the log.
+
+Auditors in this context are typically lightweight software components
+rather than individuals. They function by verifying the overall
+integrity of the logs, periodically checking log proofs. A log proof
+consists of a signed cryptographic hash of the log, ensuring that a
+particular certificate appears in the log. This is essential since the
+CT framework mandates that all certificates must be registered; a
+certificate that hasn't been registered is deemed suspect. 
+
+While TLS clients are not required to enforce certificate
+transparency, it is advisable for them to provide warnings when
+connecting to a site lacking transparency. For instance, a warning
+might state, "Beware, you are connecting to a website that cannot
+provide certificate transparency. Do you want to proceed?" If a TLS
+client, through an auditor, determines that a certificate is absent
+from the log, it can use the SCT from the log as evidence that the log
+has not behaved correctly. Furthermore, auditors and monitors exchange
+information about logs through a specific protocol known as a gossip
+protocol.
+
+\subsection{A Possible CT System Configuration}
+
+A Certificate Transparency (CT) system can be configured in various
+ways, but a possible configuration includes the following components:
+
+\begin{itemize}
+    \item[(A)] Monitors continuously observe logs for suspicious
+      certificates and verify that all logged certificates are
+      publicly visible.
+    \item[(B)] Certificate owners can query these monitors to ensure
+      that no illegitimate certificates have been logged for their
+      domain.
+    \item[(C)] Auditors are responsible for verifying that the logs
+      are functioning correctly and can also confirm that a particular
+      certificate has been logged.
+    \item[(D)] Monitors and auditors exchange information about logs
+      to detect any forked or branched logs, ensuring consistency
+      within the system.
+\end{itemize}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+  \centering
+  \includegraphics[width=0.4\textwidth]{img/x509 ct system.png}
+  \label{fig:ct system}
+
+  % \caption{CT System Configuration}
+\end{wrapfigure}
+
+While CT does not prescribe any specific configuration, a possible
+setup might involve the following steps:
+\begin{enumerate}
+  \item The Certificate Authority (CA) obtains an SCT from a log
+    server and incorporates it into the TLS certificate using an
+    X.509v3 extension.
+  \item The CA then issues the certificate, with the SCT attached, to
+    the server.
+  \item During the TLS handshake, the TLS client receives the TLS
+    certificate along with the SCT.
+  \item The TLS client validates the certificate and checks the log
+    signature on the SCT to confirm that the SCT was issued by a
+    legitimate log and corresponds to that certificate. If any
+    discrepancies are found, the TLS client may reject the
+    certificate.
+\end{enumerate}
+
+In another configuration, monitors may be operated by the CA, while
+auditors can be built directly into the browser. In this case, the
+browser periodically sends a batch of SCTs to its integrated auditing
+component, requesting verification of whether these SCTs have been
+legitimately added to a log. Auditors then asynchronously contact the
+logs to perform the necessary verification.
+
+Overall, monitors and auditors can operate as standalone entities,
+offering either paid or unpaid services to CAs and server operators.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+  \centering
+  \includegraphics[width=0.4\textwidth]{img/x509 ct system alt.png}
+  \label{fig:ct system alt}
+
+\end{wrapfigure}
+
+Another possible configuration is shown in figure \ref{fig:ct system
+alt} , and involves placing the monitor and auditor outside the
+Certification Authority  and the browser. In the previous setup, these
+components were integrated within the CA and the browser, which
+necessitates certain changes. However, this is not mandatory. By
+having the monitor and auditor operate as independent entities, we can
+minimize modifications to the existing certification authorities and
+browsers.
+
+\subsection{Current Log Servers}
+
+As of October 2023, the availability of log servers in the Certificate
+Transparency (CT) ecosystem is dependent on browser support. There are
+currently six valid log servers: CloudFlare, DigiCert, Google, Let’s
+Encrypt, Sectigo, and TrustAsia. For a complete list, visit
+\url{https://certificate.transparency.dev/logs/}.
+
+Additionally, there are ten public monitors that actively observe
+these logs: Censys, CloudFlare, crt.sh (by Sectigo), DigiCert,
+Entrust, Facebook, KEYTOS, Hardenize, sslmate, and ReportURI. It is
+worth noting that many of these monitors focus primarily on the
+domains they serve, such as CloudFlare, which monitors only its own
+domains. For more information on public monitors, refer to
+\url{https://certificate.transparency.dev/monitors/}.
+
+\section{ACME Protocol}
+
+The Automated Certificate Management Environment (ACME) protocol,
+detailed in RFC-8555 from March 2019, simplifies the management of
+public key certificates (PKCs) between End Entities (EEs) and
+Certificate Authorities (CAs). Created by the Internet Security
+Research Group (ISRG) for their CA service, Let’s Encrypt
+(\url{https://letsencrypt.org}), ACME aims to make it easier for
+everyone to adopt Transport Layer Security (TLS) without the cost.
+
+One major challenge in the world of certificates is the push for
+short-lived ones. Imagine needing to create a new certificate every 24
+hours or even more frequently—that sounds like a nightmare if done
+manually! This is where automation comes into play. With ACME, you can
+automatically request and issue PKCs without needing a person to
+intervene each time. This is especially useful since some folks
+advocate for certificates valid for as little as five minutes. If a
+key gets compromised, the risk is limited because the certificate
+isn’t valid for long.
+
+Here’s how it works: an ACME agent (or client) is installed on your
+web server. This client proves to the CA (Let’s Encrypt) that it
+controls a domain. Once the CA verifies this, it allows the client to
+request and install certificates as needed. The client can even be
+programmed to perform certificate operations at fixed intervals—no
+more manually generating individual PKCS\#10 requests or proving domain
+ownership every single time. You can also skip the hassle of
+downloading and configuring server certificates with ad-hoc
+procedures.
+
+There are over 100 open-source ACME clients available, making it very 
+easy to integrate this process into your workflow. Some popular ones
+include Certbot (from Let’s Encrypt), GetSSL, Posh-ACME, Caddy, and
+ACMESharp. For a full list, check out
+\url{https://letsencrypt.org/docs/client-options/}.
+
+By minimizing human involvement and keeping costs low, Let’s Encrypt
+makes it possible for anyone to get free certificates, helping to
+spread TLS adoption far and wide. With ACME handling the heavy
+lifting, securing your web presence has never been easier!
+
+If you want to use ACME for your own certificates, first of all, you
+must create an account at Let's Encrypt or the CA that supports ACME.
+Then you must perform domain validation once and for all, by
+demonstrating that you have the right to request certificate for
+a domain website. And then you will get a certificate and you will be able
+also to manage the revocation of certificates.
+
+\subsection{Account Creation}
+
+Account creation in the ACME system is a one-time process that must be
+completed before you can issue or revoke any certificates. During this
+phase, the ACME client generates an asymmetric key pair, which is used
+for both authentication and authorization purposes, although it's
+referred to as the authorized key pair.
+
+The authorized public key is linked to the account registered at Let’s
+Encrypt, while the authorized private key is used to sign your
+certificate requests. When you send a request to Let’s Encrypt,
+they'll validate it using your public key. 
+
+It's important to note that a single account can be associated with
+one or more domains. While you only need one domain to start, you can
+also manage certificates for additional domains, such as those
+belonging to the University of Torino, under the same account.
+
+\subsection{Domain Validation}
+
+Domain validation is the trickiest part of the ACME protocol because
+the client must prove control over the domain without human
+intervention. For example, if the client claims ownership of
+\texttt{Polito.IT}, the Certificate Authority (CA) will issue a
+challenge. The CA might say, "If you control \texttt{Polito.IT},
+please place this value in a specific path on your web server,"
+meaning the client must create a web page with that value.
+Alternatively, the client can create a DNS record with the value,
+providing two options for validation.
+
+In addition to placing the value, the client needs to sign a nonce
+with its authorized private key to associate the proof. After the
+client solves the challenge, it sends the signed nonce to the CA to
+initiate the validation process. The CA then downloads the response
+from the domain and verifies both the correctness and the signature.
+
+If everything checks out, the CA approves the domain ownership by
+recording it in a database, enabling the client to request
+certificates for that domain. For instance, if the client claims
+control of \texttt{example.com}, Let's Encrypt might challenge,
+"Please place the value \texttt{ED98} on the page at
+\texttt{https://example.com/80303}." The page should contain only that
+value.
+
+The client, using its private key, signs the nonce and sends it
+alongside the value to the CA. Once the administrator places
+\texttt{ED98} on the specified page, Let's Encrypt verifies the
+response. This process links the client's public key to
+\texttt{example.com} in the CA's database, allowing it to make future
+requests for certificates. Notably, the private key used to sign the
+message is that of the client software, not the web server. The client
+acts like a chatbot, managing certificate requests for domains it
+controls, such as \texttt{example.com}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/ACME domain
+  validation.png}
+  \label{fig:acme}
+
+  \caption{ACME Domain Validation}
+\end{figure}
+
+\subsection{Certificate Request and Issuing}
+
+Once the ACME client has been registered, it can use the authorized
+key pair to request, renew, and revoke certificates for its domain.
+The client constructs a PKCS\#10 Certificate Signing Request (CSR)
+automatically, so there's no need for manual intervention. It submits
+this request to the Certificate Authority (CA) to issue a certificate
+containing a specified public key. 
+
+In this process, the client takes the public key for a server and
+includes it in the CSR. The CSR includes a signature generated by the
+private key (SK) corresponding to the public key (PK) included in the
+CSR. Essentially, this means the request is double-signed: it is
+signed by the server’s private key and also signed with the authorized
+private key associated with the domain. 
+
+For example, when requesting a certificate for \texttt{example.com},
+the PKCS\#10 structure remains unchanged, but the request is validated
+by the client’s authorized key, demonstrating that it is a legitimate
+request. Once the CA (e.g., Let’s Encrypt) verifies the request, it
+will return a signed certificate for \texttt{example.com} that
+corresponds to the specified public key, completing the issuance
+process.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/ACME certificate request
+  and issuing.png}
+  \label{fig:acme cert}
+
+  \caption{ACME Certificate Request and Issuing}
+\end{figure}
+
+\subsection{Certificate Revocation}
+
+For certificate revocation, it is the ACME client, not the server,
+that signs a revocation request using the authorized private key (SK)
+associated with the corresponding domain. This ensures that the client
+has the right to initiate the revocation process. The Certificate
+Authority verifies the signature of the request to confirm the
+authorization.
+
+Once verified, the CA revokes the specified certificate, which was
+initially issued by the CA. This revocation information is then
+included in the appropriate revocation mechanisms, such as the
+Certificate Revocation List and/or the OCSP. Consequently, when
+relying parties check the status of the certificate, they will receive
+accurate and up-to-date information regarding its validity. The use of
+the authorized key for this request is crucial, as it demonstrates the
+client's entitlement to perform the operation, ensuring that the
+revocation process is secure and properly managed.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/ACME certificate revocation.png}
+  \label{fig:acme rev}
+
+  \caption{ACME Certificate Revocation}
+\end{figure}
