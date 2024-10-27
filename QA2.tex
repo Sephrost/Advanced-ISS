@@ -1,0 +1,223 @@
+\section{Question and Answers}
+\subsection*{Question 1}
+What is the primary function of a public key certificate (PKC)?
+\begin{itemize}
+  \incorrect to encrypt data directly using a public key
+  \correct to securely bind a public key to specific attributes
+  \incorrect to store both the public and private keys together
+  \incorrect to create a digital signature for verifying an identity
+\end{itemize}
+\subsection*{Question 2}
+What does the phrase "securely bind" implies in the context of a PKC?
+\begin{itemize}
+  \incorrect the process of encrypting a message using the public key
+  \correct the act of using a signature by an authority to make a secure and verifiable link between a public key, its owner and some related attributes
+  \incorrect creating a hash of the public key for faster computation
+  \incorrect Using the public key to establish a secure channel between two
+  entities
+\end{itemize}
+\subsection*{Question 3}
+What are redguired steps to check the integrity of a public key certificate?
+\begin{itemize}
+  \incorrect hashing the private key
+  \correct  applying a digital signature to the certificate
+  \correct  verifying the signature of the Certificate Authority 
+  \incorrect  encrypting the certificate with the private key
+\end{itemize}
+\subsection*{Question 4}
+You are working in a financial institution. A customer claims they did not make
+a large withdrawal from their account. However, the transaction was processed
+using their personal bank login and was accompanied by a digital signature
+generated using their private key. The claim from the customer is acceptable?
+\begin{itemize}
+  \correct Yes, since the digital signature provides non-repudiation 
+  \incorrect No, it does not prove anything
+  \incorrect Yes, but only if additional verification (e.g., SMS) is available
+  \incorrect No, because the private key could have been compromised
+\end{itemize}
+\subsection*{Question 5}
+An employee in a company sends an important contract via email to a client,
+attaching a (plain) PDF file in an encrypted S/MIME message (using the trusted
+digital certificate of the client). Later, the client denies having correctly
+received the contract, claiming the email could have been forged. Is it a
+correct claim?
+\begin{itemize}
+  \incorrect No, because the email was sent from the employee's account
+  \incorrect No, because the email contains the employee's contact information.
+  \incorrect No, because S/MIME format guarantees non-repudiation 
+  \correct None of the above
+\end{itemize}
+\subsection*{Question 6}
+What is the roles of the Registration Authority (RA)? 
+\begin{itemize}
+  \correct verifying claimed identity and attributes
+  \incorrect issuing Public Key Certificates (PKC) directly
+  \correct authorizing the issuing of certificates
+  \incorrect authorizing the revocation of PKCs
+  \incorrect revoking certificates in a timely manner
+  \incorrect publishing certificates and their status
+  \incorrect providing OCSP responses for certificate validation
+\end{itemize}
+
+\subsection*{Question 7}
+Which of the following tasks is handled by the Validation Authority (VA)?
+\begin{itemize}
+  \incorrect generating Public Key Certificates (PKC)
+  \correct providing services to verify the status of PKCs
+  \correct providing Certificate Revocation Lists download service 
+  \incorrect providing signing certificates service to validate them
+\end{itemize}
+\subsection*{Question 8}
+What are possible uses of the \texttt{TBSCertificate} field in the certificate
+structure?
+\begin{itemize}
+  \incorrect Check the version of the certificate 
+  \incorrect store the actual signature value
+  \incorrect hold critical certificate fields such as the subject, validity,
+  and public key
+  \incorrect ldentify the algorithm used to verify the certificate's signature
+\end{itemize}
+
+\subsection*{Question 9}
+What information is typically contained in the validity field of a certificate?
+\begin{itemize}
+  \correct the dates between which the certificate is valid 
+  \incorrect the algorithm used to verify the certificate
+  \incorrect the public key information of the subject
+  \incorrect the revocation status of the certificate
+\end{itemize}
+\subsection*{Question 10}
+The following process is a typical certificate emission workflow (justify if yes or no)?
+\begin{enumerate}
+  \item the certificate owner (CO) asks for a certificate to the
+  Certification Authority (CA)
+  \item the CA re-directs the CO to the relevant Registration Authority
+  (RA) to prove and register CO identity and attributes
+  \item the CA asks for the authorization to the RA to emit a certificate
+  for the CO
+  \item the CA generates a public/private key pair 
+  \item the CA emits, signs and sends the CO certificate to the CO
+  \item the CA securely send (typically OOB, e.g. in person meeting) the
+  private key to the CO
+\end{enumerate}
+\subsection*{Question 11}
+Which of the following directives can typically be part of a Certificate
+Policy?
+\begin{itemize}
+  \correct CAs shall implement controls to prevent unauthorized adding, modifying
+    or deleting of repository entries
+  \correct the registration and/or Issuance process SHALL involve procedures in
+    which the Applicant demonstrates possession of the Private Key
+  \correct revoked or Expired Certificates SHALL reguire a new enrollment.
+    Applicants MUST submit a new Certificate Reaguest and be subject to the
+    same ldentification and Authentication reguirements as first-time
+    Applicants
+  \incorrect Distinguished names SHALL identify both the entity (i.e. person,
+    organization, device, or object) that is the subject of the Certificate and
+    the entity that is the issuer of the Certificate`
+\end{itemize}
+\subsection*{Question 12}
+Which of the following directives may be part of a Certification Practice Statement (CPS)?
+\begin{itemize}
+  \correct If the subject:countryName field is present, then the CA SHALL verify the country associated with the Subject using any method previously adopted to verify identity
+  \correct The CA SHALL annually review their CP and CPS
+  \correct Distinguished names SHALL identify both the entity (i.e. person, organization, device, or object) that is the subject of the Certificate and the entity that is fhe issuer of the Certificate
+  \correct the CA SHALL maintain an internal database of all previously revoked Certificates and previously rejected certificate reguests due to suspected phishing or other fraudulent usage or concerns
+  % they are all true
+\end{itemize}
+
+\subsection*{Question 13}
+Which field in an X.509 certificate is used in the process of checking the revocation status of a certificate?
+\begin{itemize}
+  \incorrect Subject Alternative Name (SAN) 
+  \correct Authority Information Access (AlA) 
+  \correct CRL Distribution Points (CDP) 
+  \incorrect Basic Constraints
+\end{itemize}
+
+\subsection*{Question 14}
+
+\subsection*{Question 15}
+which of the following is NOT a valud KeyUsage for the certificate?
+\begin{itemize}
+  \incorrect DigitalSignature
+  \incorrect NonRepudiation 
+  \incorrect DataEncipherment 
+  \correct ServerAuthentication
+\end{itemize}
+\subsection*{Question 16}
+Consider the following scenario: a company has multiple domains for its website
+(e.g., example.com, example.net, example.org). and the the need to issue a
+certificate covering all these domains. Which extension(s) from the following
+ones it reguires to accomplish its reguirement?
+\begin{itemize}
+  \incorrect keyUsage
+  \correct subjectAliName 
+  \incorrect authoritylnfoAccess 
+  \incorrect crlDistributionPoints
+\end{itemize}
+\subsection*{Question 17}
+An end user want to secure the exchange of electronic mail. Any of the following purposes would likely be included in the Extended Key Usage extension in a certificate suitable to the end user goal
+\begin{itemize}
+  \incorrect codeSigning
+  \incorrect serverAuthentication 
+  \incorrect clientAuthentication 
+  \correct emailProtection 
+  \incorrect none of the above
+\end{itemize}
+\subsection*{Question 18}
+Youre connecting to an online banking service, and you want to ensure that the
+connection is secure. You correctly verify the signature and notice that the
+certificate presented has not yet expired.Thus, is it automatically considered
+valid?
+\begin{itemize}
+  \incorrect Yes, because in case of revocation the validity dates inside the
+  certificate would be updated
+  \incorrect Yes, expiration is the only thing that determines validity 
+  \incorrect No, validity is determined solely by the root certificate 
+  \correct None of the above
+\end{itemize}
+\subsection*{Question 19}
+Consider an e-commerce company deploys TLS certificates on its web server to
+secure customer transactions. It rely on OCSP for real-time verification of the
+certificate status. A customer, storing the valid certificate of the CA that
+issued the server certificate performs the following steps
+\begin{itemize}
+  \correct visits the e-commerce site, and a TLS handshake is initiated
+  \incorrect the server presents its TLS certificate, the client check the
+  signature validity
+  \incorrect the browser makes an OCSP reguest to confirm the status of the
+  certificate
+  \incorrect the OCSP responder provides a status response indicating the
+  certificate is valid
+  \correct the customer (client) continues the transaction
+\end{itemize}
+Can you see any issue here?
+\subsection*{Question 20}
+If you notice that the version number inside TBSCertList is v3 you can conclude that
+\begin{itemize}
+  \incorrect you are analysing a possibly valid X.509v3 certificate 
+  \incorrect the rest of the TBSCertList contains CRL extensions
+  \incorrect You are using an up-to-date (corresponding to x509v3 certificate) version of the CRL format
+  \correct none of the above
+\end{itemize}
+
+\subsection*{Question 22}
+Which telas in tne TBSCertList structure indicate wnen tne CRL was last updated and when the next update is expected?
+\begin{itemize}
+  \incorrect signatureAlgorithm and signatureValue
+  \incorrect issuerand signature
+  \correct thisUpdate and nextUpdate % correct
+  \incorrect issuelTime and revocationDate
+  \incorrect None (since there is not a filed for the next update)
+\end{itemize}
+
+\subsection*{Question 22}
+What is a key risk associated with the use of pre-computed OCSP responses?
+\begin{itemize}
+  \incorrect the server load increases significantly replay attacks get more likely
+  \incorrect DoS attacks get more likely time-based 
+  \incorrect DoS attacks get more likely
+  \incorrect OCSP responses can be faked by the (malicious) server owning the certifcate
+  \incorrect pre-computed OCSP responses lead to privacy concerns due to client data exposure
+\end{itemize}
