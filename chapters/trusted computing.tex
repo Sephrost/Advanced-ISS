@@ -1,20 +1,25 @@
 \chapter{Trusted computing}
-Nowadays, the modern computing system is made up of many components
-highly distributed.
+Nowadays, the modern computing system is made up of many highly
+distributed components.
 
 Let's take into consideration the typical distributed infrastructure,
 it's made up of a cloud for storage and computation, which communicate
-with other devices outside its cluster, such as IoT devices, with edge
-routers. Securing all those components it's a real challenge, in the
-past we had physical components, nowadays the trend is softwarization 
-of the components on top of a generic hardware, with "tools" such as
-SDN, NVF, etc.
+with other devices outside its cluster, such as IoT devices, via edge
+routers. Securing all those components it's a real challenge, because
+each of those devices could be different, as well as their
+communication technologies(Wired, Wireless, etc.). 
+
+While in the past we had physical components, nowadays the trend is
+\textbf{softwarization of the components} on top of a generic
+commodity hardware, with "tools" such as SDN, NVF, etc.
 \begin{boxH}
-  As a consequence, systems more flexible but more vulnerable.
+  As a consequence, systems \textbf{more flexible} but \textbf{more
+  vulnerable}.
 \end{boxH}
 After all, the larger the software base, the higher the probability of
-bugs, especially in the software more than in the hardware, without
-even considering the issue of software updates.
+bugs, especially in the software, but hardware bugs are to be taken 
+into consideration as well. All this without even considering the
+issue of software updates
 
 One of the main issues nowadays is \textbf{trustworthiness}, that being if
 something behaves exactly as expected. However, there are several problems
@@ -30,12 +35,14 @@ related to trust in this context:
 \end{itemize}
 
 If possible, it is recommended to protect the infrastructure by
-avoiding or blocking attacks, which is a basically impossible task. If
-protection is not feasible, one should do the next best thing, that
-being monitoring the state of the system for early detection and
-reaction to attacks. This can be by providing \textbf{integrity
-verification}, meaning that the system has not been tampered with,
-both of the software component as well as their configuration.
+avoiding or blocking all the possible attacks, which is a basically
+impossible task. If protection is not feasible, one should do the next
+best thing, that being monitoring the state of the system for early
+detection and reaction to attacks. IDS can help to this end, but they
+can be eluded by the attacker, so the best solution is to provide 
+\textbf{integrity verification}, meaning that the system has not been
+tampered with, both of the software component as well as their
+configuration.
 
 Integrity concerns can be categorized into hardware and 
 software aspects:
@@ -44,7 +51,8 @@ software aspects:
   \item \textbf{Hardware:}
     \begin{itemize}
       \item Am I communicating with the correct (intended) node?
-      \item Does it host the expected (physical) components?
+      \item Does it host the expected (physical) components? For this
+        reason, each contry is developing their own components
     \end{itemize}
   \item \textbf{Software:}
     \begin{itemize}
@@ -55,39 +63,53 @@ software aspects:
     \end{itemize}
 \end{itemize}
 
+As we just explained, trust is a big issue in modern computing, and 
+in order to answer all those questions, we need to consider some
+solutions.
 \section{Trusted Execution Environment (TEE)}
-Let's give again a definition of what trust is.
+Systems are complex, and its difficult to trust every single
+component, but we can create a small environment that we can trust.
+But first, let's give again a definition of what trust is.
 \begin{boxH}
-  Something is trusted is it is expected to behave in a certain way
-  under any condition, meaning that you rely upon to not compromise
-  your security.
+  Something sor someone is \textbf{trusted} if one can \textbf{rely}
+  upon to \textbf{not compromise your security}, without any
+  guarantees.
 \end{boxH}
 
-Similarly, something is trustworthy if it will not compromise your
-security, thinking about whether it is safe to use something or not.
+Similarly, something is \textbf{trustworthy} if it \textbf{will not
+compromise your security}, thinking about whether it is safe to use
+something or not.
 
 If something is trustworthy it is trusted, but not vice versa.
 
 Trusted Execution Environment is what you may choose to rely upon to
-execute sensitive tasks, hoping its a trustworthy tool. TEE were
-originally developer for smartphones, but nowadays they are used in 
-a variety of devices.
+execute sensitive tasks, which are called \textbf{Trusted
+Applications} (TA), and which one hope to be trustworthy. 
+
+TEE were originally developer for smartphones, which made them
+necessary due to the high number of apps running on the same
+environment, some of those with critical data(CC numbers, etc.), but
+nowadays they are used in a variety of devices.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{img/Tee and REE.png}
+  \label{fig:tee and ree}
   \caption{Trusted Execution Environment and Rich Execution
   Environment}
 \end{figure}
 
-As you can see from figure, the TEE is a separate environment from the
+As you can see from figure \ref{fig:tee and ree}, one one device can
+run different enviroments at the same time On of those is a
 \textbf{Rich Execution Environment} (REE), which is the normal
-environment in which you run your applications. The TEE is a separate
-environment isolated from the rest of the system to run critical
-tasks, which an communicate with the rest of the system only through a
-well-defined interface. Notice that the this is one of the most
-critical parts of the system, as it is the only part that communicate
-with the untrusted platform.
+environment in which one runs any applications or OS. On the other
+hand, the TEE is a separate environment isolated from the rest of the
+system to run critical tasks and has access to some trusted ankles
+like the hwardware keys, the secure storage, peripherals, etc.
+TEE can only run on some specific hardware platform made up of trusted
+components(not trustworthy, but trusted): the trusted drivers, the
+core framework(the execution core) and a set of API accessible only
+from trusted applications, the TEE communication agent 
 
 In modern computing, TEE has become an important subject, especially
 in the field of "confidential computing," which is actively promoted
@@ -128,34 +150,59 @@ The security principles of a Trusted Execution Environment
 \end{itemize}
 
 \section{Some TEE Implementations}
-\subsection{Intel IPT}
+\subsection{Intel Identity Protection Technology (Intel IPT)}
 
 Intel Identity Protection Technology (Intel IPT) is a security feature
-that operates a Java applet on a separate CPU. The Management Engine,
-which is integral to Intel IPT and rund on separated hardware, is part
-of the chipset and is thus tied directly to the physical hardware.
-Some sample applications of Intel IPT include key generation and
-storage, which is integrated with the Windows Cryptographic API. It
-also supports One-Time Password (OTP) generation, such as through
-VASCO's MYDIGIPASS.COM, and secure PIN entry. This secure PIN entry is
-made possible because the chipset is responsible for managing video
-output, ensuring protection during input.
+that operates on a dual-CPU system within Intel processors. This
+design leverages the Management Engine (ME), a dedicated CPU that
+exists alongside the primary CPU in Intel processors. While the
+primary CPU executes user tasks, the ME, integrated into the chipset,
+can perform various management and security functions independently.
+Typically, the ME is unused in consumer devices, but in corporate
+environments, it can be activated even when the device is off via
+features like wake-on-LAN, allowing remote management over Wi-Fi or
+Ethernet.
+
+Intel IPT uses the ME to run a \textbf{Java applet} isolated from the
+main CPU, offering enhanced security for tasks such as cryptographic
+key generation and storage, which integrates seamlessly with the
+Windows Cryptographic API. Additionally, Intel IPT supports secure
+One-Time Password (OTP) generation, as seen in applications like
+VASCO's MYDIGIPASS.COM, which use the ME to securely store secrets for
+OTPs. Another significant feature is secure PIN entry, where the
+chipset manages video output to ensure the security of PIN input by
+isolating it from the main system.
+
+The ME's integration into the hardware, running on separate CPU
+architecture, exemplifies a physically separated Trusted Execution
+Environment (TEE), offering distinct security advantages by isolating
+critical operations from the main processing tasks.
 
 \subsection{ARM TrustZone}
 
-ARM TrustZone extends the CPU buses with an additional "33rd bit,"
-which signals whether the processor is in secure mode. This signal is
-also made available outside the CPU, enabling the use of secure
-peripherals and secure RAM. Potentially, an indicator could show which
-mode the CPU is currently operating in. TrustZone is an open and
-documented system, though it supports only one secure enclave at a
-time. ARM is actively working on introducing a third mode to enhance
-this capability with attestation features.
+ARM TrustZone is a Trusted Execution Environment (TEE) implemented in
+certain ARM CPUs, designed to provide a secure and a normal mode
+within the same processor. To achieve this, TrustZone extends the
+CPU's bus with an additional "33rd bit" that signals whether the
+processor is in secure or normal mode. This signal is exposed outside
+the CPU, which enables secure peripherals and secure RAM by allowing
+the system designer to control access to memory and devices based on
+the security mode.
+
+While the TrustZone framework is open and well-documented, it has some
+limitations. TrustZone can only support a single secure enclave at a
+time, and this security relies on software-based separation between
+applications rather than on distinct hardware boundaries, making it
+somewhat less secure than fully hardware-isolated environments. ARM is
+actively working to expand TrustZone by introducing a third
+operational mode to accommodate specific features like attestation.
+However, adding this capability presents challenges due to backward
+compatibility concerns, as ARM aims to preserve the success of its
+platform without disrupting existing applications.
 
 \subsection{Trustonic}
 
-TrustZone, while innovative, has limitations, particularly 
-due to its restriction of supporting only one secure enclave. 
+The main issue with TrustZone is that it only one secure enclave. 
 To address this issue, Gemalto developed the Trusted Foundations 
 system, and Giesecke+Devrient (G+D) created MobiCore. 
 Both solutions effectively divide the single secure enclave into 

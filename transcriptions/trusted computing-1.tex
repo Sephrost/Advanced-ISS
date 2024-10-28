@@ -1,0 +1,579 @@
+ - Okay, so welcome back. First of all, we finish the analysis of SSH that we
+ stopped at some lectures ago. And we have discussed the SSH in general. Since
+ SSH is a tool which is quite frequently used for system management, it is a
+ good target for attackers because that is usually permitted even across
+ firewalls to permit remote management. So there are several attacks against
+ SSH, not the protocol itself, which is quite secure, but against
+ implementations. And one of the first that we are looking at is Botan Spy.
+ Botan Spy is probably, because there is no confirmation, a tool by CIA as
+ based on the information provided by Wikileaks on July 6, 2007 as part of the
+ notification of Vault 7 released by Wikileaks. So what is Botan Spy? Botan Spy
+ is a malware targeting X-Shell. X-Shell is a Windows SSH client used in USA
+ mostly and South Korea. In which way is the attack working? The attack is
+ working injecting a malicious DLL into a process, into SSH shell process. The
+ purpose is to steal username and password for those connections that are
+ authenticated with password or username, private key file name and passphrase
+ for public keys authenticated connection. So the purpose is to be able to
+ impersonate a valid user. It is designed, this tool, to work within a more
+ general tool quite interesting, which is named Shell Term, which creates a
+ cover channel with a common control server and offers generic DLL injection
+ capabilities. It is a tool that is difficult to detect by malware because it
+ does not write anything on the disk apart from the DLL, but the DLL is not
+ stored on disk. You remember that the DLL, dynamic link library, is something
+ which is executed in memory. So this attack is difficult to detect because
+ it's not storing a new DLL on disk, which could be detected, but it's putting
+ directly in the memory, in the RAM, random access memory, the new DLL, and
+ then it is joining the process with that specific DLL. And for the rest, there
+ is direct communication with the common control center. No data written to
+ disk, hence, very difficult to detect for any malware. And optionally use it
+ also offline. Let's imagine that the system is not connected to the internet
+ when that command is executed. In that case, it is more detectable because it
+ can write collected data to disk. However, those data are encrypted via AS,
+ and later when the system will go back to an internet connection, those
+ information will be transferred to the command and control center. Okay, when
+ I'm presenting these attacks, it's not just to say, okay, oh, there is this
+ possibility, but it is about understanding how we can defend against these
+ attacks. What's the problem here, can you tell me? Because remember, every
+ time there is a successful attack, we study the attack to understanding how to
+ avoid the same mistake. So, can we protect against this CIA attack or not? Or
+ is 100\% successful? (silence) Which is the weakness being exploited? Because I
+ don't see any zero day vulnerability. I see no programming error. (silence)
+ It's not really an external source because here it is not specified, but this
+ shell term in some way is executed. So, we assume that there is some
+ possibility about that. Maybe, but that may be part of some malware for the
+ specific attack, you are right, you're right. If we don't permit execution or
+ anything strange, we are safe, but that is a generic thing. For this specific
+ attack against X-Shell and SSH, what is the problem which is exploit?
+ (silence) No, it's not exploiting that, that is the result. Once this malware
+ has hit the machine, if you use password, it will copy the password, but also
+ if you use strong authentication, it will copy your private key file and your
+ passphrase. So, the purpose is stealing your credentials, either
+ password-based or public key-based. But what is the error? There is one huge
+ error here. (silence) That is one possibility, but it's not the error. That is
+ the way in which the data are exfiltrated. And since we are talking about CIA,
+ maybe the CIA is hiding the command and control on Google, and maybe you
+ permit access to Google through your firewall. So, that is the way in which it
+ is used, the export of the data. But the way in which you collect the data.
+ Yeah, so, what can you do to avoid that? (silence) It's a problem of the
+ developer. Because when you develop any application, you have the choice. Are
+ you using static or shared libraries? If you use a shared library, that is a
+ DLL in Windows, you decrease the size of your application, but you run the
+ risk that at runtime, your application is linked with the wrong DLL. On the
+ contrary, if you link against a static library, your application is bigger,
+ but you don't run that risk. So, you, as a developer, can minimize this kind
+ of risk by using static libraries, which is not the default nowadays,
+ unfortunately. Because people say, no, but we want to minimize the
+ applications, less space on disk, when there is an update of the library, it
+ will be automatically updated, and so on. (silence) Can you do that? Have you
+ done that as a developer? That is not possible, because it's not you. Who is
+ linking the DLL with your application? Your application at runtime? Is that
+ you? Is that the developer? No. Who is? Give the answer. Who? If you don't
+ understand how applications are executed, you have a big problem. The linker,
+ no. The linker is the one that, when you have compiled your application, finds
+ the appropriate library. If it is static, will insert the code in your
+ executable. If it is dynamic, will just say, oh, I need this. And that is,
+ when you execute your application, you have the loader, which is a component
+ of the operating system, that takes an exit, put it in pages in RAM, looks. If
+ there, is there anything missing? Oh, you need this library. Okay, let me see.
+ I already have a copy in RAM, so I put a pointer to that library. Oh no, you
+ are the first one using the DLL. Let me take the DLL, put in RAM, and put the
+ pointer. So it's outside your control. You can just say the name of what you
+ need, but you don't have any control about which version of that. No, you can
+ specify the version, but you cannot control the actual file, such as computing
+ the hash and so on. Okay, so in general, when I show you some attacks, the
+ important thing is, yes, we understand that this attack is possible, but then,
+ try to find the source of the attack, the origin, the problem, in order to
+ avoid that in the future. GearFalcon, probably yet another CIA tool. Again,
+ it's listed in the Vault 7 release of Wikileaks. And this time, it's not going
+ in Windows, but it's going against the enterprise Linux, that is, Red Hat
+ CentOS version. And it is attacking directly the OpenSSH command line client,
+ which is the most used in the world. Again, it is based on DLL. It reloads a
+ malicious DLL to intercept the plain text traffic before encryption or after
+ decryption. So it has just inserted a DLL that is placed after the
+ encryption/decryption part. So if you are using username and password, it will
+ intercept that. Otherwise, we'll not get your private key, because those are
+ not part of the traffic, but we'll get the real traffic, because it is
+ controlling the plain text being transmitted on the channel before applying
+ the protection protocol of SSH. It uses an encrypted configuration file. So
+ it's encrypted, you don't see the content, but you can note that there is an
+ extra file on your system. The captured data are stored in yet another
+ encrypted file, so another sign that you are infected, and that requires root
+ access, but it is not integrated with any command and control center. And
+ apparently, it freely reads and writes files on disk. Probably relies on the
+ fact that there is rare adoption of multi-malware in Linux. So all these
+ things are not noted unless you compute the hash of all the files in your
+ system and you compare with the gold ones, with the correct content of your
+ disk. But probably, those files are stored in a variable part of the file
+ system, in which also that kind of information is not useful. Surprisingly,
+ it's not very stealthy, not very much sophisticated, because most people that
+ use Linux thinks, "Oh, this is not Windows." So we don't have all the
+ vulnerabilities of Windows. Yes, but you still need some kind of protection.
+ Same thing that happens with Mac. Against SSH itself and not an
+ implementation, the most widely used attack is brute force. When you use
+ username and passwords. So we get a false sense of security using a secure
+ channel. And some people use, over it, insecure authentication, that is,
+ username and reusable password. So the typical brute force attack against such
+ an environment is trying all password from a dictionary of well-known
+ passwords. Example of an attack. This is an experiment done by some security
+ researchers. They put, on September 2016, some servers on purpose, protected
+ only with username and password, not public key authentication. One was IPv4
+ and one was IPv6, and they were deployed in the cloud. The IPv4 server was
+ immediately attacked and conquered in 12 minutes. It was just a server put
+ there, no publicity, nothing. So you remember, automatic scanning of all IP
+ addresses. You have SSH, let me try, okay? As the password for root was
+ password. So they did that on purpose to check. And in a few minutes, that was
+ converted to a zombie as part of a botnet. So 12 minutes. After one week, the
+ IPv6 server was not even attacked. But that is telling you that IPv6 is not so
+ much used and so not much interesting. (upbeat music) (upbeat music) (upbeat
+ music) (upbeat music) (upbeat music) (upbeat music) (upbeat music) - Okay, for
+ Linux. How can we protect against these brute force attacks? For example, by
+ setting a lockout after N authentication failures. Sorry, this account is
+ locked. You can use, for example, PAM, PAM2 or PAM fail lock. Or you can do
+ another thing. Use a famous program by Daniel Bernstein, TCP wrappers, to
+ permit or deny access only to specific hosts or networks. That is something
+ similar to a firewall, but it's a local firewall controlling who has the right
+ with an IP address. We know that IP addresses can be faked, but if you are
+ permitting access only from local machines, it's difficult that someone from
+ internet can use those addresses. Or you can use IP tables and implement SSH
+ rate control. No more than five connections per minute. So if they are trying
+ to try all possible password, they will take forever. That is a possibility.
+ Of course, independent of the other things, one important thing that should
+ not permit direct access as root. You authenticate as a user, and then
+ eventually you run sudo to execute something with administrative privileges.
+ Not very strong, but it helps. Change from the default port, don't use 22,
+ because that will be the first port which is scanned by an attacker. Use any
+ other free number. Or there is another interesting program, which is named
+ fail to ban, which can put a limit to the number of failures. After that
+ number of failures, that address is banned from connecting to this host for a
+ certain amount of time, maybe 15, maybe 30 minutes, maybe one week. You decide
+ that is a setting that you may have. Or even much better, if you really want
+ to use username and password, then don't use just plain username and password,
+ use a second factor authentication, such as Google Authenticator. And of
+ course, the best solution is disable password-based authentication. So the
+ main applications of SSH are remote interactive access with text-based
+ interfaces. Execution of commands, don't forget that, because most people
+ think SSH is just, I connect and I have a terminal. No, no, no, you can just
+ send a command to be executed remotely. Creation of tunnels, and that we have
+ studied, and that we have studied, all with the security properties offered by
+ SSH. Some notes, in the past it was an add-on, nowadays it's directly
+ available in all platforms. With Windows 11, you already have SSH, for
+ example, while in the past was some external add-on, not only the client, but
+ also the server. That is, you can remotely connect with SSH to your Windows
+ machine. And SSH is not dead, as you can see from the RFCs, not only they are
+ quite a lot, but they are continuing to be issued and to be modernized. For
+ example, Suite B cryptography suites, SHA-2 integrity, in the past it was just
+ SHA-1, and so on. ASGCM, elliptic curve, increase of the minimum recommended
+ Diffie-Hellman parameters. So, when you look at the RFCs, it's not only for
+ finding information, but also for understanding if the protocol is actively
+ maintained, because cryptography makes progress, and we need to adapt the
+ protocol to the new algorithm. Okay, and you see that it arrives up to this,
+ in which RC4 is deprecated, because now we have much better alternatives. And
+ for example, here we have the IDBAR curves. So, it is being aligned with what
+ we are doing in TLS 1.3. So, even if it is not of the same complexity as TLS
+ 1.3, it is still using much of the modern cryptography that we have studied.
+ Okay, this finishes this part. Let me now go to a new topic. (upbeat music)
+ (upbeat music) (upbeat music) (upbeat music) (upbeat music) (upbeat music)
+ (upbeat music) (upbeat music) (upbeat music) (upbeat music) (upbeat music)
+ (upbeat music) (upbeat music) Okay, so, this new topic has to do with the
+ complexity of the current information systems, which are not composed by
+ single elements, but by a wide network with many components and highly
+ distributed, okay? So, the topic is integrity and attestation. Attestation
+ means understanding and proving if the system is behaving correctly or not for
+ generic distributed infrastructures. That can be the cloud, can be
+ software-defined networks, can be system hosting network functional
+ virtualization, and so on. So, let's consider a typical distributed
+ infrastructure to understand the complexity of what we are facing. Okay, we
+ have the cloud. Great. Cloud is hosting storage, is hosting computational
+ units, and we are all using that. But, in order to use that, you need some
+ edge devices to access the cloud. That can be 5G networks, can be routers,
+ modems, Wi-Fis, home gateways, and so on. But then, you are accessing those
+ resources via personal devices. And in some cases, not even real devices, but
+ the Internet of Things, very, very small objects. Desktop, laptops, but also
+ smartphone, traffic light remotely controlled, a watch, whatever, okay? So,
+ you see that already by components, it's very complex. But then, you have all
+ the kind of possible connections. Wired, wireless with different technologies,
+ short range, long range, satellite, fiber, whatever. So, it's a real nightmare
+ to make secure all these kind of things, okay? So, what are we trying to do?
+ We have a problem. Because in the past, we had physical elements. We had the
+ hardware. When we were talking about a router, that was a real machine, piece
+ of art. When we talk about the firewall, it was the same. Nowadays, there is a
+ trend towards softwarization. For example, maybe you have studied in other
+ courses, software-defined networking, in which all the basic functions, such
+ as filtering, routing, switching, are deployed in software modules. On top of
+ a generic hardware, not dedicated. But also, software-defined radio. So, even
+ the radio and transmission part can be changed and manipulated via software.
+ Network function virtualization. Not only SDN, which is for switching and
+ routing, but generic network functions. And then, artificial intelligence.
+ Artificial intelligence is a computational load deployed in several places.
+ So, most of the things that we use nowadays tend to be software running on
+ commodity hardware. A standard platform to minimize the hardware cost. And we
+ put the complexity in software, so that we are also able to quickly update it,
+ if needed, or change functionality, or add in functionality. Good. So, the
+ consequence is, we are becoming more flexible, but also more vulnerable.
+ Statistically, the software is more prone to bugs than hardware. Hardware has
+ got its bugs, for sure. But not as many as software. Okay. And then, there is
+ not only that point of bugs. There is the problem of software updates. You are
+ receiving updates. Are those trusted updates? Have they been manipulated? Is
+ there a malware in the update that has been transmitted to you? So, the
+ problem is, we want it easy, or call it fast, call it flexible. We want it
+ cheap, and we want secure. But one of the theorems of security is that you can
+ have two properties, not three. And you check what you want. Most people go
+ for the first two, and the third one is neglected. That's not good. Okay. So,
+ the problem that I'm trying to solve, or to address, at least, is, I got an
+ infrastructure, communication, computational, storage, and I want to know if I
+ can trust that infrastructure for performing the tasks that I want that
+ infrastructure to complete. So, here, the definition is trustworthy. Something
+ is trustworthy. It will behave in the expected way. So, you expect something,
+ and yes, I am trustworthy. I will surely do that. Which is problematic. Can we
+ trust the cloud providers? As hardware, as software, as people managing the
+ cloud? Trust in the network providers, and in the edge providers. There is the
+ core network, and there is the edge network, and they are connected. In
+ general, in addition, given the previous schema, remember that the edge and
+ the end user devices typically have very low, and in some cases, not at all,
+ any kind of access control who can perform the operations. If you have
+ physical access, you can do whatever you want. So, on top of that, we have
+ also low cost IoT, where the key is not only IoT. Yes, we want IoT, but we
+ want to pay the minimum. That typically implies to save on the security cost,
+ because we try to release hardware and software as fast as possible with as
+ low effort as possible. So, most IoT devices are completely insecure. And then
+ we have also the personal devices, not only in your hands, in which I hope you
+ are knowledgeable, but in the hands of your father, your mother, your aunt, of
+ ignorant people, in the sense that they ignore the problem and don't have any
+ clue how to address that. And so, they become a potential victim, a zombie,
+ for example. So, if possible, we do our best to protect all these things. That
+ is to avoid the attacks, to block the attacks, but no, it's impossible to
+ foresee all possible ways of the attacks. So, we are now adopting a different
+ strategy. If we cannot block everything, yeah, we can do something to try
+ blocking, but then on top of that, we would like at least to monitor the state
+ of the system for early detection. Oh, there is an attack undergoing so that
+ we can detect and possibly react to that. Yes, we can use IDS, but that is not
+ general. There are several kinds of attacks that an IDS cannot detect. So,
+ we're trying to do something better. And something better is summarized by
+ these two words. We want to do integrity verification. So, to be able to
+ verify and demonstrate that the system has not been altered, that the software
+ which is running is the software that we expect, that the configuration of
+ that software is the one that we expect. Because, yes, you may be running IP
+ tables, but if I was able to change the configuration file for IP tables,
+ okay, you have no security. So, remember, not only the software components,
+ but also the configuration of those components are important if we want to
+ achieve some security. And we are studying that because typically when an
+ attacker arrives, the first thing that he's trying to do is injecting new
+ software, changing some existing software, changing some configurations, and
+ so on. So, this is really one of the hottest thing in this moment in the
+ internet. So, let's go for integrity. Integrity of hardware is requiring
+ answering to the following question. Am I talking to the right intended node,
+ or there is a fake node responding to my questions? Does that node host the
+ expected physical components? Because someone may leave your node, but then
+ substitute one chip inside that, okay. Maybe you know that in the United
+ States, it has been forbidden the usage of Huawei devices. Even of Huawei
+ components, hardware components. And one of the fear that they have is that
+ one of the components, for example, of a smartphone is the GPS sensor. But
+ that GPS sensor can be remotely controlled. So, that could receive information
+ by the manufacturer for changing the setting and give you wrong information,
+ or even completely disconnect you from the GPS. So, that was the fear of the
+ United States when using components produced in a different country, not so
+ much trusted for them. And vice versa, of course, for China versus American
+ components. Each country is nowadays trying to develop their own components.
+ And if you want to see what is the last run of this problem, in the past we
+ had Western against Russia and China. Now there is a new installment. You know
+ where the new factories for chips are being created? Taiwan, with the China
+ blocking. Have you seen, have you read, do you read the newspapers? What's
+ happened one week ago? That China isolated completely Taiwan for one week with
+ a lot of planes, ships, and so on. So, I don't know for how much Taiwan will
+ remain independent. Okay, and we have a big part of the manufacturing of chips
+ based on Taiwan, which is really, really risky for all the rest of the world.
+ Okay? So, where is the production moving? Also for political reasons, not only
+ Taiwan. Okay, we try to protect Taiwan as much as we can. Are you going to die
+ for Taiwan? Are you going to the army? Okay, that answers the questions. So,
+ what is? And again, read the newspaper. United Arab Emirates. They got a lot
+ of money by the petrol, but the petrol will finish at some point in time. They
+ need to invest in something different. Oh, the world is requesting chips, and
+ there are problems with the current places where chips are manufactured. So,
+ some of the largest new manufacturing settings are being deployed in the
+ United Arab Emirates. Okay, and that is telling you a long point. Also,
+ because the Arabs don't trust the U.S. components, because the U.S. components
+ are sold to Israel. Do you want in an Arab missile, a component developed by
+ the United States, so it will happen the same that happened with the
+ smartphones in Lebanon? You see how technology goes with politics, and that is
+ a problem. That is a problem. So, I would like very much to be sure that what
+ I have built in my hardware device is really that component, and no one came
+ in and substituted it with another component. Last year, in the course before
+ this one, it was just named Cybersecurity, we had a very nice talk by an IBM
+ engineer that told us that in the cloud manufactured and managed by IBM, they
+ have that kind of security. When one element is broken, and so, for example,
+ you need to replace a network card in the cloud, the new network card must be
+ authenticated. When you insert the card, the system is asking to the card,
+ okay, do you contain in your firmware a digital signature by IBM that this is
+ a card whose components have been validated by IBM? And additional, for the
+ most critical chips, there is a digital signature even inside the chip to be
+ checked. That is integrity to the highest degree, because IBM is selling the
+ cloud to the governments, so they don't accept normal components. So, this
+ integrity is becoming really important. Okay, so, that is integrity for
+ hardware. What about software? Yes, for example, we have created TLS, oh yeah,
+ we have the proof, we are connected to the right website, good. You know what
+ exactly, you know that you have connected to a site that can use that private
+ key, but when the data exits from the TLS channel, who is the process using
+ that data? Can I have a proof of that, which is going to the right place and
+ not to the wrong one? Okay, so, am I talking to the right intended software
+ component? Is that component correctly configured? Is the baseline software,
+ for example, the TLS, or the drivers of the operating system, the expected
+ ones, or they have been changed, manipulated? So, that is, in order to answer
+ all those questions, there are two things that need to be considered. And
+ today, we start with this first one, which is trusted execution environment.
+ Okay, I have a complex system, maybe I cannot be sure about everything, can I
+ create a small portion of the system in which my software components are
+ executed correctly? So, that is named the T, trusted execution environment.
+ So, trusted versus trustworthy, we gave the definition of trustworthy, but now
+ trusted is someone or something that you rely upon to not compromise your
+ security, but you have no guarantee, you have to trust him. Someone or
+ something that will not compromise your security is trustworthy. Okay, so,
+ trusted is about how you use something. Trustworthy, sorry, is about whether
+ it is safe to use something or not. So, trusted execution environment is what
+ you may choose to trust, to rely upon, to execute a sensitive task. And the
+ sensitive task is normally named the TA, a trusted application. An application
+ that requires to be executed in a protected setting, in a protected
+ environment. Hopefully, that application is not only trusted, that you hope is
+ not misbehaving. Hopefully, that TA is also trustworthy, will not defeat your
+ security. TA is a concept that will, yes. Sorry, let me go. Unfortunately, it
+ does not work. If it is trustworthy, then it's trusted. If it is trusted,
+ maybe trustworthy. We hope, you see here, hopefully it is trustworthy. So, if
+ it is trustworthy, it is trusted, but not vice versa. Because trusted is your
+ choice. I need you to make a payment. I trust you to not run away with my
+ money. I may be wrong. Trustworthy, if I'm sure that due to some special
+ reason, you will not run out with my money. So, trustworthy implies trusted.
+ You are trustworthy, then I can trust you. But I can trust you without a
+ formal proof that you are trustworthy. OK? We normally use them
+ interchangeably, but it's not correct if you go reading or writing a
+ scientific paper about that. OK? And normally, we talk about trusted because
+ trustworthy means that you have a formal verification, that you have a proof
+ that will not create any damage. So, in the general, I also see in this
+ definition, trusted execution environment, not trustworthy. It would be nice
+ to have that trustworthy. So, the TEs were originally developed for, let's
+ say, telephones, smartphones. OK, that was the original setting because that
+ is a small setting with limited functionalities that required that kind of
+ things, especially when we have moved to the smartphone world because in the
+ smartphone world, you have several different apps executing in the same
+ environment. And that is very risky because when you are making a payment with
+ your smartphone, another app could intercept your payment data, could change
+ your payment data, and so on. So, we need, absolutely, on the smartphone, keep
+ the apps separated. So, the Open Mobile Terminal Platform was developed
+ several years ago, 2006, and that is now part of the GSM Association. The
+ first specification, Technical Requirement 0, was security requirements. What
+ is our target? 2008, now they developed the TE on top of the technical
+ requirements of Level 0. In 2010, it took quite a lot of time, the Global
+ Platform was launched to define interfaces and certification. That is, the de
+ facto certification body for mobile platforms, for TEs on mobile platforms.
+ Then, 2012, ARM, Gemalto, and GE+DE, that's a German company specialized in
+ integrated circuits for mobile telephones, they formed Trastonic to create an
+ Open TE. ARM, surely you know. You know Gemalto? Gemalto is a French company
+ developing smart cards and then evolving that to anything which requires
+ hardware-based security, OK? And GE+DE is a German company doing a similar
+ job. Then, Global Platform and the Trusted Computer Group, TCG, that we will
+ meet a lot of times in this explanation, founded a joint working group
+ focusing on TE specification and the use of a TE with another object that we
+ will meet, the Trusted Platform Module, TPM. The first major business case
+ that originated this thing was the need for Netflix to stream high-resolution
+ videos on smartphones and tablets. What does that mean? I'm streaming, you
+ have a high-resolution subscription to Netflix. You are streaming that on your
+ smartphone. If there is not a trusted environment, you can run another app
+ which will copy the movie because it is received there. So you can intercept
+ it. And that was a strong business case because Netflix said, no, we will not
+ permit streaming to smartphone unless this feature is in place, OK? So quite
+ often developments happen because there is an economical, financial
+ motivation, and not only because there is a need about security. Then, after
+ the Netflix case, financial, enterprise, government, nowadays, automotive,
+ Internet of Things are all business cases that are important for TE and TPM.
+ This is the general concept of a TE. You have some hardware platform, OK, on
+ which you can run two different things. One named Rich Environment, R-E-E,
+ Rich Execution Environment, in which you can run whatever you want, typically
+ a rich OS. If you are on a smartphone, you can run Android. You can run other
+ systems. If you are on a normal computer, you can run Linux, or you can run
+ Windows, whatever you want, OK? And you have all the normal applications, no
+ limits. Then you have another part, which is the Trusted Execution
+ Environment, which, as you can see, goes down to the hardware platform. It
+ cannot be just a pure part. It must have some hardware trust ankles. And you
+ see that here, there are, for example, hardware keys, secure storage,
+ peripherals, such as a screen and keyboard, that can be trusted, T-U-I,
+ Trusted User Interface. Because, for example, when I'm entering the data for
+ my internet banking, now the whole user interface must be accessible only to
+ the internet banking app. All the other apps are disabled. That is a trusted
+ user interface, both as display and as input devices, OK? Secure element, so
+ hardware secure resources. These must be present in the hardware platform.
+ Otherwise, you cannot run a TE. So a TE cannot be run on any CPU. TE can be
+ run only on specific hardware platform that satisfy those TR0 requirements,
+ OK? In fact, you see that you have some trusted drivers. Trusted, not
+ trustworthy. If you go with Professor System, can you demonstrate that that
+ does not contain any bug and will only perform the correct function, will
+ become trustworthy? In this moment, it's trusted. We hope to have developed
+ those drivers correctly, and they will interface with the hardware resources.
+ Then you have a trusted core framework, the core for execution. Then you have
+ an API internal to the TE that can be accessed, so called, only by trusted
+ applications. And now you can run several things. For example, the digital
+ rights management that Netflix is asking for, a payment application, some
+ corporate applications such as a VPN, and so on. These are the only ones here.
+ But then you have a TE communication agent that corresponds to the TE client
+ API, OK? There is some kind of communication, and this is one of the most
+ risky parts. Because we should check carefully what is permitted through that
+ interface. Because that is a risk. You are going from an untrusted world, so
+ potentially dangerous, into the trusted one. So typically, these API are very,
+ very much limited. For example, you are visiting a website, which is possible.
+ At one point, you want to make a payment. So maybe there is an API in which
+ you say, OK, please start the payment API connecting to this endpoint. That
+ may be acceptable, OK? So this is the general schema. And I hope you have
+ understood the concept and the fact there are two environments. So the TE
+ typically is not always alone. There is the TE, and there is the RE. One part
+ for doing whatever you want, the other for doing something which is very
+ limited in scope, but requires very high security. So nowadays, TE is a hot
+ topic for one thing, which is named confidential computing. And that is the
+ next wave for the cloud. There is a specific consortium that you may go on the
+ internet and have a look. It is named the CCC, Confidential Computing
+ Consortium, that has been created to create the foundations and the pillar for
+ the third kind of protection. Last year in ISS, we talked about the protection
+ of data in transit with secure channels, such as TLS, VPN, SSH. Protection of
+ data at rest, and then we have encryption of data on the disk. And then we
+ said, OK, and then there is protection of data in use. When the data are in
+ the RAM accessed by the CPU, can we protect them? Normally, the answer is no.
+ You cannot protect that. Confidential computing is about protecting the data
+ in use with a guarantee that only a trusted application can access that data.
+ OK? So when the data is in use, nobody else can read or write the data. And
+ they can be processed only by a duly authorized application. You should
+ compare this to the various cryptographic techniques for protecting data at
+ rest and data in motion. And that is completely different. Because mostly in
+ those cases, you have encryption with some shared keys and so on. Here, you
+ need something completely different. You need boundaries. You need walls to
+ avoid. This is more about access control rather than encryption. OK? In order
+ to be able to provide such a service, we need a root of trust, R-O-T. OK? We
+ will say there are many kinds of root of trust, but there is this concept.
+ Root of trust is not a specific component. But we name it because it is an
+ element whose misbehavior cannot be detected. So that is my root of trust. I
+ trust, and if that is not working correctly, everything is screwed up. OK? So
+ it should be trusted. That's your choice. Should be also trustworthy. And that
+ is up to the developers, to the formal verification, and so on. The root of
+ trust is part of another important component, which is named the Trusted
+ Computing Base, TCB. This is the set of all hardware, firmware, and eventually
+ also software components that are critical to the security. In the sense that
+ any vulnerability inside the TCB will break the system security. So you
+ understand that the TCB should be minimized. That's why I'm saying hardware,
+ OK, we have to use it. Firmware, because hardware without some kind of
+ software cannot be used. Then firmware, really the minimum layer to permit
+ access to the hardware. Eventually software, but software typically means
+ something complex, and I would not like to have that trusted. I would prefer
+ to have hardware trusted, maybe firmware trusted, because it's very small. If
+ I need to trust also software, well, we are expanding the attack surface,
+ because that is the point. OK? So root of trust, TCB, Confidential Computing
+ Consortium. So some security principles to follow. The TEE, so the environment
+ in which we later can execute the applications, should be part of the device
+ secure boot chain based on a root of trust, and should verify code integrity
+ during each device boot. We will discuss later in the next lecture, tomorrow,
+ what is really a secure boot. But you can guess it is something in which if
+ there is any modification, the system will not boot. And that thing has to be
+ verified not only when you install the system, but every time you boot the
+ system. Additional requirements. We would like hardware-based isolation
+ between the rich OS environment and the TEE. Hardware-based, because we don't
+ want to trust software. If that separation is implemented in hardware, it's
+ much better. Again, because an attacker at that point has to attack the
+ hardware and not the software if they want to be able to migrate from
+ untrusted to trusted. We have several trusted applications. There are
+ different choices. In some TEEs, all the trusted applications execute in one
+ environment. They are all together. I would like to have separate containers
+ in which each trusted application is executed alone. That is not compulsory.
+ It's a good wish. Some TEEs permit that. Other TEEs do not permit that. Secure
+ data storage. At some point, the trusted applications will need to permanently
+ store some information, and we would like that no one else can access that
+ data. Not another trusted application, not a rich application. So secure data
+ storage using a hardware uniquely accessible only by the operating system of
+ the TEE to prevent unauthorized access and modification and any possibility of
+ exploiting the data in another device. You cannot easily migrate that to
+ another device by simply swapping, for example, the SD card. And then trusted
+ path. It means there is privileged and secure access to peripherals. You can
+ imagine fingerprint sensor, display, touchpads, keyboards. They should be
+ hardware isolated. Again, I don't want to trust software to provide me that
+ protection. From the rich OS environment and controlled only by TEE during
+ specific actions. So any application running in the rich part should have no
+ visibility or access. Included malware. So maybe the rich part has been
+ infected by malware. I don't care. That will affect only the data and the
+ information processed in the rich environment. When I start a trusted
+ application, they will take control and the malware will not affect them in
+ any way. Those are the principles that we should follow in designing a TEE.
+ There are several TEEs that have been deployed and developed over the time.
+ Let me start with a quick overview. One of the first things that were
+ developed is named Intel IPT. Intel Identity Protection Technology. And that
+ is based on the fact that maybe you don't know, but when you buy a serious CPU
+ by Intel, you are buying actually two CPUs. One for running your program, and
+ the other CPU is named Management Engine. And normally, the Management Engine
+ is not used. [INAUDIBLE] , but it's not working. [INAUDIBLE] [INAUDIBLE]
+ [INAUDIBLE] So, inside the Intel CPU, there is a normal CPU for executing your
+ task, and a special CPU named Management Engine. Normally, in user commercial
+ devices, the Management Engine is not used. But if you are in a corporate
+ environment, where desktops, laptops, smartphones are managed by the company
+ and not by the user, the Management Engine is used to execute management tasks
+ that can be activated even when your device is switched off, in the sense that
+ there is a wake-on-LAN functionality, which they send a special packet via
+ Wi-Fi or via Ethernet, and that activates the Management Engine to run
+ specific tasks. So, this Management Engine can be used for this feature, for
+ running a Java applet on the separate CPU, the Management Engine. So, that
+ engine is bound to a physical hardware. And now we have that applet, that Java
+ applet, that can do several things. For example, it can generate cryptographic
+ keys and store that inside protected memory, not accessible to any program.
+ So, for example, there is an interface with a driver created by Microsoft, in
+ which the Windows Cryptography API, Windows Copy, can request to generate a
+ key, and can request to access a key. Or that Intel IPT was used by one-time
+ password generation. There is one product, the Vasco MyDigiPass, that will use
+ that for storing the secrets. You remember, one-time password, there is a
+ secret and the generator for the passwords. Or for secure pin entering, in
+ which no one else can see the pin that you are entering, because the chipset
+ is also managing the video. And so it is controlling all those kinds of
+ things. So, you see, this is an example of a physically separated TE, because
+ the Management Engine is actually a different chip. So, not really a TE that
+ can run in parallel with the reach. They are running on two separate CPUs.
+ Then, let's go to the other famous TE, ARM. ARM has got some of its CPUs that
+ are equipped with the so-called trust zone. The trust zone is a TE. And that
+ is made in a way in which the normal CPU bus, which should have 32-bit, is
+ extended to a virtual 32-bit, which is signaling whether the application is
+ running in secure mode or normal mode, OK? This signal is exposed outside the
+ CPU to permit also the creation of secure peripherals and secure RAM. The
+ creation, because ARM is not creating the computer. ARM is developing the CPU.
+ Then you are the designer of the board. You use ARM. You create the RAM. You
+ create the peripherals. And you can use that signal to decide who can access
+ that peripheral, that memory, and so on, OK? Potentially, we could have also
+ an indicator for which mode the CPU is in. And this is a system which is open,
+ well-documented. But the main limitation is that it permits only one secure
+ environment. You have a normal environment, and you have a secure environment.
+ And all the things that are running in the secure environment are all equal.
+ So it means that the separation between the different trusted application in
+ ARM trust zone is not implemented by hardware, but it's implemented by the
+ software running in the TE, which is a bit less secure than having real
+ hardware separation between the different applications. For that reason, there
+ is currently efforts of ARM to add a third mode of operation. They have the
+ unprotected or rich world. They have the trusted world with trust zone. And
+ now they are trying to add another zone for specific features that are the
+ attestation features that we will discuss. It's not trivial, because ARM is a
+ successful platform. It means that if you change the platform now, you are
+ breaking a lot of backward compatibility. So they cannot change the way in
+ which trust zone is working. They can add another world for specific
+ application, so that only the new CPUs and the newly developed software can
+ exploit that new world. So trust zone is not very useful by itself, because it
+ permits only to create one secure enclave. It's also named the zone of trusted
+ application. So for that reason, Gemalto developed the trusted foundation
+ system. G+D developed the Mobicore. And those are the operating system, so the
+ operating system running the DE part, that split one secure enclave into
+ several ones, essentially through a smart card operating system. So in the DE,
+ they insert an operating system that was originally developed for smart cards,
+ and can run several applications in parallel, protecting from each other. But
+ that is software-based, OK? Not hardware-based, because ARM does not have that
+ possibility for hardware protection. So later, they decided to merge forces,
+ and Trustonic was developed based on Mobicore, OK? But that is a good
+ solution, but requires to pay money. There is a license fee. You have to pay
+ G+D. The Trustonic TOS is named KiniB, and it's quite well evolved and
+ sophisticated. For example, version 500 has even a 64-bit symmetrical
+ multiprocessing for embedded systems. So it's not limited only to low-capacity
+ CPUs, but maybe even high CPUs. Then there are other competing efforts. For
+ example, if you have a Samsung device, you have Android with the KNOX. KNOX is
+ the TE developed by Samsung, which is similar in functionality to Trustonic,
+ but has added also the secure boot, so the verification that nothing has been
+ changed. Otherwise, the smartphone is blocked, OK? I think-- let me check the
+ time that we can-- yes, we can stop here. So you have a 10-minute break. And
+ then today, we will not continue with this. But as you may have read on the
+ official timetable, today, you will have an exercise session with Andrea Zeni
+ about PKI, because next week, you will have the laboratory about PKI, OK? We
+ will meet again tomorrow, and we will continue with this topic.
