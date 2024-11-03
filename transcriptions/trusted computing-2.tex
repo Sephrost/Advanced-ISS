@@ -1,0 +1,1072 @@
+ to activate the recording. So after considering Trastonic, let's consider some
+ other examples of DE. One of the most notable ones, which is still used
+ nowadays, which is not oriented to mobile devices, but to laptops and also
+ servers, is Intel SGX. Well, SGX stands for Software Guard Extensions. This is
+ a feature tightly integrated with the CPU, so it can be considered a hardware
+ base. When you buy a CPU by Intel, you can check if that supports SGX or not.
+ If it is supported, then it modifies memory management. It means that when you
+ declare the existence of an enclave inside the Intel environment with
+ protection, so that no other process, not even the ones running at the highest
+ level of priority inside the CPU, can access that memory area. So we achieve
+ the result that we wished for, to have hardware-protected memory areas between
+ the different trusted applications. So since no one can access that area, you
+ achieve the result that the enclaves are protected from codes executing in
+ other areas, both the general one and the other enclaves. And of course, vice
+ versa. Also, that enclave cannot-- And we create an enclave. The Intel SGX
+ architecture is performing a measurement. --to that, because measurement is
+ one of the key points-- [AUDIO OUT] --for getting-- basically means that we
+ compute the hash of everything which is meaningful when we start that thing.
+ Typically, it means that you compute the hash of the executable that you are
+ loading in that enclave. Of course, this solution can be combined with a
+ previous one by Intel, the IPT, for having also trusted display, because SGX
+ is something which is limited only to the execution environment. So protection
+ of the CPU operations, protection of the memory. It does not create anything
+ towards the trusted channels that we want to have towards the device. If in
+ this architecture, you want also to have trusted input-output, you need to
+ pair it with Intel IPT. SGX version 1 kind of CPUs. It was some years ago. You
+ could buy even a laptop or a desktop with Intel SGX-1. After that, they have
+ decided-- well, Intel has decided that it was not worthwhile investing on
+ user-oriented devices. And now, they have created SGX-2, which is
+ unfortunately incompatible with SGX-1, which is only server-oriented. It means
+ that SGX-2 is available only on high-end CPUs, such as the Xeon ones that are
+ the ones that, in the Intel schema, are for data centers. And notice that, in
+ order to create an enclave, you need the special permission. You need to use a
+ special library created by Intel. And finally, your code must be signed by
+ Intel. Otherwise, in an SGX enclave, which is somehow a bit weird, because you
+ need to give your code to Intel. Even if just the executable, you need to give
+ it. Otherwise, you won't get the signature. So SGX, if you are really a fan of
+ Intel and you like it, it's a good solution. For the rest of the world, there
+ are some caveats. And to be careful. Inside this course, when we will go to
+ the laboratory, we will use one specific TE, or a general-purpose TE, which is
+ named the Keystone. Keystone is not a specific TE. But it is an open source
+ framework that permits you to create a TE, customize it. So there are several
+ features in a TE. Maybe you don't need all of them. Maybe some of them will
+ not execute nicely on your specific computational platform. So in case you
+ have an embedded system, you have an IoT with a scarce memory, with a low CPU,
+ maybe you don't want to build the whole TE. Maybe your attack model, so the
+ risks that you want to protect from, don't call for a specific feature. And in
+ that case, you can just customize. You cut out the parts that you don't need.
+ So that is important, not only for performance, so that it will perform better
+ on your specific environment, but it's also helpful, because if something is
+ not present, it cannot be attacked. So it goes towards the target of
+ minimizing the trusted computing base. The smallest is the part that you need
+ to trust, the better. Because yesterday, we say, you trust. Let's try to
+ minimize what needs to be trusted. And in general, Keystone is already
+ natively providing one untrusted environment, such as the RE of ARM, plus n
+ trusted segregated enclaves. So you don't need to do anything special, like
+ running Trustonic, for example, to get separate enclaves. So in the Keystone
+ model, you have one part around whatever you like, and then one, two, three,
+ four, as many as your computational platform is capable to support. Keystone
+ is particularly important nowadays in the case of open source hardware. Maybe
+ you have seen that in other courses, but RISC-V is really, really hot
+ nowadays, not only in Europe, but across the world, because it is the first
+ open source hardware CPU. That is a CPU that you can build and customize by
+ your own. The designs are all public. And you can implement that on FPGA, if
+ you just want to test that and verify, or in the moment in which your design
+ is final and you want to achieve very good performance, you can create that as
+ a SOC, system chip, integrated with whatever else you need. The RISC-V is the
+ core, because it is providing some hardware features that are interesting.
+ Intrinsically, RISC-V is just providing core computational functions. But
+ since it is open source, people are continuing IPs. And I don't know if you're
+ familiar with this term, but I think it's not in this context internet
+ protocol, but means intellectual property. When you put an IP, it means you
+ put a module that you have the property, but you want to put it open source.
+ And so there are specific IPs for adding other instructions to the core set of
+ RISC-V. There are instructions for vector computations. There are instructions
+ for artificial intelligence. And there are, of course, crypto extensions. You
+ want to have implemented that hardware level in this RISC-V, customized by
+ yourself. But that is an addition in order to get better performance if they
+ are hardware-based. But there is something that you cannot cancel in RISC-V
+ supervisor and user in decreasing order of priority. Machine is the most
+ powerful, supervisor a bit less, and the user is the less powerful of the
+ three modes. That is also associated with the specific memory management,
+ which is named the PMP, Physical Memory Protection, which has its
+ hardware-based access control to different pages of memory. That avoids that
+ one process can access the memory of another process, either in general or
+ specifically during a period of time. And since typically input/output devices
+ are memory-mapped, that extends also when you are executing, for example, a
+ trusted application that needs to have a trusted connection to the keyboard
+ and to the display, you set up a new page protected from everything else and
+ give that page exclusively to that trusted application. When the execution
+ finishes, you can free that page and everybody can use again those pages and
+ those input/output devices. The motivation that brought to the birth of Kiston
+ is that the normal TEs are quite rigid and uncustomizable. If you compare with
+ the other solutions that we have discussed, Intel SGX is a large software
+ stack. Because yes, finally it is executing in one enclave. But in order to
+ build your enclave, you need to involve a lot of libraries. That means large
+ trusted computing, of course. There is a competing solution by AMD. AMD is not
+ implementing SGX. That is a proprietary solution of Intel. They are
+ implementing SEV, Secure Encrypted Virtualization, which is again a solution
+ to create enclaves as virtual machines with hardware-based encryption and
+ support. But again, also in this case, you need to develop that. So again, we
+ have a large trusted computing base. And finally, we have already discussed
+ the ARM trust zone. And the problem in that case is that you don't have enough
+ domains. You have just the untrusted and the trusted one and nothing more. You
+ see here the trusted hardware, in which you have the RISC-V cores, the basic
+ one for performing normal operations, optional hardware features, if you want
+ to add the crypto or artificial intelligence instructions, and so on. And then
+ you can add, and you should, a root of trust. We will discuss later how to
+ implement a root of trust. So this is the minimum hardware that you need. Then
+ in order to minimize the trusted computing base, on top of that, we do not run
+ a base operating system or an hypervisor. Keystone is organized as having only
+ one application running in machine mode, the highest priority, which is named
+ the security monitor. Security monitor is something which is performing access
+ control between any call coming from the upper layers towards the hardware. So
+ every operation that you want to perform on the hardware is mediated by the
+ security monitor, which knows if you are permitted or not. And that's all.
+ It's not providing anything else. So if you want any other features, you need
+ to develop at the upper layers. And here, you have one untrusted domain in
+ which you can do whatever you like, running an operating system. There is a
+ Linux, and there is Android available for RISC-V. And that is running, for
+ example, in supervisor mode, which is one step above machine, but not yet the
+ user mode. User mode is the partitions that run. You can create as many as you
+ want enclaves. They are named in Keystone. And each enclave is organized in
+ two levels. Since we don't have an operating system here, we need to have
+ something similar to an operating system. But not-- we don't need a general
+ purpose operating system, for example, with the scheduler, memory protection,
+ and so on, because each enclave is running one application. So you just need a
+ stripped-down operating system with just the minimal features that you need to
+ run that specific application. And that is named the Keystone Runtime. And
+ also, in that case, we have several versions of runtimes. Keystone is not
+ providing-- well, you have one available for testing. When you go to the
+ different versions of operating system, have developed minimal runtimes. And
+ that, again, helps. That is not more part of the trusted computing base in
+ general, but that is part of the trusted computing base for that specific
+ application. And then, on top of that, you develop your trusted application,
+ which, in the Keystone language, is named an EAP, Enclave Application. And if
+ you want more of that, yes, you can have more of them. This is the general
+ Keystone architecture. And I'm not going to the details here, but I'm leaving
+ to you these pointers. The PDF documents have already been uploaded to the
+ portal, so you can read them. They are a paper published at EURSYS 2020 by the
+ authors of Keystone. And then, you have a couple of videos with the original
+ presentation and a presentation by the Confidential Computing Consortium,
+ because Keystone is one of the things that are continuously being adopted and
+ developed by the CCC. So I assume, for the exam, that you have read and
+ understood these parts. In case there is something that you read and you don't
+ understand, you can come back to us with questions. But I read them by myself,
+ and it is quite easy to understand. OK, this is finishing our introduction
+ about TE. We have seen, even if just for Keystone, that each TE needs trust to
+ one concept that was developed many, many years ago, but it is still actual
+ nowadays, which is trusted computing. So before having the confidential
+ computing, we had the trusted computing, OK? Now, trusted computing is a part
+ of the confidential computing, and there is a specific operation which is very
+ important, which is named remote attestation, and they go typically in pair.
+ So let me consider what is-- because attackers nowadays try to inject malware
+ at the lowest possible level, because the lower you go, the more is-- the
+ highest is the chance that you are undetected, OK? If you can inject, then it
+ will not be detected, OK? And also, because the lower you go, the biggest is
+ the part of the system that you are able to affect and control. So if
+ possible, the malware is trying to modify the operating system. Or I can try
+ to boot an alternative operating system. Or I can try to modify the boot
+ sequence or even the boot loader itself, always with the purpose of starting
+ not only your trusted part, but also starting an untrusted part, and that
+ remains undetected. [AUDIO OUT] So that means that if we want to trust the
+ system, we need to protect the boot system and the operating system, OK? So
+ once in the past, all systems-- I don't care if it is a laptop or a server--
+ they had the BIOS, the basic input-output system. That was very, very custom
+ solutions that were developed by specific hardware vendors, but there was not
+ a general purpose one. Those preliminary solutions have led to an improvement
+ of BIOS not only as functionality, but also as security. Nowadays, we have
+ WIFI, which is a unified environment for firmware. So all the firmwares that
+ we use nowadays-- not on smartphones, but on desktop, laptop, servers, and so
+ on-- is WIFI. And WIFI has native support for firmware signature and
+ verification. So the manufacturer of the platform will sign the firmware, the
+ WIFI, and the hardware at boot will verify the signature. And as you can
+ imagine, if the signature fails-- that means someone has modified the
+ firmware-- boot is stopped. The system will not work. Once we have this
+ assurance that the basic level has been executed correctly and that it has not
+ been manipulated, as part of that, we have the boot loader, which is now
+ trusted because we are sure that no one modified it. Otherwise, boot would
+ have failed. And now we can give to the boot loader the task to verify the
+ operating system before loading it in order to have trust, at least, in what
+ is loaded inside the system. OK, that is going in the direction from the
+ rootkits. You know this is a generic term for any kind of tool that permits
+ roots access on a machine-- that is, access with the highest privileges. There
+ are various forms. We have firmware rootkits that are able to overwrite the
+ BIOS or the WIFI, depending on your machine, or the firmware of other
+ hardware. Please note that every time you have not a laptop, but typically a
+ service-- for example, a board for high-speed internet, that board comes with
+ a local processor and with a specific firmware of the CPU. But on the firmware
+ of the specific boards, maybe we are attacking the firmware of the ride
+ controller. So we don't need only to protect the firmware of the CPU. We need
+ to protect any kind of firmware inside our system. The purpose is that, of
+ course, the rootkit can start before the operating system. Bootkits-- bootkits
+ are those that replace the operating system bootloader so that the node loads
+ the bootkit before the operating system. Beware, they are very wise. They will
+ not alter your operating system. Otherwise, you will detect. So the operating
+ system will perform normal operation. But in memory, in RAM, there is another
+ object which is operating. And since it started before the operating system,
+ it can create a layer that [INAUDIBLE] made by the operating system below the
+ operating system before the hardware. Or kernel rootkits replace a portion of
+ the kernel of the operating system so the rootkit can start automatically when
+ the operating system loads. And finally, driver rootkits-- that is not to be
+ confused with the firmware rootkits. Firmware is firmware. The part which is
+ permanently stored in read-only memory, possibly, or flash of that device.
+ Driver is part of the operating system. Drivers are loaded at boot. So if I'm
+ able to be one of the trusted drivers with the hardware, so any communication
+ with that piece of hardware will be manipulated by this driver rootkit. So you
+ see that there are several kinds of attacks that are possible and are actually
+ being performed. So in most of the cases, people say, OK, but we got
+ anti-malware. We have got antivirus. We will surely detect that. But that
+ means that you are using software to protect other software. And that simply
+ does not work because software that you use itself may be attacked or may
+ fail, may have bugs, and so on. So if we really want to achieve a better level
+ of security, we need the hardware support to protect software. So we attack in
+ the software to attack in the hardware, which is still possible, but the
+ attack surface is minimized. You need physical access and so on. That is the
+ root of trust. The root of trust is that part of the hardware that you cannot
+ verify in any way. But if that part works correctly as expected, then we can
+ create the rest of the trust in the system. And we will discuss in a moment
+ how we do that. So the root of trust should be part of the TCB because my
+ fear, my colleague, whatever you like. So you cannot tell me, oh, the root of
+ trust is purely hardware. No, no. You have a piece of hardware. But then, in
+ order to use it, you need some piece of software. So the trust of the
+ computing base will be composed by the hardware, the software root of trust.
+ We don't call it in that way. But anyway, the root of trust, which should be
+ minimal. OK, let me give you an example of how we can protect the firmware.
+ This is a firmware self-protection, or if you prefer, software root of trust,
+ as you will see in a moment. This is an example that I have received by some
+ friends that work at HP Enterprise. I don't know if you are aware, the
+ famous-- [AUDIO OUT] --split into working towards enterprise with networking
+ and servers. And another one, working towards final users-- [AUDIO OUT] --and
+ developing that's user-oriented versus corporate-oriented. So they gave me
+ this example of how that is implemented. The machines created by HP, so the
+ enterprise level, have a signature region at a fixed location in the final
+ BIOS image. So you see this was the schema that they developed before UEFI.
+ The BIOS image is very small. It's just 16 megabytes. But there is a part that
+ is marked as, this is the signature. After the BIOS is being built, because
+ the BIOS is customized for each piece of hardware, because it's basic
+ input/output. So it depends on which input/output devices you have. And you
+ need to customize your BIOS for that. But that happens at the manufacturing.
+ You build this, and now you can create your custom BIOS for that. So once the
+ BIOS is ready for that specific platform, the SHA-256 hash of the specific
+ BIOS regions-- not everything, for example, the signature region must be
+ excluded, because it does not yet have a value-- is calculated. These regions
+ include static code, code that will never be updated. Sometimes you receive a
+ message from your manufacturer, oh, you need to update your firmware. That is
+ not the part. Static code is static, will never change, will never be updated
+ in the future. The BIOS version information, and the microcode-- I hope you
+ know that several CPUs nowadays have some instructions that are really not in
+ hardware-based. And other operations that are microcoded. And since microcode,
+ to customize the CPUs, are the most sensitive parts. Of course, the part which
+ is updated when you receive the message, you need to update your firmware,
+ cannot be covered, because that will change over time. But this is already
+ enough. OK, once this hash is computed for this platform, this hash is sent to
+ a specific server, one very secure machine inside HP Enterprise, which is the
+ HP signing server, which returns a signed hash image, which is 32 bytes, plus
+ the signature itself, and the certificate. All that things, all those things,
+ are copied into the signature region. So when we power on the system, there is
+ the first part of BIOS, which is immune, calculates the combined hash of each,
+ done always. OK, it's permanent. If that region contains data that are valid
+ compared to the hash that has been calculated, then the BIOS compares the
+ stored hash and the calculated hash. If both are the same boot continuous,
+ otherwise the system is halted. And that is just purely firmware-based. Can we
+ do anything better if we have a hardware of trust? Because you can understand
+ that if here I'm able, for example, to replace the chip that contains the
+ firmware, then I'm done. And that is dangerous. Of course, in most of the
+ enterprise-level platforms, the chip is not removable, is soldered on the
+ board. But if you are very smart on hardware level, you can replace that. And
+ additionally, there is another problem. In many platforms, you have one chip,
+ one memory chip, which is actually soldered to the board. And then you have
+ one free socket, which is a placeholder for the extension BIOS. Because inside
+ this chip, you can perform updates. That is changing part of it, the mutable
+ part, not the static ones. But maybe at some point in time, you need to add
+ quite a lot of things that don't fit there. So for that reason, some platforms
+ have got a free socket in which, if you need, you can place another memory
+ chip that will be executed. And this is still part of the BIOS. So the BIOS
+ will start. And before giving the control to the operating system, will also
+ execute anything which is present in the extension BIOS. And since the
+ extension BIOS is mutable, we cannot compute the signature over it. And this
+ is another very dangerous attack. So you have also to study what is the
+ hardware configuration of your platform in order to decide the kind of attacks
+ that can be performed against it. Described here is purely software-based,
+ because you see that it is the firmware verifying itself. Full stop. Can we do
+ any better? Can we use a hardware root of trust to try to protect the
+ firmware? OK. This is still from HP Enterprise. They have developed it over
+ the time. So self-verification, described in the previous slide, is based on
+ the firmware itself. The static portion verifies the part that can be updated.
+ But verification can be implemented by an external chip as well. See the
+ picture that I am showing you in a moment and a detailed description in the
+ next slide. And this is an example with an old kind of CPU, a Danverton x86
+ Danverton CPU, in which you see that from the hardware point of view, I have
+ this 60 megabyte memory for the BIOS. This is the one which is [INAUDIBLE]
+ here. And you see that it has a multiplexer in front, which attaches that, the
+ single SPI bus, to two possible sources. One is the CPU, because it must
+ execute the BIOS. But there is an additional chip, which is normally not
+ present in your board. This is a crypto microcontroller that has got several
+ features, including the ability to talk on the SPI bus and the ability to
+ drive this multiplexer. So the decision about which is the source to be taken
+ is by the crypto microcontroller. So if power is good, if we have power,
+ great. But when we have power, this one is not activated. And when we receive
+ the reset, then this microcontroller is driving the BIOS to itself. So this
+ microcontroller will verify that the content of the BIOS memory is correct.
+ Only if the BIOS memory is correct, then the reset signal will be taken out.
+ And so now the CPU will be able to execute the BIOS, because in the same
+ moment, I have switched the multiplexer to permit access from the CPU. So now
+ you see that the root of trust is this chip. That is the hardware root of
+ trust. If that behaves correctly, it's because it has got to do with the
+ electric signal, and then it must perform signal to verification and drive all
+ these signals in the correct way to keep the CPU stopped until verification
+ has passed. But if this chip works correctly, then we can trust that the CPU
+ has loaded the correct version of the BIOS. And here is the explanation. So
+ the external crypto chip validates the BIOS in the SPI flash post the power
+ on. Once validation is successful, only at that moment the x86 CPU will be out
+ of reset. Otherwise, it will remain in the reset state. So you have no way to
+ have the CPU operational if that verification fails. But there is a problem.
+ It is a general purpose one that you buy. But you want to verify the signature
+ of Eureka Packard. So that chip is a special chip that has a fusing option. So
+ once and only once, you can fuse one public key hash-- not the actual public
+ key, the public key hash, which is smaller-- that will be used to verify the
+ signature of the hash file stored in the signature region. Because in the
+ signature region, you have also the certificate. The certificate contains the
+ hash of the public key. So you can compare that hash stored inside the crypto
+ controller. For the rest, the validation is self-integrity, except which is
+ the external chip, which is doing the hardware route of trust. OK. Once we
+ have been able to start the BIOS, we start operations. The thing that we are
+ performing is the boot of the operating system, which may happen in several
+ different ways. Normal boot, normal security, that is no security. That is
+ what you normally do. Secure boot, the firmware verifies the signature and
+ will halt the platform if the verification fails. This is mostly
+ hardware-based. If you have the crypto chip or software based on the content
+ of the BIOS memory, and can verify the system loader, because the operating
+ system loader is part of the firmware while the actual operating system is on
+ the disk. Or you may have trusted boot. Trusted boot assumes that the first
+ part of the boot up to the firmware was OK and performs verification only of
+ the operating system components. That is what Windows is doing. When you boot
+ Windows, and they need to start the drivers for Windows, when they try to
+ start the anti-malware that you have installed on your machine, those things
+ need to contain the Microsoft signature. If they are not signed by Microsoft,
+ they will not be loaded as part of the operating system. And if those
+ verification fails, the operating system will not start. So it's not the BIOS
+ or the firmware that will not start. It's the operating system, which is
+ different. So you have two levels. When we talk about secure boot, it's the
+ part related to the firmware up to the moment in which we load the operating
+ system. When you have, on the contrary, trusted boot, we assume that the first
+ part was OK, and we are just checking what's happening at the operating system
+ level. And of course, this is mostly software-based and verifies the correct
+ signature until the point in which the operating system becomes operational.
+ But there is a third thing, which will be one of our key points in this
+ lecture, which is measured boot. Measured boot is the application of one basic
+ concept. When we talk about verify. OK, I trust that you are behaving
+ correctly. But please, can I check if you are really behaving correctly or
+ not? And measured boot is a procedure that we will discuss in detail, which
+ measures-- where measurement, again, is taking the hash-- all the components
+ executed from the boot time until to level x. And we will see how to extend
+ that as much as possible, because the largest the part covered, the better for
+ detecting any kind of problem. The difference with the previous kinds--
+ because secure boot and trusted boot can stop operations, either at firmware
+ level or operating system level-- the measured boot does not stop anything. It
+ is just a detection system-- ops operation-- to an external verifier. So not a
+ verifier implemented in the same platform. Because if the platform has been
+ manipulated, no one will send an alarm. But measured boot is implemented in
+ such a way that even if the platform has been attacked, the result of this
+ measurement cannot be faked, cannot be manipulated. So we have something
+ inside our system that continuously measures what is happening. And if there
+ is-- and you need to set up it-- an external verifier, that verifier may ask,
+ how are you? Are you well? Are you fine? What are you doing? And these are
+ manipulated in any way. Or, of course, they can be manipulated. But we will
+ detect, oh, the answer is not correct. And so that machine has been attacked.
+ So the point is that you have an external verifier. And that is important.
+ Because given the schema that we have discussed yesterday with that
+ infrastructure, if we have a verifier inside those infrastructure, that
+ verifier may periodically contact all the elements, look at the reports. If
+ the reports are OK, we continue operation. If reports are bad, we decide to
+ isolate in some way that node, because it's untrusted. It has become
+ untrusted. [AUDIO OUT] OK? This is a general schema to discuss about the boot
+ types. We have [AUDIO OUT] the first state immutable. Then we have the second
+ stage bootloader, which is the one that [AUDIO OUT] can be [AUDIO OUT] system.
+ But please note that before the operating system becomes operational, we have
+ two important things that have started before the operating system itself--
+ the trusted drivers and the anti-malware. They are before the operating
+ system. And then once the operating system is operational, we can run any kind
+ of applications. Now, secure boot applies to that part. Secure boot is about
+ firmware. [AUDIO OUT] If verification fails, the system is stopped. No boot.
+ If, on the contrary, we pass the verification, that part is good. Let's go to
+ the next level. Next level is trusted boot, which verifies the trust part of
+ the operating system. Again, if that fails, stop. System will not work.
+ Otherwise, we can go. But we have measured boot. Measured boot is parallel
+ because it is not stopping anything. It's just measuring what is applied, what
+ is executed. I have stopped it at this point. But my point is that measured
+ boot always starts here. And my purpose is to extend it up, up, up, up, to
+ measure everything which is happening inside the system. And the purpose of
+ that thing is just measuring. And the measures are stored locally. But then we
+ will discuss how those measures are reported in a reliable way that cannot be
+ faked to an external verifier. OK? OK, to the specific scheme implemented by
+ Windows. If you have Windows 10 or Windows 11, the latest versions, they do
+ implement the schema that you see here. We have the secure boot for the Wi-Fi
+ part. And in the view of Microsoft, this is stopping any kind of boot kit that
+ would go there. That is secure boot. Then Microsoft implements trusted boot.
+ But please, secure boot is the task of the manufacturer of your board because
+ Microsoft does not develop the firmware. So that part is upon Dell, Lenovo,
+ IBM, HP, whatever, Hatcher, who you like. Then comes the part of Microsoft.
+ The part of Microsoft is related to trusted boot. They start the operating
+ system loader, then the kernel, then the system drivers, then the system
+ files, then the Elam drivers. Do you know what is Elam? It's early launch
+ anti-malware because a part of the anti-malware will execute as a process in
+ user space. But there must be a part which is started before any user process.
+ And that is named Elam. All anti-malware software nowadays is composed by
+ those two parts. One Elam plus another part. They have also split that in two
+ for one reason. The Elam part must be given to Microsoft for signature. So I
+ don't want to give to Microsoft all my anti-malware solution. I give you just
+ the minimal, the one that in order to correct of trusted boot, which is
+ implemented by Microsoft, to stop the attacks via rootkits. Then after these
+ things are correctly operating, we can start third-party drivers,
+ anti-malware, and finally go to the Windows sign-in so the machine is
+ operational. And you see in parallel here the measured boot with an external,
+ the verifier, can, if allowed by the access control, ask what is going on,
+ what has happened since boot, and so on. So you see that this schema is
+ aligned with what I have explained to you in general in the previous slide.
+ OK, time for the first break. And then we will continue this. OK, let's
+ continue on this topic. So we have seen in general trusted, secure, and
+ measured boot. And what you should be aware of is the different
+ responsibility. Secure boot is in charge of the manufacturer of the hardware,
+ manufacturer of the platform. And so it is involved with the private and
+ public key of that manufacturer. Trusted boot of the operating system
+ manufacturer. So for example, it's the public and private key of Microsoft.
+ Measured boot is any third party. For example, the owner of this device that
+ wants to check if it is operating correctly. And the other point is that you
+ can have one part without the others. You can have a secure boot without
+ trusted boot. Your hardware supports secure boot. Your operating system does
+ not support trusted boot. Or you may have trusted boot without secure boot.
+ Your hardware does not support secure boot. Pure boot. And so that is why
+ trusted boot is never trusted boot. Because it is trusting that the rest is
+ working correctly. But we don't know. And measured boot is something that
+ requires something inside all those things, which can be enabled or not. And
+ we will discuss. Now, most of our discussion will be about measured boot. OK,
+ let's continue. And let's go to the origin of all these stories. Several,
+ several years ago-- I think it could be 20 years ago-- there was a group that
+ proposed trusted computing. And trusted computing is the definition to have
+ elements in our computing platforms which are behaving as expected. So please
+ note that trusted is not the same as good or secure. The behavior needs to be
+ the one. So you have a component. You expect that it behaves in a certain way.
+ And you would like to verify that it is actually behaving in that way. So here
+ is the concept of attestation. An attestable evidence of the platform state,
+ verifiable. So it is an evidence, something which is produced by the platform,
+ and that you have a way to verify. And then there is the root of trust. Root
+ of trust is something which we cannot verify. It's inherently trusted. Trusted
+ computing architecture defines schemes for establishing trust in a platform
+ that are based on two things. They are all about identity. Identity of a
+ hardware component and identity of software components. Those are the two
+ baselines. Specifically, the original implementation of trusted computing
+ required a hardware root of trust named TPM, the Trusted Platform Module,
+ because that is providing methods for collecting and reporting these
+ identities. A TPM used in a computer system reports on the hardware and
+ software in a way that allows determination of expected behavior. And from
+ that expectation, eventually the establishment of trust. So let's go to the
+ trusted computing base. Collection of system resources, hardware and software,
+ which is responsible for maintaining the security policy of the system. An
+ important attribute of a TCB is the ability to prevent itself from being
+ compromised by any hardware or software which is not part of the TCB itself.
+ So in that sense, the secure boot and the related firmware that we are seeing
+ is a TCB. Because, well, it's not if, which is equivalent. Preventing would
+ mean no one can modify me. Great. But as a minimum, I'm not operational if
+ someone has modified me. Please note the TPM is not the TCB of a system. TPM
+ is a component that allows an independent entity to determine if the TCB has
+ been compromised. And in some uses, the TPM can help preventing the system
+ from starting if the TCB cannot be properly instantiated. We will see that the
+ TPM is measuring everything. And if you have a specific hardware set up, if
+ the system will stop. This is not the normal behavior, but may be implemented.
+ OK. Root of trust. That is a component. Component that must always behave in
+ the expected manner because its misbehavior cannot be detected. So root of
+ trust, there are many. They are building blocks for establishing trust in a
+ platform. And we have root of trust for measurement, RTM, which is measuring
+ and send integrity measurements to the RTS. But we will see it in the
+ measurements. And then storing them in some place that, for the moment, is
+ named RTS. Usually, the CPU executes the CRTM, core root of trust for
+ measurement, at boot as the first piece of BIOS or Wi-Fi code to start the
+ chain of trust. Because we don't want anything to go undetected. So the first
+ thing that you need to start is the measurement system. And then you can start
+ all the rest. Because all the rest will be measured by this component. So it's
+ very important that we have a CRTM as first element of the BIOS itself. We
+ said that the measures collected by the RTM are stored in RTS. RTS is the root
+ of trust for storage, which is a shielded or secured storage. Shielded means
+ that no one can modify it. And eventually, it's secured in the site who can
+ read that memory. And finally, we have the root of trust for reporting. That
+ is another entity, part of the trusted computing base, that securely reports
+ the contents of the RTR. So you see, three operations. We have split them,
+ rather than having just one thing. The one which is taking the measurements.
+ The one which is taking care of storing locally those measures. And then
+ another component that, when asked either by a local process-- but that is not
+ very meaningful-- better from an external verifier, is able to correctly
+ report-- so it will read the data from the RTS-- and report that in such a way
+ that it cannot be modified. Our aim is, starting from the lowest level of the
+ firmware, create a chain of trust. I trust this. Then I can try that piece,
+ that piece, that piece. [AUDIO OUT] --to the application. Software component A
+ that measures component B, and stores that measurement in the RTS. Then,
+ component B is executed, and measures component C, and stores the measurements
+ in the RTS. And so on, and so forth. So we create a chain. We trust A, because
+ it is behaving correctly. Great. Please measure, and then start B. And B will
+ do the same. So component A, the first of the chain, is typically the CRTN,
+ which is part of the TCB. Because from some point, we need to start. And we
+ need to trust that. By using RTR, a verifier can securely see from the RTS,
+ not to the measure of A. Because A is itself the component, which is
+ performing the measurement. So that's why it must be trusted. You cannot
+ measure it. B and C can only be trusted if A is trustworthy. That is, if A is
+ really behaving correctly. Not only we think it is behaving correctly. So if
+ you are able to attack A, all the rest is destroyed. OK, let me give you an
+ overview of what is actually the TPM, Trusted Platform Module. First of all,
+ we try to minimize cost. So this is an inexpensive hardware component. It must
+ cost, as a target, less than \$1. It is available on most servers, laptops,
+ desktops, and so on. First property, it must be tamper-resistant, but not
+ tamper-proof. Tamper-resistant, it means that it is difficult to compromise
+ it, but not impossible. So if you go and read the papers over the internet,
+ you will see that the implementation of TPM by various vendors, hardware
+ problems related to the implementation. It's not the concept which is bad, but
+ it depends, tamper-resistant, to which kind of manipulation do you want to
+ resist. And each TPM will create a different kind of resistance, but
+ tamper-proof is not a requirement. Even if it is performing cryptographic
+ operations, but we will see, it is not in a high-speed cryptographic engine.
+ That is another mistake that most people do. Oh, I got a TPM. I can perform my
+ RSA signatures with it. Yeah, you can do, but it takes forever. So please,
+ don't think about that. It is rather slow. It was not a target to have high
+ speed. If you want high speed, buy an HSM. It is certified. You cannot sell a
+ component claiming it to be a TPM if it has not passed at least the common
+ criteria EAL4+, which is quite a good level. And it's a passive component, so
+ it needs to be driven by the CPU. Since it is passive, for example, it cannot
+ prevent the boot, but can protect data and securely report them. So the TPM is
+ implementing two Roots of Trust. Roots of Trust for storage. Once the data has
+ been inserted in TPM, you cannot modify apart from specific operations. And
+ Roots of Trust for reporting. The TPM is able to reliably report the content
+ of that memory. But it is not the Roots of Trust for measurement that is
+ external, because we'll perform the measure and we'll put the results inside
+ the TPM. Features. We said secure storage. In which sense RTS is a secure
+ storage in the TPM? We will see that that is a special memory, which has only
+ one operation, which is not normal in memory, which is named extend. And it is
+ an operation which is specifically designed for performing measurement of
+ software components. We will discuss that later when we detail the RTS. RTR.
+ We said reliable reporting the content. OK. Since the memory is inside, I can
+ read. But when I give it outside, how can I do that reliably? With a digital
+ signature. The TPM contains a private/public key pair. And every time that you
+ are extracting the content of the RTS, that will be extracted and provided to
+ you with a digital signature. In that sense, it's reliable. You cannot change
+ those data. You cannot create fake data. Because they're private. So you can
+ really trust that, yes, these are the correct values that are in the RTS in
+ this moment. It contains a hardware-based random number generator. That's
+ pretty good. Because you know that wrong, pseudo-random number generators are
+ the source of many problems. So having that inside the TPM is definitely a
+ plus. It contains various crypto-algorithms. Can perform various hash, MAC,
+ symmetric and asymmetric encryption. But it's not a crypto-accelerator. It's
+ slow. It can create various cryptographic keys for limited uses. You cannot
+ think of putting inside the TPM one million cryptographic keys. Yeah, it can
+ create some keys for specific uses that we will discuss. And then it is able
+ to perform two operations. One is binding, in which data are encrypted using
+ the TPM bind key, specific key, which is a unique LSA key descending from one
+ main key, named the storage key. What does that mean? Binding means that if
+ you want to decrypt this data, you can do that only on the platform that
+ contains that TPM. Because if you move the data to another platform, they are
+ encrypted with the key which is not there. So you get physical dependence. The
+ encryption can be decrypted only on that piece of hardware, which is very good
+ against data theft, but which is also a big problem. Because if that machine
+ is broken, your data will never be decrypted anymore in the future. So we've
+ got a problem of backup of data that have been bound to a TPM. So generally,
+ you don't bound generic data. You bound some specific things that are not
+ meaningful if taken to a different platform. Then you have a ceiling. Ceiling
+ is another important operation that TPM permits to perform. And ceiling is
+ similar to binding. We got another key, the ceiling key, but with a key which
+ is inside the TPM. And additionally, ceiling also remembers the state-- and we
+ will define in a moment what is actually the state-- of the platform. When you
+ want to decrypt-- not decrypt, to unseal data, that means decrypting. But that
+ will happen only if the platform is in the same state as it was when data were
+ sealed. You can think it very easily of something like that. In the moment in
+ which I created the data and I sealed them, I had four applications on. Now I
+ want to unseal. If the system is running the same things, the same operating
+ system, and so on, great. Data will be released. But if a malware is infected,
+ or even if it is not malware, someone else is-- which is not expected, the TPM
+ will refuse, say, no, sorry. You are not in the correct state. So it's an
+ additional security. It is not enough that you authenticate yourself. Oh, I'm
+ the system. Please decrypt. You need also to be running the same software
+ configuration that is sealing. Additionally, we said that trusted computing is
+ also about identifying the hardware components that we have. In which way we
+ identify hardware components? Well, authenticate hardware devices. Because
+ each TPM contains a unique and secret endorsement key that was created when it
+ was produced. Please sign this challenge. Sign this data with the endorsement
+ key. Then you are sure that that node that you are talking to is exactly that
+ one. Because that key was generated when the TPM was created. And so it cannot
+ be stolen in any way. So you see, there are several interesting features,
+ apart from cryptographic acceleration that does not exist. But yet, it is a
+ meaningful, secure component, this one. There have been two major versions of
+ TPM. The first version that gained the widespread acceptance was TPM version
+ 1.2. That was a minimal version. With the fixed cache RSA for us. That
+ depended upon the manufacturer. It had only one storage hierarchy for the RTS.
+ And then one root key, the storage root key, that was an RSA 2048-bit key. And
+ hardware identity was available via the built-in endorsement key, which was,
+ again, an RSA 2048. And sealing could happen only against the PCR value. These
+ PCR values are the registers-- R stands for registers-- where the measurements
+ are collected. So basically, you can perform sealing against the measures that
+ have been collected. And here, you can see a general generation, RSA key
+ generator, SHA-1 hash generator, and encryption, decryption, and signature
+ engine, only with RSA. In persistent memory, the endorsement key and the
+ storage root key. On the contrary, in the flexible memory, the platform
+ configuration registers, PCR, the attestation identity keys-- and we will
+ discuss later what they are-- and the storage keys. But TPM has become so
+ important that it has continued its development. Currently, if you buy a
+ laptop and you want it to run Windows 11, you must have TPM 2.0. There are
+ Windows 11 agility. There is SHA-1 for backward compatibility, but we have
+ also SHA-256. We have RSA, but we have also a CDSA-256. We can compute HMAC.
+ We have IS-128, and the various manufacturers can create other versions with
+ more cryptographic. We have distinguished among three key hierarchies, one
+ from the platform, one for storage, and one for endorsement. Each of these
+ hierarchies may have multiple keys and multiple algorithms. When you want to
+ use the TPM, they have started a complex system of authorization or access. In
+ the past, there was just one password. If you provide the correct password,
+ then the TPM will obey your orders. Now, it has become more sophisticated. It
+ can involve other elements. And the success of the TPM is also signaled by the
+ various versions. There are platform-specific specifications for PC client.
+ That was the first application. Mobile devices, you may have a mobile TPM,
+ even if that one is not so successful. But what is really successful nowadays
+ is automotive TIN. Many of the newest versions of the onboard electronic
+ devices are using a TPM for protection. And many embedded systems are starting
+ to be equipped with the TPM for the same reason. Implementations, in the sense
+ that TPM 2.0 is a specification implemented. And there are various versions.
+ The first, the original one, is I create a chip to be put on your board that
+ is a discrete TPM, a dedicated chip that implements functionality in its own
+ tamper-resistant semiconductor package. You have a chip protected. But
+ hardware manufacturers, such as AMD, Intel, they don't like to have some
+ competitor to create chips to be put. You don't need to buy that one. For
+ example, STMicroelectronics, Infineon, are good producers of TPMs. No, but why
+ buy that device? I will have it inside my CPU. So now, these big manufacturers
+ have an integrated TPM. So as part of the system on chip of the CPU, there is
+ an TPM as performed, as integrated by Intel. So it's not required, in that
+ case, to implement the tamper resistance, because it's not a separate device.
+ You must attack the CPU physically if you want to attack the TPM, because it's
+ inside that. So when you buy something based on Intel, you should check what
+ is the chipset that they are providing, because some-- not all-- some Intel
+ chipsets have the TPM integrated inside the chipset itself. Or firmware TPM,
+ that is a software-only solution, which in some sense goes against the concept
+ that we want hardware root of trust. Some kind of operations, we could put it
+ inside the firmware, and we could call it. We don't achieve, of course, the
+ same level of security. If you are able to have a trusted execution
+ environment, then that firmware TPM should be executed inside the TEE. AMD,
+ Intel, and Qualcomm have implemented the firmware TPM, because I said that TPM
+ in Intel is not in every chipset. It's only the most expensive ones. If you
+ have a low-cost Intel CPU, then they are creating, maybe with SGX or with
+ other technology, an enclave where the firmware TPM is executed. TPM. If you
+ have virtualization architecture, which is based on a hypervisor, a virtual
+ machine dedicated to running the TPM software. So it is like the firmware TPM
+ executed in a virtual machine. And then that virtual TPM is made available to
+ all the other virtual machines. So it is equivalent to have a firmware TPM,
+ but for an hypervisor-based virtual machine manager. And finally, there is a
+ purely software TPM, which is the one that you will use in the lab. It is just
+ an emulator of the TPM that you run in the user space, just like this, and so
+ on. Of course, that is useful only for development purposes. Nothing else.
+ These various kind of implementations that fits your trust model. Do you trust
+ Intel? OK, then you can have the TPM incorporated. Do you trust the
+ manufacturer of the TE inside which the firmware TPM is executed? Then you can
+ have a firmware TPM. You don't trust any of them by a chip. So in making a
+ choice among all these platforms, if you have the choice, that is the kind of
+ thing that you have to decide. As I said, anyway, you have Windows 11. Go and
+ check which kind of TPM do you have. That is a thing that you can do by
+ yourself. OK, so we said that the TPM 2.0 is not having anymore just one
+ hierarchies or keys in storage, but it's got three different hierarchies. A
+ platform hierarchy, which is related to the firmware of the platform, and
+ contains non-volatile storage for keys and data related to the firmware
+ itself, BIOS, WIFI, whatever. Then we have endorsement hierarchy. This is
+ devoted to a specific role, which is named the privacy administrator. Again,
+ keys and data. But what is the privacy administrator? When it was originally
+ developed, the TPM, and the concept of Trusted Computing Group was developed,
+ there was a fierce opposition by many cybersecurity researchers. Because they
+ say, wait a moment. I ask you the measures. You return the measures signed
+ with your RSA private key. So I know that it's coming from you, which is good.
+ You cannot lie, which is bad. Because I can know that it is your machine. And
+ when you move from one point to another, I can follow you. And I can decide a
+ policy which is based on the identity. So you have no more privacy, which is
+ very bad. So now, in version 2.0, we have different keys. Keys to identify the
+ hardware. Keys to identify the owner. Keys to identify the manufacturer. In
+ order to try to protect the privacy of the users. And that is the role of the
+ privacy administrator. Decide which kind of keys you want to develop, which
+ kind of keys you want to use for the various functionalities. And finally, we
+ have the storage hierarchy, which is for the platform. Usually, this is also
+ the privacy administrator, but it's not compulsory. In the sense, if you are
+ an individual user, yes, you are both the privacy administrator and the user.
+ If you are inside the company, typically, the privacy administrator is the IT
+ manager of your company. And the user, it's you that are using this machine.
+ And in this case, this part only contains non-volatile storage. Well, also the
+ first one, for keys and data. Each hierarchy has dedicated authorization. So
+ for example, a specific password and an access control policy. And a specific
+ seed for generating the primary keys. So we generate completely different
+ keys. OK. Now, let's give some more details about those sealing and binding
+ that I have just listed as features of TPM. We can have physical isolation for
+ securely storing data. So you store those data inside the TPM in the
+ non-volatile memory. But that quantity of memory is very limited. So
+ typically, you are not storing data. You are storing their primary keys,
+ permanent keys. OK. And in order to access that, the TPM implements mandatory
+ access control. So according to a specific policy, we decide who can have
+ access to those keys. Or since that memory is very much limited and can only--
+ We can have cryptographic isolation. We want to protect a large quantity of
+ data, a file, the TPM. So the storage is outside the TPM. For example, in the
+ magnetic or solid-state disk of the platform. Those things that you are
+ storing outside may be data or may be other keys. In any case, we call that
+ the blob to be protected, a set of bits, OK? Those bits stay out, but they are
+ encrypted with the key, which is controlled by the TPM. So even if those data
+ are outside, only with the help of TPM, you will be able to decrypt them. And
+ again, also in this case, we need mandatory access control. But it's important
+ this difference. Physical isolation, we put those data inside the TPM. And
+ cryptographic isolation, we cannot protect the data physically, because they
+ don't fit the key which is inside TPM, which more or less is equivalent. OK.
+ In the TPM, we have two main categories of objects. Primary keys, those used
+ for endorsement or storage, they are derived from one of the primary seeds.
+ And the TPM never returns the private part of those keys. You can generate
+ them. You can ask the TPM, give me the key certificate for that, but nothing
+ more. And those keys can be recreated by using the same parameters, assuming
+ that the primary seed has not been changed. That is important, because it will
+ permit you to create as many keys as you want, because those keys are not
+ permanently stored. I want a key. Use the primary seed for user with a value
+ 54. That is used in the key generation process. The private part remains
+ there. The public key remains out. Then you switch off the machine, and that
+ key is lost. Next time that you want to use again that key for which you have
+ a certificate, you must just remember the parameters. Use the user seed with
+ the value 54. And the same key will be generated. OK. Then, those are for
+ keys, primary keys. But then we have keys and sealed data objects at SDO. They
+ are protected by a storage parent key, one of the states above. And SPK needed
+ in the TPM to load or create a key. Or-- or creating these things comes from
+ the random number generator, which is inside the TPM. And again, the TPM
+ returns the private part, but returns it protected by the SPK. The private
+ part needs to be stored somewhere. So you have the sealed data object, data
+ that are outside. You have also the key that is protecting that. But that key
+ is protected with the storage parent key. So if you want to decrypt all those
+ things, you need to have that TPM. And then there is an area for objects where
+ the public area is used to uniquely identify an object, while the private
+ area, which is not, of course, exposed, is the object secrets. And that exists
+ only inside the TPM. The [INAUDIBLE] area, which is used for storage outside
+ the TPM. OK, we have mentioned the fact that the measurements are stored in
+ special registers, which are named the PCR. And now we see what are these
+ famous PCRs. Platform Configuration Register. That is the way in which the TPM
+ is implementing the Root of Trust for storage. And this is the core mechanism
+ for recording platform integrity. Why? Because it has some hardware features.
+ First of all, it can only be reset at platform reset. So when you switch on
+ the machine, or there is a specific pin that if you touch it, then the PCRs
+ are reset. But then you need physical access. But that is the only operation
+ that you can do. Malicious code cannot take measurements back. Once something
+ has been put inside, you cannot say, no, go back. No. You can say, start from
+ zero again, touching the pin or rebooting the machine. But otherwise, that
+ measurement has been stored. The interesting point is that since there are
+ many measurements that we will take, we don't have enough PCRs. We would need
+ millions of PCRs for measuring everything which is executed on the server. So
+ on the contrary, we accumulate the measurements through the only operation
+ which exists. The PCR cannot be used for addition, multiplication,
+ subtraction, boot, or touching the pin. And then the PCR can be extended. The
+ operation extend has the following syntax. You specify extend with a hash
+ function. For example, SHA-256. And it works in this way. You take the old PCR
+ value, that is the current value present in the PCR. You concatenate that with
+ the digest of new data that you want to add to the PCR. And then you compute
+ the hash. The result will be stored in that same PCR. So you see that the PCR
+ is containing the concatenation of hashes of everything that has been added.
+ This is the extend of PCR number 10 comma the new hash that you want to
+ concatenate to all the others. It is a sequence. So the value present in a PCR
+ will depend on the order in which you perform the extend operations. If you do
+ extend A and then extend B, it's not commutative. It's not the same result as
+ extend B and extend A. The important thing is that the PCR value can be used
+ to get access to other TPM objects. And if you have Windows 11, now you know
+ that it is compulsory to use a BitLocker for the operating system disk.
+ BitLocker is the disk encryption of Microsoft. And that means that the
+ operating system is not decrypted unless the system is in the same state in
+ which we will see that there are several PCRs. And some of them take the
+ measures of everything that is happening at that boot. If that PCR contains
+ the correct value, then BitLocker will unlock, will decrypt your operating
+ system disk, and you can boot Microsoft Windows. Otherwise, it will say, no,
+ wrong value. Windows cannot be booted. In that sense, we have a linkage
+ between the secure boot and the trusted boot. Because the trusted boot part,
+ if we have a TPM, which is now compulsory, will check, has everything gone
+ well insofar? Because Microsoft does not trust the manufacturer. You should
+ have stopped the platform if something was bad, but verify. And the value of
+ the PCR is one way to perform this verification. You have a question? No,
+ because that is BitLocker. BitLocker is a disk encryption for a specific
+ partition. So you cannot boot that partition where you have Windows, unless
+ the system is in a specific state. If you have a partition with another
+ operating system, you can boot. It requires a bit of tricks. I will explain
+ later. So I had Windows, the entire disk, then I reduced this partition, and
+ had the dual boot. And I don't think I had any problems. Yeah. I reduced it.
+ So the important thing is that that partition on which you have Windows must
+ be encrypted with BitLocker. BitLocker is an encryption system. OK? It means
+ that the data that are there can only be decrypted if you have the correct
+ key. [INAUDIBLE] I had BitLocker before reducing the partition. For example,
+ if I had to reduce the partition using the external tools, so not Windows,
+ would I have any problems with BitLocker outside Windows? That is a nice
+ question. So I don't have the answer for that. I know that there are some
+ issues with BitLocker, because we have [INAUDIBLE] and we decided to make them
+ dual boot. And there was a big caution. Beware, you have to save one special
+ key for BitLocker before reducing the partition. Because when you will restart
+ it, it will detect that something has been modified, and you need to enter
+ this special key. So it may depend on which tool you are using and the
+ specific platform. Conceptually, it should not, but we should see the
+ implementation. But the important point that I'm stressing here is that you
+ have one way to protect the operating system. [AUDIO OUT] Which is attached to
+ the secure boot correctly. Now we have measurements, because we said that the
+ measured boot goes in parallel. So now the secure boot has finished. Should
+ have performed everything correctly. But there is also the measurement boot,
+ which is telling you what the secure boot has done. And that result is stored
+ in a PCR. Now, the part of trusted boot is not even the trusted boot. It's
+ simply the fact that the disk is encrypted, keeping into account that PCR
+ value. And the disk will not be decrypted. So you don't even start the trusted
+ boot if decryption does not happen. Is that clear? So you have an external
+ value, which is recording what is happening at secure boot. And since you
+ encrypted the disk-- well, actually, you sealed the disk. Because if it would
+ be normal encryption, that would be possible. It's sealed. So the key depends
+ on the fact that you have the authorization. And the PCR contains a specific
+ argument. OK. Now let's concentrate, because we have the components that are
+ needed to perform the measured boot. Well, actually, it's time for the second
+ break. So let's first have the break. And then we will go inside this part.
+ OK, so we discussed the data of secure, trusted boot, the basic features of
+ the TPM. And now we see we have a look at how all these things can be
+ integrated then to perform attestation and integrity verification. So measured
+ boot assumes that you have the TPM. That is important. Maybe a discrete
+ component, maybe a firmware component, but you have the functionality of TPM
+ available. That means that the first stage bootloader in the boot ROM contains
+ the core root of trust for measurement. That is the first thing that must be
+ started, because it will measure and store in PCR the value. The value of
+ what? The value of the second stage bootloader. So first, we measure to get
+ started. That is important, because we don't know if it is trusted or not. So
+ the component which is trusted, which is the CRTM, performs the measurement.
+ The measurement is put inside the PCR. And then, OK, let's go to the second
+ stage. In the second stage, we will repeat this procedure. I will measure the
+ operating system and store it. The operating system will perform, potentially,
+ the same things for the various applications. That is not standard part.
+ You've seen that I put it in green, because for most companies, measure [AUDIO
+ OUT] boot stops at the set part that involves application [AUDIO OUT] is
+ European projects and bringing inside the IDF as a sensitive work, and which
+ is being increasingly adopted. But there is no limit. Once you have this chain
+ of trust, you can continue to perform that operation. I measure and load,
+ measure and load. And everything is accumulated inside suitable PCRs. Now that
+ we have the values inside the PCRs, that we can offer them to an external--
+ you can also have an internal verifier. But if that has been compromised by an
+ attacker, will not behave correctly. So the process by which an external
+ [AUDIO OUT] verifier with remote attestation, because I attest your integrity
+ state. And so you have a platform containing the TPM that has performed the
+ measured boot. And we have a remote verifier. The first step for the remote
+ verifier is to send you a challenge, which is typically a nonce to avoid the
+ replay attacks. That's important. Otherwise, someone will copy the response
+ and then give it back. Now, the platform will create a data packet containing
+ the challenge, so that the response depends on the request. And the value of
+ the PCRs-- well, actually, along with the challenge, there is also the list of
+ what I am interested. So the platform values of those PCRs that I have
+ requested. PCR number 0 has got this value. PCR number 1, blah, blah, blah,
+ and so on. And we'll put a nice signature signed with the internal key. The
+ device identifier. So that cannot be faked. You know that this is the content
+ of the root of trust for storage for this specific device. Now, this thing is
+ received. Those are the signed measurements. And you, first of all, you
+ validate the signature. You validate it cryptographically. You compute, again,
+ the hash. You extract the hash from the signature. You compare. They are the
+ same. But you also validate the identity. Is this a valid machine to exist in
+ my network? It means that before doing this, the verifier should have recorded
+ the list of which machines are permitted to operate in its environment. If it
+ is receiving something signed with another public key, no, no, no, no, no. You
+ should not be here. So you see that we have a double thing. We are checking
+ the software status of that component. And we verify if that component, that
+ platform, is expected to be inside my network or is something that someone has
+ added. Great. Now, we pass the cryptographic validation. We pass the identity
+ validation. We have another point. Are these values the expected ones or not?
+ Contain the so-called golden database, which is the values that we expect to
+ find in the PCRs for machines in my network. And that is a complex database.
+ Because if all the machines are equal from the hardware point of view, great.
+ But if you have one Dell, three Lenovo, two HP, some are server, some are PCs,
+ well, the values will be variable. That's also why you need to have the
+ identity. Ah, OK, you are that laptop Dell 1720, so we expect you to have this
+ version of the firmware, this version of the operating system, and so on. So
+ the lookup that you need to perform is also identity-based because not all the
+ configuration hardware and software, OK? So we check the measurements against
+ reference measurements, the so-called golden values. So remote attestation is
+ very powerful in the sense that if anything fails, you need another thing,
+ which is an alarm. OK, no, sorry. I performed the remote attestation and it's
+ not gone well. What should we do now? And now we have the problem of managing.
+ The management of remote attestation. We should decide, first of all, which
+ things are we attesting. Are we checking the PCR values related only to the
+ boot part, so boot attestation, or are we checking periodically when executed,
+ which is a dynamic attestation? That depends upon your attack model. If you
+ are considering only static attacks, that is, someone has come, has modified
+ the boot, has modified the operating system, then the first thing is, OK, I
+ will perform a check only once when the machine is switched on. But if you
+ consider runtime vulnerabilities, that is, once the machine is operating,
+ someone is able, for example, via network to enter the machine and modify the
+ things, then checking only at the boot is not a good solution. You need
+ periodic attestation. I check now, I check in one hour, I check in two hours,
+ and so on. Is that good? Once an hour? So you give a window of attack of one
+ hour to the attacker. So you have to decide the periodicity of the operation.
+ And that is related to the speed. OK, you can check once every hour. Once it's
+ compromising your system, OK, no. But that is also going against some physical
+ limit. We see that we have a cycle. I create an ounce, you extract the values,
+ you perform a signature, you transmit the results, we check in the database.
+ How much time does it take, this thing? And note that the signature operation
+ is typically the slowest part of this cycle, because the TPM is not a fast
+ cryptographic machine. It is slow. So the signature performed by the TPM is
+ typically the slowest part, because then the protocol for the request, maybe
+ for the response, depends how many things you are asking to be put in the
+ response. And the database lookup typically is quite fast. Currently, the
+ periodicity is going-- can be as short as a few seconds. We typically tell our
+ customers that we are able to provide attestation every five seconds to stay
+ on the safe side, OK? Surely, every five seconds, we can check the status of
+ the machine. And for several people, that is enough. But other people say, no.
+ In five seconds, if the attack is successful, they are making an airplane
+ crash, or this plant exploding, and so on. And that is a limit, not of the
+ attestation, but of the physical implementation. We will need a fast [AUDIO
+ OUT] if we want to go down that part. Then you have another problem, the
+ whitelist generation. Because inside the golden database, you have what are
+ the correct values that you expect. If we think to apply this to a cloud
+ environment, you remember that in the beginning, we said, OK, we have all
+ these nice things. Well, generating a whitelist is quite complex, especially
+ if you are considering not only the boot and the operating system, if you are
+ considering the applications that are running. Because you must list all the
+ possible software components to be executed on any machine. For this reason,
+ yes, that is feasible. In the past, we have run a European project named the
+ T-Cloud, or Trusted Cloud, in which we demonstrated that it was becoming
+ giant. But [AUDIO OUT] we are lucky. Because if, on the contrary, you want to
+ apply to limited environments, such as internet of things, edge devices,
+ software-defined network, ENFV, those are environments with limited software
+ components that are running. And so it is much, much easier to list what is
+ the software that you expect to find on each node. This is for you to remember
+ that even if we often talk technical in these lectures, then you need security
+ management. Because maybe you have a wonderful solution from the technical
+ point of view, which is unmanageable. So we are talking about this problem, if
+ you want to sell this as a product. Can you manage that? In addition, you may
+ want to have in your database labels. For example, we are currently
+ maintaining all the possible versions. We label in one way. This is good, that
+ is the correct one. This was valid one year ago, so it's old. This is buggy.
+ This is a version which is old and was replaced because it contained bugs,
+ functional bugs. So in case we find it, it's not optimal, but OK, will not
+ function correctly. But then we have [AUDIO OUT] vulnerable. This is an older
+ container, the vulnerability. If we find it running on one machine, we should
+ immediately stop that machine. So having these labels is, again, very useful,
+ but needs, again, management. And then, as I mentioned, we should measure not
+ only the software components being executed, but also the configurations. The
+ configuration may arrive in several ways. I don't know if in other courses we
+ have discussed what is MANO. Yes? No? Management and network orchestration,
+ typically in NFV and cloud, you talk about MANO. It's a centralized system
+ that decides each node in which way should be configured. Or, more simply, you
+ use network management solutions based on netconf or SNMP and so on. So we
+ have two problems. One problem is, in the previous slide, I said that each
+ component is measuring [AUDIO OUT] the next component, which is [AUDIO OUT]
+ beside software components, because I need to measure configurations. And we
+ are lucky in the sense that for the operating system up, we can measure also
+ files operations. You can measure the content of a file, which is important.
+ Which tells you that if the configuration is file-based, then you can measure
+ it. For example, you have a file for IP tables. And when IP tables is started,
+ that is the configuration. Great. But if you have a hardware device, such as a
+ router, in which someone is connecting via netconf and telling the router, you
+ should route that [AUDIO OUT] traffic in this way, there is no file there.
+ There is in-memory configuration. And that, unfortunately, is dependent to the
+ platform. The switches, the routers, the firewalls of one company behave in a
+ way which is different from the other. And you need some memory-based
+ inspection. That is, for example, one possible topic. We will talk later about
+ the thesis. But in case someone of you is interested in these things, and also
+ in networking, or anyway, hardware devices, this is something that we are
+ investigating, creating some systems that supplement the part that is
+ measuring components and files with something that performs in-memory scanning
+ and detection in order to get a copy of the current configuration for a
+ specific software. For example, you look where IP table, take the hash, and
+ you report to that. OK. I mentioned that there are several PCRs. Each
+ specification of the TPM-- well, this is TCG. I forgot to mention that. This
+ is the Trusted Computing Group, which is the group, the alliance, of companies
+ that are behind the Trusted Computing. And if you go there, you will see that
+ there is IBM, and Apple, Hewlett-Packard. Most of the companies are there. And
+ this is the suggested use for PCR on a client PC. PCR0, platform firmware from
+ the system board ROM. But also, the WIFI runtime services and the WIFI boot
+ services. That is, PCR0 is extend, extend, extend. And finally, it will have
+ the values composed by these things. And you can compare with expected PCR0
+ for that platform, that version of the firmware. Let's check the rest. PCR1,
+ interfaces from other required specification. ACPI, SMBIOS, and so on. That is
+ for various other things. PCR2, drivers loaded. PCR3 is not here. That means
+ it's not used for PC. But PCR4 contains the legacy OS loader and the WIFI OS
+ loader. It contains the system partition GPT partition table, in case someone
+ has played a trick and has changed the partition of your disks. You see, that
+ is not software. We are measuring a configuration of the system. PCR7 is the
+ secure boot policy. Because a secure boot can be disabled by the user. So we
+ want to know if this machine has performed the secure boot or not. Because
+ measurement works independently. If there is a secure boot, the machine has
+ not booted if it was manipulated. But we want to check that. And finally, PCR8
+ plus, so up to them, they are devoted to the operating system. So we can check
+ several things. And here is names. You see 8, 15 defined for use by the static
+ OS, 16 for debug, and 23 for application support. Typically, there are 24
+ PCRs. Now, we said that that was measured boot. And they put the applications
+ in green, saying, OK, that can be extended also to applications. But the way
+ in which extend to applications is rather tricky. Because we have the
+ operating system. It's not tricky performing the measure. It's tricky
+ understanding if the result is good or not. Because we don't have one PCR for
+ every possible application. So we are continuing to extend, extend, extend. So
+ how do we know if the result is good or not? So we have the operating system
+ that has been-- since we are proposing is that we use one PCR for all the
+ applications that are running. But now we have a problem. If I start first
+ application A and then application B, it's different if I start B and then A.
+ So the content of that PCR will be a nightmare. I can't predict it. I cannot
+ tell you, oh, this is good or this is bad. Because it depends on the number of
+ applications that have started, the sequence, and so on. So yes, the operating
+ system can perform measure then load. So application number one has got this
+ value. Well, actually, first I put the value in the PCR. And then I start.
+ Then I start application number three. Then I start application number three
+ and so on. So I extend, extend, extend. Now, can we do that? And can we
+ measure that? Yes, if you have Linux. If you have Mac or you have Windows,
+ forget about it. If you have Linux, yes, we can. And it's named IMA. This is a
+ standard component of the Linux kernel. But you just need to enable, when you
+ configure your kernel, which is named the Integrity Measurement Architecture.
+ And you see clearly that the name is related to what we are studying. It
+ extends normal attestation that goes up to the moment in which the operating
+ system is started to dynamic execution. So it extends the measurement to the
+ applications. And it can perform various operations. Collect is accessed. And
+ you see that I mentioned a file. But can also be a configured thing before it
+ is accessed. May be accessed for execution. May be accessed for reading. May
+ be accessed for writing. Every time there is an access of a file, IMA kicks
+ in. Store-- the measurements performed are added to a list, kernel residence,
+ named the measurement list. So something that should be protected, because it
+ is in kernel memory. But just in case someone is attacking that, we also
+ extend with the hash of that measure. Number 10, one of the dedicated to the
+ operating system, keeps accumulating the hash of everything which is executed.
+ So we have the hash, the global hash in PCR number 10, while in the main
+ everything that has been executed. Then, appraise. Appraise is a feature which
+ is not needed for measured operations. But I mention it just in case someone
+ has got a bright idea on how to use that. That is enforcing local validation
+ of a measurement against a good value stored in an extended attribute of the
+ file. That means I got an executable. For example, the Python interpreter. And
+ they feel that someone has changed it, manipulated, replacing it with a copy
+ infected with malware. What I can do is to use an extended attribute of the
+ Linux file system to save the hash. And if you have IMA with appraise enabled,
+ when Python is executed, before executing, IMA computes the hash, compared
+ with the hash stored together with the file. And if they are different, Python
+ is not started. You understand that this is weak. Because if I have attacked
+ the machine and they have modified IMA, or if I was so good to alter this
+ attribute, even if it should not be alterable, but if you add a rootkit or
+ something similar, I can perform the operation. And it's a local validation
+ which can counter some kind of weak attacks, but it's not very, very strong.
+ Maybe it's good. Then, which is protecting those extended attributes, which
+ include also the appraisal hash against offline attacks. The collect store are
+ the two features that we are discussing now. And we are using that in the
+ measurement. So when IMA started, the extension of the UEFI measured boot to
+ the OS and application is performed in this way. IMA uses PCR number 10. And
+ the initial value that it puts inside is the so-called boot aggregate. That is
+ the hash of all PCRs from 0 to 7. They are all related to the UEFI. So we
+ start from this value. So we get a link between what we are doing, what was
+ done down to avoid that you can do strange attacks. Then, we can configure
+ what will be measured using a so-called IMA template. The IMA template is the
+ configuration file for IMA. In many cases, we use a standard template named
+ IMA-NG. But it can be customized. It is a routine operation. Then, the
+ measures are exposed in the kernel security file system. So ASCII runtime
+ measurements contain all the things that are being measured. This is an
+ example. When you dump that file, you get something like this, PCR number 10,
+ template hash, template, the file data hash. You see SHA-1 has got this value.
+ Then, the first thing which is executed is /init. Great. It has got this value
+ with SHA-256. Then, we add this shared library. Then, we add these other
+ shared libraries. Everything which is executed is listed here and extended
+ into the PCR number 10. Now, we need to verify that. Because we ask to the
+ machine, please give me the PCR number 10. You have it. Oh, what should be the
+ correct value? When you have IMA enabled, the measurement lists are not alone.
+ But they are accompanied by the measurement list. So that part, which is
+ kernel resident, but the PCR 10 value is variable, executed, and their order
+ of execution. So we needed to compute if the PCR 10 value returned now is
+ correct or not. And we do it this way. We start with myPCR10, which is a
+ variable on the verifier, equals 0. Because that is the RSA. Then, we said
+ that the first thing is the boot aggregate. So we perform extend with the boot
+ aggregate, which is possible because in the response, so we add the values,
+ PCR 0, 1, 2, 3, up to 7. So we put them together, and we put it there. Then,
+ we go through the list in the same order in which the measures were performed.
+ So for each measure M of a component C, first point, since here, we have the
+ name of the component. OK, specific machine, alarm. I don't look at anything
+ else. Something was executed, which is bad. If the measure of that component
+ is different from the gold measure of that component, alarm. Yes, that
+ component is permitted, but someone has manipulated it. No good. Otherwise, I
+ will extend with these measures my PCR 10, and I will repeat. So I'm
+ re-performing the extend, but not in the real EPM, in my memory as the
+ verifier. In the end, when I finish scanning the measurement list, if my PCR
+ 10 is equal to the PCR 10 that was returned in the response, then OK, else
+ alarm. You see that in this way, we are able to attest everything from the
+ boot, to the operating system, to all the applications, and those
+ configurations that correspond to a file stored inside the operating system.
+ OK, I think it was a dense lecture, so think about it. And next week, we will
+ continue extended data to virtualize the environments and other things like
+ that. Have a nice weekend. [AUDIO OUT] you

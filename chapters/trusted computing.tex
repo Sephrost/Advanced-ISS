@@ -216,16 +216,37 @@ but additionally incorporates secure boot functionality.
 
 \subsection{Intel SGX}
 
-Intel Software Guard Extensions (SGX) are closely integrated with 
-the CPU and modify memory management to enhance security. 
-Enclaves, which are isolated execution environments, are protected 
-from other code and vice versa. As these enclaves are created, 
-the code is measured in a manner akin to the Trusted Platform 
-Module (TPM). SGX can also be combined with Intel Identity 
-Protection Technology (IPT) to facilitate a trusted display. 
-Initially, SGX1 was available on both low-end and high-end CPUs, 
-while SGX2 is now primarily restricted to server-oriented CPUs, 
-such as the Xeon series.
+Intel Software Guard Extensions (SGX) are tightly integrated with the
+CPU, providing a hardware-based TEE by modifying memory management to
+enhance security. SGX enables the creation of secure enclaves, which
+are isolated execution environments protected from access by other
+processes, even those with high priority. These enclaves achieve
+memory isolation, ensuring that only the code within an enclave can
+access its data, providing a high level of hardware-protected
+separation.
+
+When an SGX enclave is created, the Intel SGX architecture performs a
+measurement, similar to Trusted Platform Module (TPM) practices, by
+computing a hash of the executable loaded into the enclave. This
+measurement-based security model is essential to SGX’s integrity,
+ensuring that only approved code can run within an enclave.
+
+For extended capabilities, SGX can be paired with Intel Identity
+Protection Technology (IPT), allowing features such as a trusted
+display. However, SGX itself is limited to CPU and memory protection
+and does not provide secure input/output channels. When trusted
+input-output is required, pairing with Intel IPT enables trusted
+interaction with the display.
+
+Intel initially made SGX-1 available across both consumer and
+enterprise CPUs, but later revisions—specifically SGX-2—shifted focus
+towards server-oriented environments. SGX-2 is now mainly available on
+high-end CPUs, such as Intel’s Xeon series, used in data centers.
+Furthermore, enclave creation within SGX requires special permissions
+and the use of Intel-specific libraries, and all enclave-bound code
+must be signed by Intel. This signing requirement means executable
+code must be submitted to Intel to receive a signature, which may be a
+barrier for some users.
 
 \subsection{Keystone}
 
@@ -240,22 +261,36 @@ customizable open-source hardware options, including
 Field-Programmable Gate Arrays (FPGAs) or System-on-Chip (SoC)
 designs. The framework incorporates core components along with
 cryptographic extensions and supports various execution modes,
-including Machine, Supervisor, and User modes. Additionally, it
-features Physical Memory Protection (PMP) to safeguard memory and I/O
-operations.
+including Machine(M), Supervisor(S), and User(U) modes. Additionally, it
+features Physical Memory Protection (PMP), which has its
+hardware-based access control to different pages of memory. That
+avoids that one process can access the memory of another process,
+either in general or specifically during a period of time. This helps
+to safeguard memory and I/O operations, which are memory mapped.
 
 Usually, TEEs are rigid and un-customizable, with many design
 implementation dictated from the underlying hardware, for example
-Intel SGX has a large software stack that is not customizable, AMD SEV
-have very large TCB, ARM TrustZone has a single TEE. 
+Intel SGX has a large software stack that is not customizable which
+means a larger TCB, which is undesirable, AMD SEV
+have the same issue and ARM TrustZone has a single TEE. 
 
 The architecture is shown in figure \ref{fig:keystone}. Keystone is
-structured to have a Security Monition as the only program running in
-Machine mode, which provides mediation for the operations of the 
-Untrusted hardware and enclaves to the Trusted hardware.
-Keystone doesn't require an entire operating system to run, but only
-a stripped down version because each enclave have an isolated Runtime
-on top of which the Enclave app runs.
+structured to have a \textbf{Security Monition} as the only program
+running in Machine mode(the highest privilege mode), which provides
+which provides access control between any call coming from the upper
+layers towards the hardware. It also provides an \textbf{untrusted
+domain} where one can run any OS compatible with the RISC-V 
+architecture(even Linux), which will run in Supervisor mode. 
+Furthermore, to minimize the TCB, no hypervisor or base operating
+systems are required.
+
+On the other hand, one can have many \textbf{Enclaves}, which are 
+isolated from the untrusted domain and from each other. Since they
+dont need a general purpose OS, they run on a \textbf{Keystone 
+Runtime}, which is a small OS that provides the necessary services 
+to the specific application. On top of this, the \textbf{Keystone 
+Application} runs, which is the actual application that the user 
+wants to run.
 
 \begin{figure}[H]
   \centering
@@ -263,6 +298,10 @@ on top of which the Enclave app runs.
   \label{fig:keystone}
   \caption{Keystone architecture}
 \end{figure}
+
+\begin{boxH}
+  For the exam, read the bloody papers.
+\end{boxH}
 
 \section{Trusted computing and remote attestation}
 Attacker would obviously like to inject malwares at the lowest level
@@ -272,15 +311,23 @@ to modify the OS is possible, or, alternatively boot an alternative
 one under the control of the attacker by modifying the boot sequence
 or even the bootloader.
 
-It comes natural after this that the boot system nd the OS should be
-protected: for boot sequencing we once had the BIOS, which was 
-very difficult to protect, then we had UEFI, which is more secure with
-native support for firmware signature and verification. After this has
-been initialized, the OS can be verified before activation.
+It comes natural after this that the boot system and the OS should be
+protected in order to trust the system: for boot sequencing we once
+had the BIOS (Basic Input Output System), developed by specific
+hardware vendors(no general purpose one available) which was very
+difficult to protect, then we had UEFI (Unified Extensible Firmware
+Interface) , which is more secure with native support for firmware
+signature and verification. After this has been initialized, the OS
+can be verified before activation.
+
+So the manufacturer of the platform will sign the firmware, the UEFI,
+and the hardware at boot will verify the signature. IF it fails, the
+firmware has been tampered with, and the system will not boot. This
+step is necessary to guarantee trust in the loaded OS.
 
 \subsection{Rootkits}
 This is the generic name for a tool that allows to have root access to
-a machine.
+a machine. Of those, there are many kinds.
 
 \paragraph{Firmware Rootkits} Firmware rootkits function by
 overwriting the BIOS/UEFI or other hardware firmware. This allows the
@@ -300,31 +347,35 @@ of the OS.
 trusted drivers used by the operating system (e.g., Windows) to
 interact with hardware. By mimicking a legitimate driver, these
 rootkits gain access to hardware resources while avoiding detection.
+Don't confuse drivers rootkits with firmware ones, the firmware is
+permanently stored in read-only memory, while drivers are part of the
+OS and loaded at boot-time.
 
 \section{Root of trust}
-In general, protecting software withs software can not always be the
+In general, protecting software with software can not always be the
 best idea, as it may fail or have bugs. For this reason, we need
 hardware support to protect the software.
-For this reason we have a \textbf{Root of Trust}, which is a hardware 
+At this end, we have a \textbf{Root of Trust}, which is a hardware 
 component that is trusted to behave as expected, and is the foundation
 for the chain of trust. The RoT should be always part of the Trusted
 Computing Base because hardware is anyway operated by software or
 firmware
 \subsection{SW root-of-trust}
 
-An example from HPE illustrates a method of firmware 
-self-protection using a software root-of-trust. HPE implements 
-a designated “signature” region at a fixed location within the 
-final BIOS image, which is typically 16MB in size. Keep in mind that
-this was developed before UEFI.
+An example from HP Enterprise illustrates a method for firmware
+self-protection, or software root-of-trust. HP Enterprise machines
+implements a designated “signature” region at a small fixed location
+within the final BIOS image, which is typically 16MB in size. Keep in
+mind that this was developed before UEFI.
 
-During manufacturing, the SHA-256 hash of specific BIOS 
-regions is calculated. These regions include static code, BIOS 
-version information, and microcode. The computed hash is then 
-sent to an HPE signing server, which returns a signed hash 
-image (32 bytes) that includes the signature and certificate 
-information. This signed hash image is stored in the BIOS 
-“signature” region.
+During manufacturing, the SHA-256 hash of the custom BIOS regions is
+calculated. These regions include static code, BIOS version
+information, and microcode, but not the hash itself, as its yet to be
+initialized, at its only based on components that will never be
+updated. The computed hash is then sent to an HPE signing server,
+which returns a signed hash image (32 bytes) that includes the
+signature and certificate information. This signed hash image is
+stored in the BIOS “signature” region.
 
 On power-up, the early BIOS code calculates a hash from the 
 specified valid BIOS regions and verifies the validity of the 
@@ -332,7 +383,17 @@ stored “signature” contents. If the calculated hash matches
 the stored hash, the boot process proceeds; otherwise, the 
 system halts, preventing further booting.
 
+Of course, this method is not perfect, as it is still software-based 
+and can be compromised. For example an attacker could replace the 
+chip, which is soldered on the board, with a compromised one, or add
+another memory chip on the free region of the board, which code will
+be executed after the BIOS but before the OS without the integrity 
+protection of the signature.
+
 \subsection{HW root-of-trust}
+The mechanism just described tries to verify firmware from the
+firmware, but can we do better? Yes, we can use a hardware root of 
+trust to verify the firmware. 
 
 A hardware root-of-trust for firmware protection typically includes 
 self-verification, where a static portion of the firmware authenticates 
@@ -342,26 +403,34 @@ Alternatively, firmware verification can be managed by an external
 chip, offering a secure, independent means of affirming firmware 
 authenticity.
 
-Another level of hardware root-of-trust can be implemented through 
-an external cryptographic chip, which takes on the role of validating 
-the BIOS in SPI flash memory after power-on. Upon successful 
-validation, this chip allows the x86 CPU to exit its reset state; 
-otherwise, the CPU remains in reset, ensuring security.
+For example take a look at figure \ref{fig:hw rot}, which shows a x86
+Denverton CPU(which is quite old) and implements a 16MB SPI flash
+memory, which stores the BIOS. It presents a multiplexer in front of
+it that connects to both the CPU and an external cryptographic
+microcontroller which can both use the SPI bus and drive the
+multiplexer. So the decision of which chip can use the SPI bus is
+taken by the external cryptographic microcontroller, which will verify
+the integrity of the BIOS before allowing the CPU to boot.
 
-The external chip may also include a fusing option, allowing a public 
-key hash to be securely fused and later used to verify the signature 
-of the hash stored in the BIOS's signature region. This validation 
-process is similar to the internal BIOS self-integrity check, with the 
-added benefit of relying on an external chip, making it the true 
-hardware root-of-trust.
+Upon successful validation, this chip allows the x86 CPU to exit its
+reset state; otherwise, the CPU remains in reset, ensuring security,
+meaning that the chip is the true hardware root-of-trust.
+
+The external chip may also include a fusing option, allowing a public
+key hash, which is smaller than the public key, to be securely fused
+and later used to verify the signature of the hash stored in the
+BIOS's signature region. This validation process is similar to the
+internal BIOS self-integrity check, with the added benefit of relying
+on an external chip, making it the true hardware root-of-trust.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/Hw RoT verification.png}
+  \label{fig:hw rot}
 \end{figure}
 \section{Boot Types}
-
-Different types of boot processes provide varying levels of security 
+Once we have been able to start the BIOS, the OS can be started.
+Different types of boot processes provide varying levels of security
 during system startup:
 
 \paragraph{Plain Boot} A plain boot involves no security checks, 
@@ -373,11 +442,20 @@ halts, ensuring security from the earliest stages. This process is
 primarily hardware-based and verifies components up to the 
 OS-loader.
 
-\paragraph{Trusted Boot} A trusted boot involves the operating 
-system verifying signatures of critical OS components, such as 
-drivers and antimalware software. If any verification fails, system 
-operations are halted. This type of boot is mainly software-based 
-and extends verification up to the operational state of the OS.
+\paragraph{Trusted Boot} A trusted boot involves the operating system
+verifying signatures of critical OS components, such as drivers and
+antimalware software. If any verification fails, system operations are
+halted. You could have noticed that it assumes that the first part of
+the boot up to the firmware was OK and performs verification only of
+the operating system components. This type of boot is mainly
+software-based and extends verification up to the operational state of
+the OS.
+
+\paragraph{Secure boot vs Trusted boot} With secure boot, if the
+firmware(BIOS/UEFI/whatever) is compromised, it will not be loaded,
+whereas with trusted boot, if the firmware is compromised, the OS
+could still be loaded because the firmware is not verified. 
+
 
 \paragraph{Measured Boot} During a measured boot, the system 
 measures each component executed from boot through a defined 
@@ -386,12 +464,55 @@ does not halt operations if verification fails. Instead, it can securely
 report these measurements to an external verifier, providing 
 ongoing insight into system integrity.
 
+What has been just explained is shown in figure \ref{fig:boot types}.
+Notice that the trusted drivers and the anti-malware are loaded before
+the OS.
 % 2 figures 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/boot types.png}
+  \label{fig:boot types}
   \caption{Boot types}
 \end{figure}
+
+\subsection*{Windows Boot protection}
+
+Windows 10 and Windows 11 implement a robust boot protection scheme
+that combines Secure Boot, Trusted Boot, and Measured Boot to secure
+the startup process against malicious interference, as shown in figure
+\ref{fig:windows boot protection} . Secure Boot, which is managed by
+the hardware manufacturer (e.g., Dell, Lenovo, HP), is the first line
+of defense and prevents unauthorized firmware and bootloaders from
+running. This step effectively blocks bootkits and ensures that only
+trusted firmware initiates the boot sequence.
+
+Following Secure Boot, Windows executes Trusted Boot, which verifies
+and loads essential operating system components in a specific order:
+first the OS loader, then the kernel, followed by system drivers,
+critical system files, and Early Launch Anti-Malware (ELAM) drivers.
+ELAM is a fundamental part of anti-malware solutions, as it starts
+before any user-space process, offering early protection against
+rootkits. The ELAM component must be submitted to Microsoft for
+signature to ensure its integrity, enabling a secure foundation for
+user-level anti-malware processes to operate later.
+
+In conjunction with Secure Boot and Trusted Boot, Windows also
+utilizes Measured Boot, which records each step in the boot process
+for verification by an external verifier. If access is granted, this
+verifier can query the system to confirm its boot integrity and detect
+any potential tampering from the start. This integrated
+approach—Secure Boot to lock down firmware, Trusted Boot to load and
+verify core OS elements, and Measured Boot to maintain verifiable
+logs—creates a strong defense against unauthorized modifications
+during the boot process.
+
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/windows boot
+  protection.png}
+  \label{fig:windows boot protection}
+\end{wrapfigure}
 
 \section{Trusted Computing}
 
@@ -420,82 +541,93 @@ integrity.
 
 \subsection{Trusted Computing Base (TCB)}
 
-The Trusted Computing Base (TCB) refers to the collection of 
-system resources, including both hardware and software, that is 
-fundamental in upholding the security policy of a system. An essential 
-aspect of the TCB is its resilience against compromise; it must be 
-able to protect itself from threats posed by any hardware or software 
-outside of the TCB itself.
+\begin{boxH}
+The Trusted Computing Base (TCB) refers to the \textbf{collection of
+system resources}, including both hardware and software, that is
+essential in upholding the security policy of a system. 
+\end{boxH}
 
-It is important to note that a \textit{Trusted Platform Module} (TPM) 
-is not synonymous with the TCB of a system. Instead, the TPM 
-serves as a tool for an independent entity to assess whether the 
-TCB has been compromised. In specific implementations, the TPM 
-may also play a preventative role, ensuring that the system does 
-not start if the TCB fails to initialize correctly, thus providing an 
-additional layer of security assurance.
+An essential aspect of the TCB is its resilience against compromise;
+it must be able to protect itself from threats posed by any hardware
+or software outside of the TCB itself.
+
+It is important to note that the TPM \textbf{is not} synonymous with
+the TCB of a system. Instead, the TPM serves as a tool for an
+independent entity to assess whether the TCB has been compromised. 
+
+In specific implementations, the TPM may also play a preventative
+role, ensuring that the system does not start if the TCB fails to
+initialize correctly, thus providing an additional layer of security
+assurance.
 
 \subsection{Root of Trust (RoT)}
 
-The \textit{Root of Trust} (RoT) refers to a component within a system 
-that must reliably act in an expected manner, as any deviation in its 
-behavior cannot be detected. The RoT is essential in establishing trust 
-within a platform and comprises several foundational components.
+\begin{boxH}
+  The RoT refers to a component within a system that must reliably act
+  in an expected manner, as any deviation in its behavior cannot be
+  detected. 
+\end{boxH}
 
-The \textit{Root of Trust for Measurement (RTM)} is responsible for 
+The RoT is essential in establishing trust within a platform
+and comprises several foundational components.
+
+The \textbf{Root of Trust for Measurement} (RTM) is responsible for 
 taking integrity measurements and transmitting these to the 
-\textit{Root of Trust for Storage} (RTS). Typically, the CPU executes 
-the \textit{Core Root of Trust for Measurement} (CRTM) at boot, 
+\textbf{Root of Trust for Storage} (RTS). Typically, the CPU executes 
+the \textbf{Core Root of Trust for Measurement} (CRTM) at boot, 
 serving as the first element of BIOS/UEFI code to initiate the 
 chain of trust.
 
-The \textit{Root of Trust for Storage (RTS)} provides a shielded and 
-secure storage environment for critical integrity measurements.
-
-The \textit{Root of Trust for Reporting (RTR)} securely reports the 
-content stored in the RTS, thus enabling verification of the system's 
-integrity.
+The RTS provides a shielded(no one can modify it) and secure storage
+environment for critical integrity measurements.
+The RTR securely reports the content stored in the RTS, thus enabling
+verification of the system's integrity.
 
 \subsection{Chain of Trust}
 
-In a \textit{Chain of Trust}, each component verifies the integrity of 
-the next component in sequence. Component A measures Component B and 
-stores this measurement in the \textit{Root of Trust for Storage} (RTS). 
-Then, Component B measures Component C and similarly stores the 
-measurement in the RTS, continuing this process down the chain.
+Our aim is, starting from the lowest level of the firmware, create a
+\textbf{chain of trust}.
 
-Typically, Component A is the \textit{Core Root of Trust for Measurement} 
-(CRTM), which is part of the \textit{Trusted Computing Base} (TCB). By 
-using the \textit{Root of Trust for Reporting} (RTR), a verifier can 
-securely retrieve the measurements of Components B and C from the RTS. 
-For Components B and C to be trusted, Component A must itself be 
+In a Chain of Trust, each component verifies the integrity of the next
+component in sequence. Component A measures Component B and stores
+this measurement in the RTS. Then, Component B measures Component C
+and similarly stores the measurement in the RTS, continuing this
+process down the chain.
+
+Typically, Component A is the CRTM, which is part of the TCB. By using
+the \textbf{Root of Trust for Reporting} (RTR), a verifier can
+securely retrieve the measurements of Components B and C from the RTS.
+For Components B and C to be trusted, Component A must itself be
 trustworthy.
 
-\subsection{Trusted Platform Module (TPM) Overview}
+\subsection{Trusted Platform Module Overview}
 
-The Trusted Platform Module (TPM) is an inexpensive component,
-typically costing less than 1 dollar, and is available on most servers,
-laptops, and PCs. It is designed to be tamper-resistant, although it
-is important to note that it is not entirely tamper-proof.
+The Trusted Platform Module is an inexpensive component, typically
+costing less than 1 dollar, and is available on most servers, laptops,
+and PCs. It is designed to be \textbf{tamper-resistant}, although it
+is important to note that it is not entirely tamper-proof, meaning
+that it is difficult to compromise it, but not impossible.
 
 While the TPM provides security features, it is not a high-speed
 cryptographic engine; in fact, it is relatively slow in terms of
-processing speed. The TPM is certified with a Common Criteria
-Evaluation Assurance Level (EAL) of 4 or higher, which indicates a
-certain level of security assurance.
+processing speed, m.t. doing RSA signatures with it will take forever.
+The TPM have to be certified with a \textbf{Common Criteria Evaluation
+Assurance Level}(EAL) of 4 or higher, which indicates a certain level
+of security assurance, which is quite good indeed.
 
 As a passive component, the TPM requires the CPU to drive its
 operations. It does not have the capability to prevent the boot
 process; however, it can protect sensitive data and securely report
-this information. Consequently, the TPM functions as both the
-\textit{Root of Trust for Storage} (RTS) and the \textit{Root of Trust
-for Reporting} (RTR), but it does not serve as the \textit{Root of
-Trust for Measurement} (RTM).
+this information. Consequently, the TPM functions as both the RTS and
+the RTR, but it does not serve as the RTM, because we'll perform the
+measure and we'll store the results inside the TPM.
 
 The TPM provides secure storage capabilities, functioning as a secure
 storage component (RTS) with an extend-only approach. It can report
 the content of this secure storage using a digital signature, thus
-acting as a reporting entity (RTR).
+acting as a reporting entity (RTR). This means that every time that
+memory is read outside the TMP, a digital signature computed with a
+asymmetric key pair stored inside the TPM is attached to the data.
 
 One of the critical features of the TPM is its hardware random number
 generator, which supports various cryptographic algorithms, including
@@ -505,17 +637,45 @@ TPM is not a crypto accelerator, as its performance is relatively
 slow.
 
 The TPM also facilitates the secure generation of cryptographic keys
-for limited use cases. It supports binding, which encrypts data using
-the TPM bind key—a unique RSA key derived from a storage key.
-Additionally, the TPM allows for sealing, a process similar to
-binding, but it also specifies the TPM state required for the data to
-be decrypted, known as unsealed.
+for limited use cases. It supports \textbf{binding}, which encrypts
+data using the TPM bind key—a unique RSA key derived from a storage
+key. What does that mean? Binding means that if you want to decrypt
+this data, you can do that only on the platform that contains that
+TPM. Because if you move the data to another platform, they are
+encrypted with the key which is not there. This also means that if the
+platform broke down, you can't decrypt the data anymore.
+
+Additionally, the TPM allows for \textbf{sealing}, a process
+similar to binding, but it also specifies the TPM state required for
+the data to be decrypted, or unsealed. This means that the data can be 
+decrypted only if the TPM is in a specific state, which is useful to
+avoid tampering.
 
 Furthermore, computer programs can utilize a TPM to authenticate
 hardware devices. Each TPM chip is manufactured with a unique and
-secret Endorsement Key (EK) that is burned in during production,
-ensuring that the authenticity of the hardware can be verified.
+secret \textbf{Endorsement Key} (EK) that is burned in during
+production, ensuring that the authenticity of the hardware can be
+verified.
 
+\subsection{TPM 1.2}
+
+TPM 1.2 features a fixed set of cryptographic algorithms, which
+include SHA-1, RSA, and optionally AES. This version of the TPM
+provides a single storage hierarchy specifically for the platform
+user, ensuring that key management and storage are centralized.
+
+At the core of TPM 1.2 is a single root key known as the Storage Root
+Key (SRK), which is typically an RSA-2048 key. This root key serves as
+the foundation for other keys within the TPM, facilitating secure
+storage and cryptographic operations.
+
+Additionally, TPM 1.2 incorporates a built-in Endorsement Key (EK)
+(RSA-2048) that provides a hardware identity for the platform. This EK
+is essential for establishing the authenticity of the TPM and the
+device it resides in. 
+
+Another important thing of TPM 1.2 is its capability for sealing
+only against the PCRs value, where the measurements are collected. 
 \subsection{TPM 1.2}
 
 TPM 1.2 features a fixed set of cryptographic algorithms, which
@@ -538,29 +698,39 @@ data to a Platform Configuration Register (PCR) value. This sealing
 process ensures that the data can only be decrypted when the platform
 is in a specific, verified state, enhancing the security of sensitive
 information.
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/TMP 1-2.png}
+  \label{fig:tpm 1.2}
+\end{wrapfigure}
 
-\subsection{TPM 1.2}
+\subsection{TPM 2.0}
 
-TPM 1.2 features a fixed set of cryptographic algorithms, which
-include SHA-1, RSA, and optionally AES. This version of the TPM
-provides a single storage hierarchy specifically for the platform
-user, ensuring that key management and storage are centralized.
+TPM 2.0 introduces advanced cryptographic flexibility and supports a
+range of algorithms, including SHA-1 for backward compatibility,
+SHA-256, RSA, ECC-256, HMAC, and AES-128, providing robust options for
+secure operations. This version organizes keys into three main
+hierarchies: platform, storage, and endorsement. Each hierarchy can
+support multiple keys and algorithms, enhancing security management
+and allowing for versatile key applications based on specific needs.
 
-At the core of TPM 1.2 is a single root key known as the Storage Root
-Key (SRK), which is typically an RSA-2048 key. This root key serves as
-the foundation for other keys within the TPM, facilitating secure
-storage and cryptographic operations.
+A significant feature of TPM 2.0 is policy-based authorization,
+enabling more sophisticated and adaptable access controls (in previous
+version just one password was required). This policy
+framework allows security measures to be tailored according to diverse
+requirements and provides a structured way to enforce access
+restrictions.
 
-Additionally, TPM 1.2 incorporates a built-in Endorsement Key (EK)
-that provides a hardware identity for the platform. This EK is
-essential for establishing the authenticity of the TPM and the device
-it resides in. 
+Additionally, TPM 2.0 includes platform-specific specifications
+tailored to various application areas, including PC clients, mobile
+devices, and automotive environments. Each of these specifications
+addresses the unique security requirements of its respective platform,
+ensuring that TPM 2.0 can meet the needs of a broad range of use
+cases. However, most of the hardware manufacturers implements their
+TPMs directly in the CPU or the chipset, meaning that one should check
+when buying new hardware: in some cases the TPM is software based on
+even virtualized on a dedicated VM thanks to the hypervisor.
 
-Another important feature of TPM 1.2 is its capability for sealing
-data to a Platform Configuration Register (PCR) value. This sealing
-process ensures that the data can only be decrypted when the platform
-is in a specific, verified state, enhancing the security of sensitive
-information.
 
 \subsubsection{Implementations of TPM 2.0}
 
@@ -590,23 +760,38 @@ hardware.
 
 \subsubsection{TPM 2.0 Three Hierarchies}
 
-TPM 2.0 defines three key hierarchies, each serving distinct purposes
-and managing different aspects of security and key storage.
+TPM 2.0 defines \textbf{three key hierarchies}, each serving distinct
+purposes and managing different aspects of security and key storage.
 
-The first hierarchy is the Platform Hierarchy, which is dedicated to
-managing the platform’s firmware. This hierarchy utilizes non-volatile
-(NV) storage for keys and data, ensuring that critical
+The first hierarchy is the \textbf{Platform Hierarchy}, which is
+dedicated to managing the platform’s firmware. This hierarchy utilizes
+non-volatile (NV) storage for keys and data, ensuring that critical
 firmware-related information is securely maintained.
 
-The second is the Endorsement Hierarchy, which primarily caters to the
-privacy administrator. Similar to the Platform Hierarchy, this one
-also provides storage for keys and data, emphasizing the importance of
-privacy in the overall security architecture.
+The second is the \textbf{Endorsement Hierarchy}, which primarily
+caters to the privacy administrator. But why we need a privacy admin?
+In the early days of the TPM and the Trusted Computing Group (TCG),
+there was concern over privacy implications. One issue was that every
+time a device’s TPM measured and reported its state, it signed those
+measurements with its unique RSA private key. This approach ensured
+that the measurements were authentic and uniquely tied to the device,
+which was valuable for verifying the integrity of the platform.
+However, this method also had a drawback: it revealed the device’s
+identity.
+If each attestation came from a unique RSA key, it could be traced
+back to the same machine each time, compromising privacy.
+For this reasons we use different keys for different purposes(key of
+the manufacturer, key to identify the owner, \ldots).
 
-Lastly, the Storage Hierarchy is designed for the platform’s owner,
-who typically also acts as the privacy administrator. This hierarchy
-features NV storage for keys and data, allowing for efficient
-management of cryptographic assets.
+Similar to the Platform
+Hierarchy, this one also provides storage for keys and data,
+emphasizing the importance of privacy in the overall security
+architecture.
+
+Lastly, the \textbf{Storage Hierarchy} is designed for the platform’s
+owner, who typically also acts as the privacy administrator. This
+hierarchy features NV storage for keys and data, allowing for
+efficient management of cryptographic assets.
 
 Each of these hierarchies comes with dedicated authorization
 mechanisms, such as passwords, and specific policies to govern access
@@ -616,21 +801,20 @@ integrity of the TPM's operations.
 
 \subsection{Using a TPM for Securely Storing Data}
 
-Utilizing a Trusted Platform Module (TPM) for securely storing data
+Utilizing a TPM for securely storing data
 involves several key considerations to ensure both security and
 accessibility.
 
 One primary advantage of using a TPM is its physical isolation. The
-storage occurs within the TPM itself, specifically in non-volatile RAM
-(NVRAM), which helps safeguard sensitive information. This storage can
-include primary keys and permanent keys, although it is important to
-note that the space available in a TPM is very limited.
+storage occurs within the TPM itself, specifically in NVRAM, which
+helps safeguard sensitive information. This storage is very small, so
+ut usually stores primary keys and permanent keys
 
 To enhance security, Mandatory Access Control (MAC) mechanisms are
 employed, which govern how data and keys are accessed within the TPM.
 This cryptographic isolation ensures that even if data is stored
-outside the TPM, such as on a platform's hard drive or solid-state
-drive (SSD), it remains protected.
+outside the TPM, such as on a platform's hard drive, it remains
+protected.
 
 When storing keys or data outside the TPM, it is crucial that the
 information is encapsulated in a secure format, often referred to as a
@@ -641,13 +825,13 @@ regulated.
 
 \subsection{TPM Objects}
 
-Trusted Platform Modules (TPMs) utilize various objects to manage
-cryptographic keys and secure data. One of the primary types of
-objects within a TPM is the primary key, which includes endorsement
-keys and storage keys. These keys are derived from one of the primary
-seeds stored within the TPM. Notably, the TPM does not return the
-private value of these keys; instead, they can be re-created using the
-same parameters, assuming that the primary seed remains unchanged.
+TPMs utilize various objects to manage cryptographic keys and secure
+data. One of the primary types of objects within a TPM is the
+\textbf{primary keys}, which includes endorsement keys and storage
+keys. These keys are derived from one of the primary seeds stored
+within the TPM. Notably, the TPM does not return the private value of
+these keys; instead, they can be re-created using the same parameters,
+assuming that the primary seed remains unchanged.
 
 In addition to primary keys, TPMs also handle keys and sealed data
 objects (SDOs). These objects are protected by a Storage Parent Key
@@ -663,7 +847,8 @@ maintaining the overall security provided by the TPM.
 
 \subsection{TPM Object Areas}
 
-Trusted Platform Modules (TPMs) categorize the storage structure of objects into distinct areas, each serving a specific purpose:
+Trusted Platform Modules (TPMs) categorize the storage structure of
+objects into distinct areas, each serving a specific purpose:
 
 \begin{itemize}
   \item \textbf{Public Area:} This area is utilized to uniquely
@@ -683,32 +868,107 @@ Trusted Platform Modules (TPMs) categorize the storage structure of objects into
 
 \subsection{TPM Platform Configuration Register (PCR)}
 
-The Platform Configuration Register (PCR) serves as the Trusted
-Platform Module's (TPM) implementation of Root of Trust for Storage
-(RTS) and is a core mechanism for recording platform integrity. PCRs
-maintain their values and can only be reset during a platform reset or
-through a hardware signal, which ensures that any malicious code
-cannot manipulate or retract its measurements.
+The Platform Configuration Register (PCR) serves as the TPM
+implementation of Root of Trust for Storage (RTS) and is a core
+mechanism for recording platform integrity. PCRs maintain their values
+and can only be reset during a platform reset or through a hardware
+signal, which ensures that any malicious code cannot manipulate or
+retract its measurements.
 
 PCRs are extended using a cumulative hash, following the formula:
 
 \[
 \text{PCR}_{\text{new}} = \text{hash}(\text{PCR}_{\text{old}} \, || \, \text{digest\_of\_new\_data})
 \]
+Basically, the new PCR value is the hash of the old PCR value and the 
+new data. This process is repeated for each new piece of data that
+needs to be added to the PCR.
 
-This process is commonly referred to as the EXTEND operation.
+This process is commonly referred to as the EXTEND operation (keep in
+mind that it's not commutative).
 Additionally, PCRs can be utilized to gate access to other TPM
 objects. For example, BitLocker uses PCR values to seal disk
 encryption keys, ensuring that the keys can only be accessed when the
 platform is in a known and trusted state.
 
 \subsection{Measured Boot}
+
+Measured boot builds on secure and trusted boot principles by using
+TPM functionality to verify system integrity throughout the boot
+process. The key here is that a TPM is available—whether as a separate
+chip or firmware module—enabling attestation at each step.
+
+The process begins with the Core Root of Trust for Measurement (CRTM)
+located in the boot ROM’s first-stage bootloader. This trusted
+component takes the first measurement by capturing the state of the
+next component in line, the second-stage bootloader, and stores this
+in the TPM’s Platform Configuration Registers (PCRs). This baseline
+measurement is critical, as it establishes initial trustworthiness for
+everything that comes afterward.
+
+Once the second-stage bootloader is loaded, it continues the process
+by measuring the operating system, which can also measure subsequent
+applications if needed. The idea is simple: measure each part of the
+boot sequence and store these measurements in the PCRs, creating a
+chain of trust from the very start.
+
+The accumulated values in the PCRs provide a snapshot of the system’s
+integrity, which an external verifier can check to confirm everything
+is as expected. Though an internal verifier is possible, an external
+one is often more reliable in case an attacker has compromised the
+internal components. This setup allows measured boot to act as a
+strong line of defense, verifying each stage and ensuring a trusted
+environment.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/Measured boot.png}
   \caption{Measured boot}
 \end{figure}
 \subsection{Remote attestation procedure}
+
+Remote attestation leverages the values stored in the TPM’s PCRs
+during the measured boot process, enabling an external verifier to
+confirm the system's integrity. Here’s how it works:
+
+First, an external verifier, which could be a trusted system on the
+network, sends a unique challenge (often a nonce) to the device
+holding the TPM. This challenge prevents replay attacks by ensuring
+that each attestation session is fresh and unpredictable. The platform
+then gathers the values of the PCRs requested by the verifier and
+packages them along with the challenge.
+
+This package of data—containing the PCR values and the response to the
+nonce—is signed using a key unique to the device. This signed response
+assures the verifier that it’s seeing legitimate measurements tied to
+that specific device.
+
+When the verifier receives the signed package, it performs several
+checks:
+\begin{enumerate}
+  \item \textbf{Signature Validation}: It verifies the signature to
+    ensure the data hasn’t been tampered with and is genuinely from the
+    device.
+  \item \textbf{Identity Validation}: It checks that the device’s
+    identity matches expected values, using a stored list of authorized
+    machines to confirm that the device is part of the network.
+  \item \textbf{Measurement Validation}: Finally, the verifier compares
+    the PCR values against known "golden values" stored in a database.
+    These golden values reflect the expected configurations for each
+    device type—taking into account variations in hardware, firmware,
+    and software.
+\end{enumerate}
+
+If the PCR values match the golden values, the verifier can
+confidently conclude that the system is in a known and trusted state.
+If there’s a mismatch, an alert is raised, signaling that the device
+may have been compromised or misconfigured.
+
+This remote attestation process provides a robust way to ensure system
+integrity across a network by verifying both the software status and
+identity of each device, making it a valuable tool for network
+security.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/remote attestation
@@ -718,25 +978,30 @@ platform is in a known and trusted state.
 
 \subsection{Management of Remote Attestation}
 
-When managing remote attestation, several factors must be considered
-to ensure its effectiveness. One critical aspect is whether to
-implement only boot attestation, which is static, or to include
-periodic (dynamic) attestation as well. This decision should take into
-account the attack model, especially with respect to runtime
-vulnerabilities that could be exploited.
+Remote attestation has been performed, and it has failed. What now?
+Management of remote attestation is most important when the
+attestation process fails. 
 
-The periodicity of the attestation operation is another important
-consideration, as it must align with the speed of potential attacks.
-Current implementation limits, which include the time required for
-signature verification, protocol execution, and database lookups, are
-typically in the range of several seconds due to the inherent slowness
-of Trusted Platform Modules (TPMs).
+One critical aspect is whether to implement only boot attestation,
+which is static, or to include periodic (dynamic) attestation as well.
+This decision should take into account the attack model, especially
+with respect to runtime vulnerabilities that could be exploited.
 
-Another challenge in remote attestation management is whitelist
-generation. This process can be complex in general but may be less
-difficult in limited environments, such as Internet of Things (IoT)
-devices, edge devices, Software-Defined Networking (SDN), and Network
-Function Virtualization (NFV). 
+The \textbf{periodicity of the attestation} operation is another
+important consideration, as it must align with the speed of potential
+attacks. A cycle of operations which include the time
+required for signature verification, protocol execution, and database
+lookups, are typically in the range of several seconds due to the
+inherent slowness of TPMs, and for some cases is acceptable, but for
+others a window of exposure of even 5 seconds is excessive. 
+And that is a limit, not of the attestation, but of the physical
+implementation.
+
+Another challenge in remote attestation management is
+\textbf{whitelist generation}. This process can be complex in general
+but may be less difficult in limited environments, such as Internet of
+Things (IoT) devices, edge devices, Software-Defined Networking (SDN),
+and Network Function Virtualization (NFV). 
 
 Furthermore, it is essential to label components appropriately—such as
 good, old, buggy, or vulnerable—and to include configurations from
@@ -744,4 +1009,57 @@ sources like Management and Orchestration (MANO) or network management
 tools. While generating labels can be straightforward if the data is
 file-based, it becomes significantly more challenging when dealing
 with memory-based data.
+\subsection{TCG PC Client PCR use (architecture)}
+According to the Trusted Computing Group for a PC client the PCRs are
+used for various purposes:
+\begin{itemize}
+  \begin{wrapfigure}{r}{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/TCG PC Client.png}
+  \label{fig:TCG PC Client PCR use}
+\end{wrapfigure}
+
+  \item PCR0 is measuring the Platform firmware from system board ROM
+    and it is a fixed value given one version of the firmware.
+    Typically, in a database there are different values for PCR0
+    according to the version of the firmware and the version running
+    in a device could be deduced by these values. It also stores the
+    UEFI boot services, UEFI runtime services.
+  \item PCR1 contains the hash of various extensions of the firmware
+    (ACPI, SMBIOS, OTHER).
+  \item PCR2 drivers loaded from the disk.
+  \item PCR3 is not here. That means it's not used for PC.
+  \item PCR4 is the part of the UEFI OS loader and of the Legacy OS
+    Loader
+  \item PCR5 is for the Platform hardware, for example it is reading
+    and computing the hash of the partition table. That is important
+    if someone manipulated the hardware.
+  \item PCR7 contains the Policy for Secure Boot.
+  \item All registers from PCR8 to above are given to the OS to decide
+    what will be used for.
+\end{itemize}
+For all the registers up to PCR7 the values can be predicted. They
+will depend on the kind of platform, version of the firmware or
+driver. These values are in the golden: if there are wrong values in
+those registers the system cannot be trusted.
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|p{0.1\textwidth}|p{0.9\textwidth}|}
+    \hline
+    \textbf{PCR Index} & \textbf{PCR Usage} \\ \hline
+    0 & SRTM, BIOS, Host Platform Extensions, Embedded Option ROMs and PI Drivers \\ \hline
+    1 & Host Platform Configuration \\ \hline
+    2 & UEFI driver and application Code \\ \hline
+    3 & UEFI driver and application Configuration and Data \\ \hline
+    4 & UEFI Boot Manager Code (usually the MBR) and Boot Attempts \\ \hline
+    5 & Boot Manager Code Configuration and Data (for use by the Boot Manager Code) and GPT/Partition Table \\ \hline
+    6 & Host Platform Manufacturer Specific \\ \hline
+    7 & Secure Boot Policy \\ \hline
+    8-15 & Defined for use by the Static OS \\ \hline
+    16 & Debug \\ \hline
+    23 & Application Support \\ \hline
+  \end{tabular}
+  \caption{PCR Index and Usage}
+  \label{table:pcr_usage}
+\end{table}
 
