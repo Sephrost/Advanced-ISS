@@ -1177,3 +1177,332 @@ if (myPCR10 == PCR10) OK else raise alarm
 \end{listing}
 
 
+\subsection{Size and Variability of the TCB}
+
+The TCB is as large as the smallest set of code, hardware, personnel,
+and processes necessary to be trusted to meet specific security
+requirements. A reliable TCB is essential for achieving a secure
+system, as it represents the foundation upon which all security
+assurances are built.
+
+To enhance confidence in the TCB, several methods can be applied:
+\begin{itemize}
+    \item \textbf{Static Verification:} Analyzing the TCB without
+      executing it to ensure it behaves as expected.
+    \item \textbf{Code Inspection:} Manually examining the TCB code
+      for potential vulnerabilities.
+    \item \textbf{Testing:} Running the TCB through various scenarios
+      to check for security flaws.
+    \item \textbf{Formal Methods:} Applying mathematical proofs and
+      models to verify the TCB's behavior under different conditions.
+\end{itemize}
+
+These methods, however, are often expensive and labor-intensive,
+making it essential to minimize the complexity of the TCB. A smaller,
+more streamlined TCB reduces the attack surface, yet simplification
+alone is insufficient if variability is not controlled.
+
+The Trusted Platform Module (TPM) aims to establish a reliable TCB via
+the Core Root of Trust for Measurement (CRTM). However, the TCB has
+become increasingly large and dynamic, posing challenges to
+consistency. For example, two “identical” computers might report
+different TCB measurements due to slight variances, making it harder
+to maintain a uniform security baseline.
+
+\subsection{Dynamic Root of Trust for Measurement}
+
+The Dynamic Root of Trust for Measurement (DRTM) is a technique that
+establishes a trusted environment on demand by resetting the CPU and
+starting measurements from a controlled point, rather than relying on
+the entire system boot sequence from BIOS onward. This approach helps
+mitigate issues with incorrect Platform Configuration Register (PCR)
+values when firmware is updated, which can otherwise cause problems
+with accessing sealed data.
+
+DRTM leverages special processor commands to initiate a secure
+environment, often referred to as a "Late Launch." These commands
+include:
+\begin{itemize}
+    \item \texttt{SENTER} for Intel's Trusted Execution Technology
+      (TXT), which executes the SINIT binary module.
+    \item \texttt{SKINIT} for AMD's Secure Virtual Machine (SVM).
+\end{itemize}
+
+When either of these commands is executed, all processing on the
+platform is temporarily halted. DRTM then:
+\begin{itemize}
+    \item Hashes the contents of a specified memory region, storing
+      this measurement in a dynamic PCR (PCRs 17–23 were added in TPM
+      v1.2 specifically for dynamic measurements).
+    \item Transfers control to a specific memory location, where the
+      Secure Loader Block (SLB) is measured and executed.
+    \item Disables Direct Memory Access (DMA), interrupts, and
+      debugging to secure the environment during this process.
+\end{itemize}
+
+PCR 17 is unique in that it is used specifically by DRTM commands,
+ensuring the integrity of this late-launch measurement. By allowing
+the TCB to start fresh from a known, controlled point, DRTM enables
+flexible and secure initialization of trusted environments.
+
+\subsection{Hypervisor TEE}
+
+The Dynamic Root of Trust for Measurement (DRTM) was designed to
+facilitate the secure loading of a hypervisor, such as Xen or VMware
+ESX, which in turn manages and isolates virtual machines (VMs). When
+initialized through DRTM, the Trusted Platform Module (TPM) can attest
+to the integrity of the hypervisor, ensuring it has loaded correctly
+and securely. Only after a proper load can TPM-sealed storage be
+accessed by the hypervisor, thus providing a robust mechanism for
+securing sensitive data in cloud computing environments.
+
+Although this approach enhances security, validating the hypervisor's
+integrity remains challenging due to its substantial codebase. For
+instance:
+\begin{itemize}
+    \item Xen hypervisor includes a complete copy of the Linux kernel.
+    \item VMware hypervisors are similarly large in scale.
+\end{itemize}
+
+The extensive code size of these hypervisors necessitates rigorous
+validation to maintain trust, underscoring both the capabilities and
+challenges of using DRTM for hypervisor-based Trusted Execution
+Environments (TEEs).
+
+\subsection{Remote Attestation in Virtualized Environments}
+
+In virtualized environments, having a hardware Root of Trust (RoT)
+remains crucial for ensuring security. However, full virtualization,
+as seen in virtual machines (VMs), often provides only a
+software-based RoT, such as virtual TPMs (vTPMs) implemented by
+platforms like Xen, Google, and VMware. To strengthen security, a
+strong link between the virtual TPM (vTPM) and the physical TPM (pTPM)
+is necessary.
+
+This approach involves \textit{deep attestation}, where hardware-based
+attestation is used to verify the integrity of the environment. By
+rooting sealed objects in the physical TPM, the vTPM gains added
+protection. This setup requires an extension of the standard
+TCG-defined interfaces, which is an area of ongoing development.
+
+Alternatively, in lightweight virtualization environments, such as
+Docker containers, a different approach is feasible. Here, because the
+hardware resources, including the TPM, are shared directly with the
+host, the complexity of managing separate attestation layers can be
+reduced.
+
+\subsection{Remote Attestation for OCI Containers}
+
+Remote Attestation for Open Container Initiative (OCI) containers
+is designed to be flexible and is not dependent on any specific
+containerization technology. This approach is transparent both to the
+container runtime and to the containerized workloads, allowing
+seamless operation without requiring modifications to the container
+environment.
+
+The RA process verifies both the host and its containers, leveraging a
+hardware-based RoT to ensure the integrity of the system components.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/container OCI .png}
+  \caption{Remote attestation for OCI containers}
+\end{figure}
+
+\subsubsection{Implementation}
+
+The implementation of RA for OCI containers introduces a new Integrity
+Measurement Architecture (IMA) template called \texttt{ima-dep-cgn}.
+This template is designed to enhance the attestation process by
+addressing the following key aspects:
+
+\begin{itemize}
+    \item \textbf{Dependencies:} The template helps to determine
+      whether an entry belongs to the host or to a specific container,
+      establishing a clear relationship between the two.
+    \item \textbf{Control-Group Name:} This identifier specifies the
+      particular container associated with the entry, allowing for
+      accurate tracking and management.
+    \item \textbf{Template Hash:} The digest for the entry is
+      calculated using an algorithm other than SHA-1, with options
+      such as SHA-256 or SHA-512, ensuring a more secure and robust
+      hashing process.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/container OCI
+  implementation.png}
+  \caption{Implementation of remote attestation for OCI containers}
+\end{figure}
+
+\subsection{Credentials chain of trust}
+Inside the TPM, there's a Endorsement Key (EK) which is unique to each
+TPM, with the respestive EK certificate issued by the TPM vendor. We
+dont use that to avoid tracing by the vendor. Instead, the
+manifacturer additionally provides a IDevID based on the EK and the
+TPM vendor certificate. This IDevID is still inside the TMP, bu we
+dont use that either to avoid tracing by the vendor. Instead, we use
+a local device identifier (LDevID) which is based on the IDevID and
+the OEM certificate.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/credential chain of
+  trust.png}
+  \caption{Credentials chain of trust}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/TPM credential
+  activation.png}
+  \caption{The TPM credential activation process}
+\end{figure}
+
+\subsubsection{TPM Basic Authorization Mechanism}
+
+The Trusted Platform Module (TPM) implements a basic authorization
+mechanism designed to ensure secure command execution and object
+usage. The key features of this mechanism include:
+
+\begin{itemize}
+    \item \textbf{Direct Password-Based Authorization:} The TPM
+      supports direct password-based authorization for executing
+      single commands, enhancing security by requiring valid
+      credentials.
+    
+    \item \textbf{Password-Based HMAC:} Commands and responses are
+      authenticated using a password-based Hash-based Message
+      Authentication Code (HMAC), ensuring the integrity and
+      authenticity of the communication.
+    
+    \item \textbf{Nonces for Replay Protection:} The mechanism
+      utilizes both caller\_nonce and TPM\_nonce values to prevent
+      replay attacks, ensuring that each command and response pair is
+      unique and cannot be reused maliciously.
+    
+    \item \textbf{Platform State Awareness:} The TPM is aware of
+      various platform states and can be configured to enforce
+      specific policies regarding object usage, including:
+    \begin{itemize}
+        \item \textbf{PCR Value Dependency:} Object usage can be
+          restricted based on the values of selected Platform
+          Configuration Registers (PCRs), ensuring that operations are
+          only performed when the platform is in a trusted state.
+        
+        \item \textbf{Time-Based Restrictions:} The TPM can prevent
+          object usage after a specified time, enhancing security by
+          limiting the validity of operations to a defined time
+          window.
+        
+        \item \textbf{Multi-Entity Authorization:} Usage of certain
+          objects may require authorization from multiple entities,
+          such as key holders, ensuring that a consensus is reached
+          before critical operations are performed.
+    \end{itemize}
+\end{itemize}
+
+\subsection{SHIELD project}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/SHIELD project.png}
+  \caption{SHIELD project}
+\end{figure}
+
+\section{Keylime}
+
+Keylime is an open-source remote attestation project hosted at the
+Cloud-Native Computing Foundation (CNCF) that is designed with a focus
+on cloud-oriented environments. It leverages the Trusted Platform
+Module (TPM) to create a highly scalable remote attestation (RA)
+framework with a straightforward architecture.
+
+Keylime includes several key features: remote boot attestation, which
+ensures the integrity of the boot process by verifying the platform's
+state at boot time; Linux IMA support, allowing for periodic runtime
+attestation through Linux Integrity Measurement Architecture (IMA) to
+verify system integrity during operation; registration of multiple
+agents to a verifier, enhancing flexibility and scalability in
+attestation processes; and a robust certificate infrastructure to
+facilitate secure communications and verifications within the
+framework.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/keylime schema.png}
+  \caption{Keylime schema}
+\end{figure}
+
+\subsection{Remote Attestation Procedures – RATS}
+
+The Remote Attestation Procedures (RATS) were proposed by the Internet
+Engineering Task Force (IETF) to enhance support for different
+platforms during the load time. RATS defines various actors involved
+in the remote attestation procedures, including the Attester, Relying
+Party, Verifier, Relying Party Owner, Verifier Owner, Endorser, and
+Reference Value Provider.
+
+Additionally, RATS specifies several topological patterns, such as the
+Background Check Model and the Passport Model, to organize the
+interactions among these actors. The framework is documented in
+RFC-9334, titled "RATS Architecture," which lays the foundation for
+the remote attestation process. Numerous other RFC drafts are
+currently in progress, focusing on various aspects such as data
+formats, procedures, and attestation models to further develop the
+RATS framework.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/RATS.png}
+  \caption{Remote Attestation Procedures (RATS)}
+\end{figure}
+
+\subsubsection{RATS – Main Roles}
+
+In the RATS framework, several key roles are defined to facilitate the
+remote attestation process. 
+
+The \textbf{Attester} is responsible for generating evidence when
+attestation is needed, typically at the request of the Relying Party.
+This evidence is essential for accessing services, such as those that
+utilize OAuth for authentication.
+
+The \textbf{Verifier} plays a critical role in comparing the evidence
+provided by the Attester against predefined reference values, applying
+an appraisal policy in the process. It also utilizes endorsements to
+identify valid attesters, ensuring that the attestation is credible.
+
+Finally, the \textbf{Relying Party} evaluates the attestation results
+based on its specific policy, known as the Relying Party Policy. It is
+important to note that the Relying Party and the Verifier may be part
+of the same service, streamlining the attestation process.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/RATS attestation
+  procedure.png}
+  \caption{RATS attestation procedure}
+\end{figure}
+
+\section{Veraison (VERificAtIon of atteStatiON)}
+
+Veraison is an open-source project designed to enhance consistency for
+Verification Services in the realm of remote attestation. It
+implements various standards and provides a set of libraries that
+allow for extensive customizations.
+
+Originally generated by ARM's Architecture Technology Group (ATG),
+Veraison was later adopted by the Confidential Computing Consortium
+within the Linux Foundation. It supports a variety of architectures
+and RoT implementations, making it a versatile
+solution in the field of attestation.
+
+While Veraison does not offer a standard agent implementation, it
+features a flexible structure for evidence provisioning. Its high
+customizability enables users to select only the necessary features
+for their applications, facilitating the easy development of custom
+functionalities tailored to specific requirements.
+
