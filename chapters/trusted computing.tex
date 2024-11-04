@@ -1012,12 +1012,14 @@ with memory-based data.
 \subsection{TCG PC Client PCR use (architecture)}
 According to the Trusted Computing Group for a PC client the PCRs are
 used for various purposes:
-\begin{itemize}
-  \begin{wrapfigure}{r}{0.5\textwidth}
+\begin{wrapfigure}{r}{0.5\textwidth}
   \centering
   \includegraphics[width=0.5\textwidth]{img/TCG PC Client.png}
   \label{fig:TCG PC Client PCR use}
+  \caption{TCG PC Client PCR architecture}
 \end{wrapfigure}
+
+\begin{itemize}
 
   \item PCR0 is measuring the Platform firmware from system board ROM
     and it is a fixed value given one version of the firmware.
@@ -1047,12 +1049,15 @@ those registers the system cannot be trusted.
   \begin{tabular}{|p{0.1\textwidth}|p{0.9\textwidth}|}
     \hline
     \textbf{PCR Index} & \textbf{PCR Usage} \\ \hline
-    0 & SRTM, BIOS, Host Platform Extensions, Embedded Option ROMs and PI Drivers \\ \hline
+    0 & SRTM, BIOS, Host Platform Extensions, Embedded Option ROMs and
+    PI Drivers \\ \hline
     1 & Host Platform Configuration \\ \hline
     2 & UEFI driver and application Code \\ \hline
     3 & UEFI driver and application Configuration and Data \\ \hline
-    4 & UEFI Boot Manager Code (usually the MBR) and Boot Attempts \\ \hline
-    5 & Boot Manager Code Configuration and Data (for use by the Boot Manager Code) and GPT/Partition Table \\ \hline
+    4 & UEFI Boot Manager Code (usually the MBR) and Boot Attempts \\
+    \hline
+    5 & Boot Manager Code Configuration and Data (for use by the Boot
+    Manager Code) and GPT/Partition Table \\ \hline
     6 & Host Platform Manufacturer Specific \\ \hline
     7 & Secure Boot Policy \\ \hline
     8-15 & Defined for use by the Static OS \\ \hline
@@ -1062,4 +1067,113 @@ those registers the system cannot be trusted.
   \caption{PCR Index and Usage}
   \label{table:pcr_usage}
 \end{table}
+
+\subsection{Measured Execution}
+Previously, we discussed measured boot, which verifies the integrity 
+of the system during the boot process. We would like to extend this
+functionality to the application that runs on the OS, but to do so we
+would have to store the measurements in PCRs, which are limited in 
+number.For this reason we can simply use one PCR and extend the
+measurements of each application.
+
+Another issue also arises: the value of the PCR depends on the
+execution order, in fact starting an application A before an
+application B will result in a different value of the PCR than
+starting the application B before the application A.
+For this reason, the OS can measure the application before loading it
+and perform the extend operation of the PCR, but not all OS are able
+to do so(the superior OS can).
+\subsubsection{Linux’s IMA}
+
+The \textbf{Integrity Measurement Architecture} (IMA) in Linux is a
+standard component of the Linux kernel(one needs to enable it)
+that extends attestation capabilities to dynamically executed
+elements, such as applications. It provides mechanisms for collecting,
+storing, appraising, and protecting measurements to ensure the
+integrity of files accessed on the system.
+It can perform various operations:
+
+\begin{itemize}
+  \item \textbf{Collection}: IMA measures a file before it is
+    accessed, creating an integrity measurement to track any potential
+    alterations.
+  \item \textbf{Store}: The measured data is added to a
+    kernel-resident list, known as the Measurement List (ML), and the
+    IMA PCR (specifically PCR 10) is extended to reflect these
+    measurements, making them available for attestation purposes.
+  \item \textbf{Appraise} (optional): IMA can enforce local validation
+    of a file's measurement by comparing it to a "good" value stored in
+    the file's extended attributes. This step helps to ensure that the
+    file remains in a trusted state, but is a feature which
+    is not required for measured operations
+  \item \textbf{Protect} (optional): IMA can secure a file's extended
+    security attributes, including the appraisal hash, against offline
+    attacks. This prevents unauthorized modifications to these
+    attributes when the system is not active.
+\end{itemize}
+The appraise feature is most interesting: lest's suppose that one
+think that, for example, a python executable has been compromised. One
+can use an extended attribute to store the hash of the python 
+executable and compare it with the hash of the python executable 
+measured by the IMA. This happends before it's been executed,
+automatically by the OS. If the hashes are different, the python
+executable is not executed.
+
+When the IMA starts, it extends UEFI's measured boot concept to the OS
+and applications by using PCR 10. It begins by storing a "boot
+aggregate," which is a hash of all PCR values from 0 to 7—these PCRs
+capture UEFI-related measurements. This boot aggregate establishes a
+continuity between the boot measurements and IMA's ongoing monitoring,
+preventing certain types of attacks.
+
+IMA is configurable through an "IMA template," which defines what gets
+measured. A common template, "IMA-NG," is often used, but the template
+can be customized to fit specific needs. IMA then logs these
+measurements in the kernel security filesystem, where they’re stored
+as ASCII runtime measurements, allowing access to a detailed record of
+measured files and executables. For example, each entry includes the
+PCR 10 value, a template hash, and hashes for each file, showing the
+order in which each executable or library was measured.
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{PCR} & \textbf{template-hash} & \textbf{template} & \textbf{filedata-hash} & \textbf{filename-hint} \\
+    \hline
+    10 & 91f34b5[...]ab1e127 & ima-ng & sha1:1801e1b[...]4eaf6b3 & boot\_aggregate \\
+    10 & 8f16832[...]e86486a & ima-ng & sha256:efdd249[...]b689954 & /init \\
+    10 & ed893b1[...]e71e4af & ima-ng & sha256:1fd312a[...]6a6a524 & /usr/lib64/ld-2.16.so \\
+    10 & 9051e8e[...]4ca432b & ima-ng & sha256:3d35533[...]efd84b8 & /etc/ld.so.cache \\
+    \hline
+  \end{tabular}
+  \caption{Example of IMA Measurement List}
+\end{table}
+
+
+To verify these measurements, a verifier can request the current PCR
+10 value. The machine responds with this value along with the detailed
+measurement list. To validate, the verifier starts with a zero value,
+incorporates the boot aggregate by combining PCRs 0 through 7, and
+then processes each measurement in the order they were originally
+extended into PCR 10. This step-by-step verification ensures that the
+system's state aligns with expected integrity values.
+
+\begin{listing}
+  \centering
+  \begin{verbatim}
+myPCR10 = 0
+myPCR10 = extend(boot_aggregate)
+
+foreach measure M of component C
+    if (C not authorized) then raise alarm
+    if (M != gold_measure(C)) then raise alarm
+    myPCR10 = extend(M)
+end foreach
+
+if (myPCR10 == PCR10) OK else raise alarm
+  \end{verbatim}
+  \caption{IMA verification}
+\end{listing}
+
 

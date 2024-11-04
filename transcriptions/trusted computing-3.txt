@@ -1,0 +1,1058 @@
+ Okay, so we continue with the topic that we started in the previous lecture.
+ But before starting that, I would like to remind you one thing. I don't know
+ if you read the regularly the schedule on the Polito Portal. Next week, the
+ two lectures will be dedicated to social engineering. It will be the start of
+ that part of the course. So that will be while the laboratory won't be the
+ usual laboratory for this part. There will be no laboratory for social
+ engineering, but only lectures and the first six hours will be next week. In
+ the week after that, we will on the contrary, continue with the traditional
+ cybersecurity, technical cybersecurity by myself. Okay, great. Now, we studied
+ secure boot, trusted boot, measured boot. And in particular, we studied how
+ it's possible to extend the measured boot to measured operations, going up to
+ the applications being executed, at least in a Linux environment, thanks to
+ the IMA. But there is something more than this. And the point is that a
+ trusted computing base that we are using in modern system is too much big and
+ too much variable. So there is a problem in that. Should be the smallest
+ amount of code because you remember that that part must be trusted.
+ Unfortunately, there is no proof that it is correct. And if it is too big,
+ it's too big a risk. So we can try to increase our confidence in the trusted
+ computing base by means of static verification when we develop the source
+ code, code inspection, testing, or even formal methods that you have either
+ already studied or you will start in the security verification and testing.
+ But all these methods are quite expensive. And so reducing the complexity of
+ the TCB is an important target nowadays, but in itself, it is not sufficient.
+ The TPM tries to create the smallest possible TCB via the core root of trust
+ for measurement. But the TCB nowadays anyway has become too large and too much
+ dynamic. That is a problem because we have some measures that say this should
+ be the hash value of that component. But if there are too many variations,
+ just knowing what are the correct golden measurements becomes too difficult.
+ So in general, two identical computational nodes could have very different
+ measures and yet be perfectly fine. So one thing that has been done is to
+ introduce a dynamic root of trust for measurement, exploiting the secure boot
+ for then starting from another point. So rather than trust everything since
+ the BIOS, once we have executed secure boot, which as we discussed cannot be
+ modified, otherwise the boot is not performed. Then from that point on, we
+ perform a reset and start measuring components from that point on. So we said
+ the first part was secured because otherwise we would not reach at this point.
+ Now let's start measuring from this point above. For that purpose, since EPM
+ version 1.2, some dynamic PCRs were added from 17 to 23. So you see that the
+ IMA PCR is also, no, that's not included because it's PCR 10. But so these
+ PCRs are set to minus one on boot, which is quite different because the others
+ are reset to zero on boot. So that is to distinguish them from the other PCRs
+ and can be reset to zero by the operating system, which is an operation, which
+ is not permitted on the other PCRs. You remember the other PCRs can only be
+ reset by a hardware reset and not by any software operation. PCR number 17,
+ the first in this series is special because its value can be set only by a
+ special hardware instruction, which is named ASCII init in IMD with
+ virtualization or secure enter if you have the architecture named Intel TXT.
+ In any case, whatever is the real operation being executed, they have the same
+ effect. They disable direct memory access, disable all the interrupts and
+ disable any debugging mode. That means that the program executing that special
+ instruction is the only thing being executed in this moment on this computer,
+ cannot be interrupted, no one else can have access to the memory and no one
+ else can trace it or modify it via debug. The purpose is to permit to this
+ program to measure and then execute the secure loader block. So this is like a
+ new start. We said secure boot, we arrive at this point. Now we have this
+ component and this component, which is part of the secure boot, we'll execute
+ these instructions to be sure to be the only one operating in the system. And
+ now we'll measure the secure loader block and we'll eventually execute it. So
+ this is creating a dynamic root of trust for measurement, DRTM. With this
+ special processor command, specifically in the Intel version, there is already
+ a specific binary module to be executed, which is named SINIT, in which any
+ other processing is stopped and then the dynamic root of trust issues the
+ contents of memory region. So not only measuring the binary module to be
+ executed, but also the memory region, to be sure that there is nothing strange
+ in the memory and the measurements are stored in dynamic PCRs. Then control is
+ transferred to a specific memory location. And this is also called late launch
+ because it's not the original launch of the system, but it's something that
+ happens after the normal launch. This helps in avoiding the problem with the
+ PCR values that are incorrect when firmware is updated. And the consequent
+ problem with the sealed data. We have mentioned the fact that sealing is like
+ encryption, but it is attached, it's related to a specific system state. So
+ imagine that you have sealed data. Then your system say, okay, I'm performing
+ an update, firmware update. Now you've got a new bias. Next time that you
+ start your system, even if that bias is correct, so the measurements are
+ perfect, the sealing will not work. Because they all, if you want to unseal,
+ you must have that version because of that was the state. So it means that now
+ we should seal the data, not against the firmware, but upon some operational
+ state started after the dynamic route of trust for measurement was executed.
+ Okay, so it's not only a problem of not having the correct measures because
+ creating a very big database, it is of course possible to maintain a lot of
+ measurements. But sealing is one of the worst thing because sealing requires
+ exactly the same state. Originally, the DRTM was intended to permit the
+ loading of an hypervisor. You know that hypervisor is that software layer to
+ create virtual machines and perform virtual machine management. For example,
+ hypervisor quite common are Xen or VMware ESX. Because now you have loaded the
+ hypervisor, the hypervisor loads and isolates the virtual machines. The TPM
+ will attest to the hypervisor because that is the first software layer and TPM
+ sealed storage can be released only to the hypervisor once it has been loaded
+ properly. So now we are sealing data against the hypervisor. If the correct
+ hypervisor is executed and not changed, then the protected memory will be
+ released. And typically that protected memory is the one that is needed for a
+ specific virtual machine. When you want to save the state of a virtual
+ machine, you save that sealed against the TPM. So this concept of DRTM may be
+ useful for cloud computing because that is heavily using virtualization. But
+ unfortunately, the hypervisors that I mentioned are still a huge amount of
+ code to be validated. Xen contains a full copy of Linux and VMware is of
+ similar size. And that is unfortunate because the purpose is to have a small
+ TCB. Even if now we have moved the PUN, the point from which we take the
+ measurements and we have excluded the firmware, yet we have a problem with the
+ size. So we are now trying to address the problem of remote attestation and
+ measurements in virtualized environments. We said that having a hardware root
+ of trust is quite an important point for security. But when you virtualize,
+ you have problems. If you have full virtualization, that is virtual machines,
+ they normally offer just the software version of the root of trust. For
+ example, Xen, but also Google, also VMware, offer a VTPM equivalent to a real
+ TPM. But it's not the same thing because virtual TPM is a piece of software.
+ As such, it can be attacked. These are not protected by hardware. And that's
+ reasonable because if you have 20 virtual machines and you have only one TPM,
+ the one TPM can only provide support for one machine, not for the others. So
+ you are forced to have virtual TPM. So if we really want to go along that way,
+ we need a strong link between the VTPM and the physical TPM. When I write
+ PTPM, I mean the physical TPM. There are various works ongoing in that area.
+ You can find even a work by my group, which is dealing with deep attestation.
+ Deep attestation means you use the VTPM, but then the VTPM is somehow
+ validated by the physical TPM. So you create a link to the real hardware, or
+ you decide to seal the objects in the physical TPM to protect the virtual TPM.
+ And unfortunately, having this kind of deep attestation requires an extension
+ to the normal interfaces defined by the trusted computing group. Because when
+ you call an operation like sealing, now you should be able to distinguish if
+ you want sealing against the TPM, but probably if you are executing inside a
+ virtual machine, it will be the virtual TPM, or you want sealing against the
+ physical TPM. So the interface should be able to select which TPM you would
+ like to execute your operation. And that is quite complex. Additionally, here
+ you have another problem, that even if everybody knows that protecting
+ attestation with hardware is much better than protecting with software, people
+ don't want you to tell that. If you go to big cloud providers, such as Amazon,
+ Google, and Microsoft, and you say, but do you have a physical TPM? They will
+ say, no, no, no, we have an equivalent. No problem for you. But if you have
+ really studied, you say that, no, it's not equivalent. You cannot get the same
+ kind of security, but they don't want that that is said, okay? So when someone
+ is offering you such a solution, you have to investigate very well in which
+ way it is implemented. But there is an alternative. If we don't use
+ full-fledged virtual machines, but we use containers, such as the ones enabled
+ by Docker, that is completely different. Because you may have the operating
+ system running on the node and using the physical TPM. And then the containers
+ don't have a completely separated virtualization layer. They are just calling
+ the operating system for certain operations. And you know that separation
+ among containers is created by (silence) namespaces. Depends on the kind of
+ separation that you want. If you want to separate the storage, you have a
+ storage namespace. If you want to separate networking, networking namespace,
+ and so on. Okay? But anyway, even if they see a virtual copy of the disk, a
+ virtual copy of the network, all the operations are then mapped to operations
+ executed on the host operating system. That is an important feature to be
+ understood. Okay? Because in that way, we are on a positive side, because the
+ host operating system is just one, even if you have 1,000 containers, and the
+ host operating system has access to the physical TPM. So the situation for
+ protecting with attestation containers executed on bare metal, as we say, is
+ much better than creating attestation for real virtual machines. Because we
+ don't have the virtualization layer. Everything is just separated by
+ namespaces and operations are performed by the operating system itself of the
+ host. So this is a solution that, by the way, was invented by my group and now
+ has been deployed by many major vendors, which is a remote attestation for
+ containers that respect the open container interface architecture. This is
+ generic. So not tied to a specific containerization technology. You can
+ recognize, for example, the symbol of Docker, but also the one of Podman. I
+ don't care. The important point is that containers are executed on a host,
+ which is in contact with the real hardware. If you're running containers
+ inside a virtual machine, no, sorry. Okay? Uh, this is transparent to the
+ container runtime and to the containerization workloads and provides the
+ remote attestation of two things. Since we have the host performing a lot of
+ operations, we need to attest the host as a first thing, because if the base
+ layer has been compromised, all the rest is gone. So we need always to attest
+ the host and then we can attest containers, all of them, only some of them, as
+ you like. Okay? And the architecture is like this. We have a hardware root of
+ trust. We have the attestation agent and we have the virtualization layer, but
+ this is virtualization with containers. The point is that here inside, we have
+ something that when we write the measure of one operation, we label it. Is
+ this operation performed inside the host or inside the container? And if it is
+ executed inside the container, we have a label. Executed inside container
+ number one, number two, number three. So now the measures are enriched with
+ the specification of which execution environment requested that operation. And
+ we can do that because anyway, the operations are executed on the host
+ operating system, even if they appear to be executed in the container. Now,
+ the problem is just that we need to have a bit more complex verification
+ because the verifier will send the attestation request containing the nonce
+ and we'll get the attestation response. These are the same as we have seen.
+ The measurement list, the nonce, the PCR values, everything signed by the
+ physical TPM. Great. So first thing, let's verify the TPM authenticity. We
+ have a digital signature with a certificate. Is that the one that we are
+ expecting for this node? If yes, we proceed. Now let's verify the TPM quote
+ validity. Is that signature corresponding to the values inside? Yes. Among the
+ various PCRs, are those PCRs related to trusted boot with the correct value?
+ If yes, we proceed. After that, we start the procedure for verifying the IMA
+ measurement list using in all these steps, the golden values. Then in
+ particular, we verify if the operating system, the host part is correct, and
+ then we can verify one or more containers. So we are not forced. We can
+ extract the parts that we are interested to. Okay. This is the implementation.
+ In the implementation, we extend the IMA template with this new version of the
+ template where essentially we have this C-group name. C-group names are the
+ identifiers for the various containers. Those were not available before. You
+ can see now that we have the C-group name and the runtime that executed that.
+ And you can distinguish. But now we have all the information. So the
+ dependencies are the entry that permit us to know if it belongs to the host or
+ to a container. There's a specific measure. Control group name identifies the
+ specific container. And template hash is the usual digest calculated with an
+ algorithm different from SHA-1. We can use several of them. For example,
+ SHA-256. So the important point is being able to know what is executed in the
+ host because that must always be attested plus the option to attest some
+ container. Okay. That's all for that part. Now we have to go to another
+ problem. And the problem actually is that of identity. We always said that TPM
+ is signing the measure with its own private key. But that is exposing a
+ privacy problem because if you move that machine to different environments you
+ will be able to trace that it is always the same machine because the signature
+ will be created always with the same public key. And we don't like that. That
+ is an exposure of privacy. So we would like to create a chain of credentials
+ that are trusted but that protect privacy. So we need to go from the key that
+ was created by the TPM vendor because we said that we have a basic key which
+ is inside the chip that would permit the vendor to know where the machine that
+ he produced is located now to a certificate that on the contrary is
+ customer-oriented because I buy this machine and I want this machine to have
+ my identity not the one provided by the TPM. There is a specific standard
+ 802.1AR secure device identity using TPM which permits the so-called zero
+ touch management of a platform. This is an interesting topic. As systems
+ becomes bigger and bigger you don't have the personnel to go and replace
+ elements configure them all around the world. So having zero touch management
+ is very important because you just send someone to replace the hardware put it
+ in the rack and then that should be automatically recognized and configured by
+ the system. But in order to do that you need the identity of that element, a
+ trusted identity. So it works like this. Inside the chip, the TPM there is one
+ first key, the endorsement key that was created by the TPM vendor. In fact,
+ that endorsement key whose private part is inside the TPM is accompanied by an
+ endorsement key certificate signed by the TPM vendor. That is creating a proof
+ that that piece of hardware is a genuine one. It is the vendor that is
+ attesting yes, this is a TPM version such and such created by
+ STMicroelectronics, Infineon or whoever you like. Great. We don't want to use
+ that because otherwise the vendor can trace the machine. So when that object
+ is used to create, for example a computer because that is a board typically in
+ which you have the TPM but now you need to create a PC you need to create a
+ server. So there is a manufacturer. So the manufacturer will adopt that board
+ and will create an additional key, IDEV ID which is based on the endorsement
+ key plus the vendor certificate. So now you have a second key which is signed
+ by the OEM other equipment manufacturer. The one that built your computer and
+ the trustworthiness is based on the fact that the previous key was certified
+ in that way. So this certificate contains a link to this certificate. So this
+ certificate cannot be moved to another machine with a different TPM. It
+ contains a key which is still inside the TPM but this is an additional key,
+ IDEV ID. But that would permit not the vendor of the TPM but the vendor of the
+ computer to trace operations. And so we have a final step. The final step is
+ local device identifier which is in the field. So in the moment in which you
+ deploy this machine inside your IT infrastructure and again creates another
+ key pair whose certificate depends on the IDEV ID and the OEM certificate.
+ This is the local device identifier with the certificate that was created by
+ the customer by the owner, by the operator of this machine. And this is the
+ chain of trust for the keys. So you can use now this key for performing a test
+ station with the no risk of being traced by the manufacturer of the TPM or the
+ vendor of the computer. Yet you can demonstrate that this is a genuine TPM
+ because you can send this chain of trust, okay? So the important point is that
+ the verifier system must possess this certificate. There are few TPM, so not
+ that certificate. The certificate of the CA of that vendor because that is the
+ root of trust that permits you full verification. Okay, how is that
+ performant? Now we look at some sequence diagrams to make or activate
+ credential. We have a TPM, we have the platform hosting the TPM and we have an
+ external certification authority. So the host platform is asking to the TPM,
+ please create a new key. So this works for all the keys after the endorsement
+ key for the IDEV ID or LDEV ID. Create a key. Here is the new key that you
+ wanted. Of course, only the public part. Please create a certificate for this
+ new key. And here is my TPM endorsement credential just to demonstrate that
+ I'm based on that kind of machine. Now here is your certificate. It's
+ encrypted with your TPM endorsement key. This is an example of proof of
+ possession with an encrypted certificate. So that thing, that certificate can
+ only be decrypted by that TPM because that is the endorsement key. Please
+ decrypt and check that it certifies the new key. Yes, it is. And here is the
+ certificate that you want. So now we have created the new key, but we have
+ verified that this key is tied. The private part is installed in the same TPM
+ as the endorsement key. So we have a genuine pairing. Authorization. When we
+ want to use the TPM, we need some kinds of authorization. Authorization can be
+ direct, password-based. When you want to execute a command towards the TPM,
+ you can just give a password, which of course is creating a bit of problems in
+ case someone is able to sniff the commands, for example, on the bus of the
+ personal computer. Or, much better, you may have password-based HMAC
+ authentication for commands and responses. In this way, even if you are
+ sniffing the internal bus, no attack is possible. And we have also a caller
+ nonce and the TPM nonce. So a nonce in the request and a nonce also in the
+ response to prevent a replay of requests and responses. Those are some basic
+ features. Password-based or HMAC. With HMAC, much better, if you think that
+ the internals of your machine may have been compromised. But the TPM knows a
+ lot about the platform state. And then it can be configured with additional
+ authorization, because basically this is authentication. And then
+ authorization, okay, if you are authenticated, you can do whatever you want.
+ Really? So, for example, even if you supply a correct password in one of these
+ ways, the TPM can be configured to prevent object usage unless selected PCRs
+ have a specific value. So a generalization of the concept of sealing. Or
+ prevent object usage after a specific time. This is valid only for two days.
+ Or prevent object usage unless authorized by multiple entities. So for the
+ most secure case, you may require two people insert the password or to have a
+ command with double HMAC computed with two passwords. Those are examples. So
+ this part is quite complex and quite rich to satisfy different requirements.
+ Okay, so now we got the TPM, we can operate it. We have the certificates for
+ the various key. But we have also to solve a problem related to the trust.
+ When do we perform the attestation? Most solutions that you find on the market
+ will perform attestation, so they will verify measure when the software
+ component is installed. If the component does not have the right value,
+ installation will not permitted. Or in case you are considering cloud
+ computing, installation is actually download. I wanted to get something from a
+ repository and start a job on the cloud with that software. So installation or
+ download time. And typically we just check the signature of the developer. If
+ the signature is good, great. Or load time. The moment in which we take that
+ piece of software, you put it RAM for execution. So we want to measure
+ components when loaded for execution. And here the tricky part is, what is
+ executable? Because if it is a binary, great, you have compiled the C program.
+ You have an X file or something similar, an L file. You run it and we compute
+ the hash of that and we measure. But nowadays you are using Python. And that
+ is a hell. Because what is being executed is the Python interpreter. So you
+ mentioned the Python interpreter, which is good. But actually the program
+ being executed is the input to the Python interpreter. So you need to extend
+ measurement to those things if those are in a file. But if you start a Python
+ interpreter and then you give commands on the keyboard, good luck with that.
+ So the definition of executable is really, really important. For best
+ measurements, you need not to permit the usage of interpreters, but you need
+ to have real binaries. And we have another thing. Even assuming that you have
+ measured the binary, so you are sure that the one being executed is the
+ correct one, maybe that the binary is changing its behavior based on
+ configuration files. For example, when you start IP tables, IP tables is
+ reading the configuration from a file. And you can change the file while IP
+ tables is running and send an NGAP signal to IP tables, and he will reread the
+ configuration and modify. So we need to be able to measure the configuration
+ files. And you should be very careful because normally in order to save time
+ and operations, IMA and in general the attestation operations look just at the
+ name of the file. If the file has already been measured in this session, it
+ will not be measured again. And that's bad. So you need to check not only the
+ name of the file, but also the last modification date, for example, because
+ otherwise you think you have measured correctly, but now the file has changed.
+ Or even worse, there are some binaries that have not file-based, but
+ memory-based configuration. If you think of firewalls or routers, switches,
+ those are not file-based. You start the router, the switch, and then you use
+ Watt for configuring them. When you have a network with 100 routers, how do
+ you configure those routers initially? I mean, then they have their routing
+ protocols, but initially you need to put some definitions, use this interface
+ for outside, this for inside. How do you perform that configuration? The
+ firmware is already there. You need to configure to tell these interfaces for
+ this, these interfaces for that, and this is a class A. What? For 100, 1,000.
+ What? The driver, which driver? That is a piece of hardware. No one has
+ attended a network management course. No, no, no, plug and play. You look like
+ plug and play because you plug and play, but plug and play means there is
+ someone configuring you. That is SNMP, Simple Network Management Protocol.
+ When you have those very nice interfaces that show you the network, oh, this,
+ that, there is SNMP behind that, which is UDP-based, that permits you to
+ manage, from a single interface, 1,000 of machines, but that is not sending a
+ file. It's sending UDP packets that contain definitions. These interfaces for
+ this network, please use this quality of service. And where is that
+ information stored when it arrives on the node? In memory. That is a big
+ problem because everything we do in attestation is based on disk. I got a
+ binary on the disk, and then I measure before loading. I have a configuration
+ file on the disk, I measure before permitting to be read. But if you go
+ directly in memory, well, we have no way to check that. And that can be SNMP
+ or it can be the modern version, which is named netconf, again, which is a big
+ trouble. So we need to be able to measure in-memory configuration. For
+ example, for filtering or forwarding rules that are modified manually. Just
+ let's imagine that we have 10 routers. Yes, we can do manually, but that does
+ not change because manually is not file-based. You give commands and the
+ result is stored in memory, or via network protocol, such as SNMP, netconf,
+ and so on. And that is a problem. It's a problem that currently is being
+ solved and addressed on a custom base. For example, Hewlett Packard is among
+ the best in this sector because they got a lot of buyers from the military,
+ from the government. So they have some special routers in which they have
+ modified the core root of trust for measurement to be able to read in-memory
+ content. And they have designed their system so that, for example, the routing
+ table is always in this section of the memory. We don't use memory
+ randomization, those kinds of things that move things around. No, no, no, no.
+ The routing table is here. The filtering table is there. Now you can have the
+ firmware compute the hash of that portion of memory. Is this solving the
+ problem? We now have got the hash. No, no, no. Forget about physical taxa. If
+ I modify the firmware in such a way to create the measurements for that, have
+ I solved the problem of attestation related to this configuration? I repeat, I
+ repeat every five seconds, even if the memory changes. But once you have a
+ measurement, what should we do? What have we done in the past week? We get a
+ measurement and then we say, okay, measurement. Sorry? Compare to what? Not to
+ the previous. Report is part of the attestation protocol. We need to compare
+ with the golden measurement. This is the correct value. What is the correct
+ value for a routing table or a filtering table? Who knows that? Who knows that
+ in the system? That user interface, the network management. Because the
+ network management is a software that says this router must be configured in
+ this way. This firewall must be configured in this way. This VPN must be
+ configured in this way. And then it is sending packets SNMP netconf to
+ configure. So now you have the attestation. You get the results from memory,
+ and that thanks to this modified version of the firmware. Now you need to ask
+ to the network management system, what is the expected configuration in this
+ moment? Because correctly someone has said, things change over time. So when
+ you receive the content of the memory, you need to compare to the content of
+ the memory, which is expected for this device via the network management or
+ security management system. You see the kind of integration that is needed for
+ this specific things. Because for the others is simpler. That is the hash of
+ the binary, that is the hash of the configuration file, great. But for
+ in-memory configurations, then you need not only to be able to measure, which
+ needs some custom firmware, because that is not the normal operation, but you
+ need also to have the dynamic view. This is the expected value in this moment.
+ Okay. And since we are approaching the time for the choice of the thesis, that
+ will be end of November. I don't remember that there is this Monday, in which
+ we will present. This is one possible topic, because this thing has been done
+ custom by Hewlett-Packard, but we are working on doing that, for example, for
+ RISC-V based platforms, which would be more general because it's an open
+ source stuff. So if there is anybody interested in that, that is a possible
+ topic. For example, being able to extend attestation to in-memory values. So
+ we need appropriate firmware host, and you could add in comparison to the
+ expected configuration by network or security management. Attestation is also
+ very important nowadays for another purpose. When something goes bad, when
+ something goes bad, you say, okay, what has happened? Okay, what is happening
+ is something that we can support with attestation, because the behavior of the
+ system, think about an object-internet thing. Think about an electronic
+ control unit on board of an autonomous vehicle. The vehicle has crashed and
+ killed the three people. Who is responsible for that? Was the design wrong, or
+ there was some malware that infected the vehicle and caused the crash? You
+ need to have a proof of that, okay? Because the behavioral computations and
+ also of the networks cannot be given for granted anymore, too much
+ softwareization. And this is becoming increasingly important because we are
+ continuously moving intelligence from centralized place to distributed, to the
+ edge, to the nodes. So we should be able to answer this question when
+ something bad happens. What was the system state, the platform state, at time
+ T of the accident? Or even, what was the network path in case there was a
+ communication ongoing at that time? And what was the processing for a specific
+ user, for a specific function at that time? And that is another topic for a
+ possible thesis. It's very emotional when I say thesis. And the topic there is
+ network path validation. It means being able to demonstrate that the packets
+ traversed a specific set of routers. And with the international problems that
+ we have, being able to demonstrate that going from Italy to Washington, we
+ have not traversed Russia or China or North Korea with our packets is not
+ trivial. We would like to be able to demonstrate that in case there is any
+ problem. That is named the network path attestation. Okay? Okay, let's say
+ that we break now. But anyway, you understand that since attestation is
+ providing evidence of what was executed, what was the configuration, that is a
+ basis for performing an audit as a minimum, understanding what was wrong and
+ pinpointing. Oh yes, the software was the correct one, so it's the fault of
+ the designer. Oh no, no, no, no, no. The software was modified by an attack.
+ So it's not the designer, but someone entered the vehicle. And that can be an
+ audit just to correct the mistake or forensic analysis if you need to go and
+ talk with the judge about the problem. Okay, let's have a break and then we
+ will continue. (indistinct) Okay, so we discussed about how attestation can
+ provide support. Now, in order to make some practical examples of how
+ attestation can be used in practice, I use one European project that we were
+ part of that was dealing with security as a service. Security as a service
+ means that we can deploy security function as needed by the user over the
+ network infrastructure that they use. And that is typically achieved by
+ creating specific network function virtualizations or security functions and
+ deploy that where needed. So you see that the component that we used for
+ performing attestation of such an infrastructure because that is
+ software-based is the trust monitor. Okay, the trust monitor is down here. We
+ have in the middle, the software-defined network NFV infrastructure, which is
+ our target for deploying the security functions. An orchestrator, because we
+ must deploy in the correct places, the various function. A store, because the
+ network security function are software objects to be downloaded. A security
+ dashboard, and also a bit of reaction, because when we detect that something
+ is not properly configured, we need to perform some reaction, okay? So that
+ was the Shield Horizon 2020 project, NFV-based security infrastructure with
+ the VNSF containing security controls for monitoring, for security actions and
+ reactions, and the remote attestation to verify the integrity state of the
+ whole infrastructure. You see that the trust monitor is receiving two inputs.
+ From the infrastructure itself, can you tell me what is this arrow for? I'm
+ testing if you have understood the attestation or not. So we have the trust
+ monitor here, the one which is evaluating if the system is correctly
+ configured, is running the correct components and so on. And they say it has
+ got two inputs. One from the store of the virtual network security function,
+ and one from the infrastructure, which is being protected. What are these two
+ arrows providing? Yeah, okay. So this one is providing the measurements. So
+ the attestation results, it means that periodically there is not an error. The
+ trust monitor is asking to each component, please give me your result. And on
+ the contrary from the store, we get the golden measurements. Those are the
+ components that can potentially be executed. So we know from there that those
+ are the values that we should expect for their hash computation. On the
+ contrary, this arrow, what is for? In case, can we give a name to that? It's
+ an alarm. So when we have a failure, when there is no match between something
+ being executed and the golden measurement, we send an alarm. And so we have a
+ model that will perform an analysis, trying to understand what's wrong and
+ create some kind of remediation. So let's start with the golden value
+ creation. Here you have the store of the network security function. So the
+ trust monitor, when it started, will request the security manifest. In the
+ sense that you must think that every time you have a software, you have a
+ manifest attached to it, that among the various things says, okay, this is the
+ hash value, if it is just one component, but sometimes a VNSF is composed by
+ several pieces and you get an hash for each of them. And now we get the VNSF
+ security manifest. We extract the measurement from the manifest. And if that
+ is already present, because this VNSF is using a component which is already in
+ my database, because it's used also by another function, I will skip.
+ Otherwise, if this measurement is unknown, I have not yet met it in another
+ VNSF, I will update the whitelist database, rather than golden measurement, we
+ say whitelist or accept list. In the sense, the things that are authorized to
+ run on the system. When we deploy a security function, there is the
+ orchestrator that requires, please start this. So the orchestrator before
+ deploying a VNSF, ask to the trust monitor, please tell me what is the
+ attestation result of the middle box. That is the host. We are going to put
+ the function on top of a box. We would like that box to be in a good state in
+ this moment. So we are checking that the operating system, the docker
+ container, runtime, they are all good. The boot was good and so on. So it
+ means that when we receive this request, we request a remote attestation
+ proof. We send a nose and the new security function, the box where we should
+ deploy that, we'll return the TPM quote and the event long. If the attestation
+ proof is correct, so it matches the expected values, we return the attestation
+ success to the orchestrator and the orchestrator will include the new middle
+ box among the various nodes that are permitted to run. If the attestation
+ proof is not verified, we will return a failure and that box will be excluded,
+ will be isolated. And of course, there will be an alarm for the security
+ manager, go and check what's happening on that physical node. But that node is
+ not more considered for any successive step of orchestration. Then we have the
+ periodic attestation. Periodic attestation is done automatically the trust
+ monitor with the periodicity, which is decided by the manager, which is
+ typically based on the speed of the attack. Maybe 10 seconds, maybe 30
+ seconds, maybe one minute. Typically it's in the order of minutes, not of
+ hours. So periodically, we request the network state to the orchestrator. You
+ see the network state. So which are the nodes that are involved in the
+ security functions in this moment? Because we don't want to attest the whole
+ huge network. If we are doing protection for a specific customer, maybe that
+ customer is using node two, seven, and 35. So we would like to attest only
+ that. And that is the information that the orchestrator has. So we request the
+ network state and we get it. Okay, these are the nodes and they should be
+ running these functions. Now, for each middle box in this sub-network, we
+ request a remote attestation proof to the security function be deployed, which
+ returns the TPM quote and the event log. We verify that that is good. If
+ attestation fails, we notify the operator through the security dashboard.
+ Beware, there is a problem run there. And then the human there can request to
+ terminate, exclude, reconfigure that box. Okay, potentially here, even if I
+ don't like it, you can even have something based on artificial intelligence to
+ take the decision. Normally in this project, we prefer the human in the loop.
+ We send the alarm and he decides what to do. Okay, that's all for the general
+ concept of attestation. Now we go about real problems when implementing in
+ terms of protocols, data, and so on. And the most widely adopted solution for
+ performing a remote attestation is named Keylime. Keylime is an open source
+ remote attestation project, which is hosted and hence endorsed by the Cloud
+ Native Computing Foundation. This is a solution which is cloud oriented. So we
+ assume to have several nodes in the cloud and we want to attest all of them
+ based on physical TPM. And it was designed to be highly scalable because if
+ you have a cloud, you need to attest quite a lot of things. And it's a very
+ straightforward and simple architecture, nothing too much sophisticated. As
+ features, it will perform attestation of the boot of each node. It will
+ support also Linux IMA with the periodic runtime attestation for checking
+ what's going on. And it has got one central verifier. And then you can
+ register multiple agents. An agent is the piece of software that you need on
+ the node to create the attestation port. So it's not compulsory. They are
+ everywhere. If you decide that only parts of the node in the cloud should be
+ attested, you deploy the agents only there. There is an additional point,
+ which is the certification infrastructure. Why? Because at least initially,
+ Keylime gave to each agent also a public key certificate in order to sign the
+ things, to perform other operations. I put it in brackets because that part is
+ very rarely used nowadays. It remains, it is there if you want to use it, but
+ it's not so frequent. So from a structural point of view, we have the attester
+ agent, which is the piece of software that you need on a node to respond to
+ remote attestation requests. Because the purpose of that node is to retrieve
+ the TPM quote. The quote is the operation in which you get the PCR values and
+ the signature with the internal key of the TPM. In addition, it collects other
+ necessary data because the quote is just giving you the PCRs, but then you
+ have PCR number 10 that requires the measurement list of IMA. Eventually, in
+ case you are supporting the certificates, so again, optional, it can listen
+ also for revocation messages in case a certificate was revoked. The registrar
+ is another element that manages agent enrollment. So when you deploy a node
+ with an agent that needs to be registered, enrolled to the registrar, and
+ provides to each registrar a unique user identifier. And it handles the key.
+ So it knows what is the agent key because each agent can sign with its own
+ key, the report, but also what are the endorsement keys. So what are the keys
+ inside the TPM? And finally, there is the verifier, which attests the
+ platforms by talking to the agents and eventually sends the revocation
+ messages if you are using the certificates. And in that case, the agent leaves
+ a trusted state. And finally, there is the tenant. So the one that manages, is
+ the owner of this part of the infrastructure that has got a common language
+ interface management tool for managing all the agents. So this is the schema.
+ You see here, we have, for example, two nodes in the network that we want to
+ attest. On each of them, we need to put an attestation agent, and then we need
+ to have a machine which is acting as a registrar, and one machine acting as
+ verifier. It's not compulsory, but they are separate. They are processes. You
+ can run both of them, registrar and verifier, on the same machine. So the
+ registrar is the one performing the enrollment. So when an agent is deployed,
+ it will try to enroll, and the registrar will also inform the verifier, okay,
+ I have registered this new node. Please take care of it with periodic
+ attestation. So the verifier will periodically send verification requests to
+ the various agents. Each agent will collect the required proofs, PCR, if IMA
+ has been enabled, also the IMA measurement list, and will send the quote with
+ all the required information. And since this is iterated for each node, then
+ there is the same kind of thing, okay. This architecture is very fine, but it
+ has a weak point. Can you detect it? Sorry? Well, of course, if you can
+ attack, but conceptually, you should say the registrar, if attacked, yeah,
+ okay. Also, if the verifier is attacked. But from an architectural point of
+ view, the problem here is that we have one centralized element for performing
+ the verification. And that is a single point of failure. If that node
+ containing the registrar and verifier is attacked, or is subject to a denial
+ of service, for example, we don't know anymore the state of the network. I'm
+ using this to tell you that there is a nice thesis proposal that we will make
+ about this, because this is the normal model in which each node is sending the
+ data to a central node, which is performing verification. But nowadays we have
+ blockchains, we have distributed ledgers. Why do we need the central node? We
+ could have the various agents just to publish their result on the ledger. And
+ then each agent could read the results and decide if the other nodes are
+ trusted or not. So to have some sort of distributed attestation in which the
+ majority wins, if there are 10, we are 11, and 10 nodes decide that he is
+ wrong, he will be excluded. And no one will talk with him. So we exclude not
+ only the centralized verification point, but we exclude also that part of
+ reaction. We don't need a separate node to take the decision. If he is bad, he
+ is bad, and the nodes automatically will drop any connection with him. Of
+ course, if he was an important component, we need to inform someone and say,
+ okay, please deploy a new one, because he is no more in the network. But that
+ is quite interesting, and it's missing attestation with the distributed
+ ledgers. This is a kind of self-healing network. When the network is being
+ attacked, the network will automatically recover, excluding the nodes, okay?
+ Just in case you are interested, think about that. Yes. Yes, you can define
+ which kind. So, you can use the endorsement key, or you can use any other key,
+ according to that chain of trust, okay? I have simplified, because that chain
+ of trust is not compulsory. As a minimum, when you have a node equipped with
+ TPS, you have the endorsement key, that is compulsory. It's inside the chip
+ created, stop. Then, if you want privacy, you can start the chain of trust.
+ You have the IDEV ID, you have the LDEV ID, and so on, okay? But it's not
+ compulsory. So, here I have written endorsement key, because that is for sure
+ present, and Keylime works with that. It's not compulsory. It's sure present,
+ and Keylime works with that. If you decide to use local DEV ID, okay,
+ substitute endorsement key with LDEV ID, for example, okay? So, now, these are
+ all the operations, and every time the quote is received, there will be a
+ verification of the proof against the golden measurements. This thing is
+ becoming so important nowadays, that there is a dedicated group by the IETF,
+ so internet, for creating remote attestation procedures. The working group is
+ named RATS, and support different platforms at load time. So, this is not
+ concerned directly with extensions, such as IMA. They are defining protocols,
+ and they say, as a minimum, when something is loaded, you should be checked,
+ and defines several actors, much more than what we have seen in general, and
+ what we see in Keylime, because you see that we have a long list of elements,
+ not only the attester and the verifier, but relying party, verifier, relying
+ party owner, verifier owner, endorser, reference value provider. So, they have
+ tried to distinguish all these roles, because when you have a multi-tenant
+ infrastructure, think about a cloud in which you have 10 different tenants, or
+ a network infrastructure composed by operators of different countries. It's
+ difficult to say there is one attestation. They need to talk to each other,
+ okay? And in addition to define these roles, RATS is also defining topological
+ patterns. For example, we can verify the attestation, not only with the model
+ that we define, but with two different models, background check and passport,
+ that I will discuss in a moment. The reference RFC, if you want to understand
+ better, is 9334, RATS architecture. But then there are many other drafts,
+ which are ongoing about various aspects. The data formats, the procedures, the
+ attestation models. This is really reflecting how much important is this thing
+ nowadays. So, this is the schema of the interactions. This is the verifier.
+ The verifier, of course, is the core, is the one receiving the quotes that
+ needs to say good or bad. Then the verifier will get some evidence from the
+ attester. We'll get the quotes, we'll get the mailing list, we'll get the
+ signed PCRs and so on. And we'll provide the attestation results to some
+ relying party. Someone will say, okay, I trust you for performing this
+ verification. But then that is the bare minimum, because we need, for example,
+ the measurement, the golden measurements. So here we have endorser. Endorser
+ is someone which is saying, okay, I say that these are the correct elements to
+ be verified in the system. Then there is someone which is saying, okay, the
+ correct values for those components are these ones. That can be part of the
+ endorser, but logically it's something different. Because, for example, you
+ have bought a component from another company, now you are running. So you say,
+ okay, I want that component to be measured, but the measures are provided by
+ that company. Verifier owner. That is the verifier. There is an owner of that
+ verifier, which is telling, how do you appraise the evidence? What is the
+ policy? What should I check there? And that is, for example, important when
+ you are having for each element in the history. When you have a software
+ component, you have the current version, but maybe in your network you have
+ also old versions. What do you accept? Only the latest version? Do you accept
+ also old version? Can you label each version with, this is just old, so it
+ misses some functionality, this is an update because there was a bug that
+ crashed the application, or this is a security fix because there was a
+ vulnerability. So having labels and having a policy saying, okay, you can
+ accept old if they have only functionality missing, but you cannot accept old
+ if they have a bug. You need quite a lot of information to decide what is your
+ strategy when you get the result and decide if they are good or not. And
+ finally, not only the verifier owner, there is also the relying party owner,
+ because when you get the attestation result, you must decide what to do. Is
+ this acceptable or not acceptable? It is a major problem or a minor problem.
+ So they have distinguished all these roles around the attestation. That part
+ is related to the supply chain because software nowadays is not created by a
+ single entity, but you have several pieces created by different companies. So
+ the supply chain, and that is to be considered.
+ - (indistinct)
+ - Yes. The endorser are the ones that are saying, yes, inside the system,
+   there is this component. I endorse that this is a valid component, but I
+   don't tell you what is the measure because maybe I have bought a piece of
+   software. So I am endorsing that the software produced by Mario is one
+   software that must appear in my system. Now you need to ask Mario, please
+   tell me what is the hash values of your component? So endorser is just
+   saying, I state that these are the correct thing to appear. And then we need
+   the values for those things. If you are the developer, the two things are
+   together, you are endorser and reference value provider. But in case you are
+   a generic builder of a system, maybe you are taking pieces from different
+   parts. Yeah. This is software, so it's not a piece of manufacture, but it's
+   software. So from one developer, one open source library and so on. And so I
+   see endorser, maybe endorsers, reference value providers, because that is a
+   supply chain. So there is quite a lot of things down there. Okay, so the
+   main roles. A tester generates evidence when attestation is needed. This is
+   requested by the relying party. So the attestation process is started by the
+   relying party. I want to attest that node, which is in my possession. And
+   maybe the evidence is needed for accessing a service. For those of you that
+   have studied web authentication, you know that there is open out for
+   performing authentication, generating tokens. And nowadays they are mixing
+   attestation with OAuth. You cannot get an authentication token valid for the
+   web unless I check what is your state. You see, that is important because if
+   I have the correct password, you give me a token, but I may be infected with
+   malware. Now, if you want an OAuth token, you must give the correct password
+   or solve a public key challenge. I don't care about authentication. But
+   additionally, you must give me an evidence that you are not infected with
+   malware, that you are running the correct software. That is another
+   extension being done in IETF. Verifier compares the evidence against the
+   reference value using the appraisal policy, how to manage differences, and
+   using endorsement to identify who are the valid attesters. And the relying
+   party evaluate the attestation results using the relying party policy.
+   Relying party and Verify may be part of the same service. Conceptually, they
+   are two different things, but they can be coincident. Now, we said there are
+   two different models to run attestation. One model is background check. It
+   means I have the attester, which is providing some evidence. The evidence
+   goes to the relying party, but the relying party does not know how to
+   evaluate that. So the evidence is passed to the verifier that will provide
+   the attestation result. That is background check. Do you know where that
+   name comes from when there is some background check? Sorry? When you buy a
+   gun? Oh, yeah, that could be. It should be done. When you go to a shop and
+   you want to buy a gun, the shop owner, the relying party, should contact the
+   police to ask, is this guy permitted to buy a gun? Is he involved in crimes?
+   Yes or no? Or when you are hired by a company, the company will perform a
+   background check. Okay, let me look at all your social media to see if you
+   are a good guy or if you are a bad guy, for example. So doing some checks
+   based on some evidence that you provide. There are several companies that
+   nowadays ask, okay, if you want to apply, you must give me all your
+   nicknames or Instagram, Facebook, and threads. And we want to check what you
+   have done in the past. That is one model. The other model is the passport
+   model. In the passport model, you have the attestor, which is creating
+   evidence. The evidence is submitted to the verifier. The verifier will
+   provide the result. Yes, I have verified you. And now you provide that to
+   the relying party. You see, I am a good guy. So when you go to the gun shop,
+   rather than waiting for the owner, you went to the police and get a
+   certificate. Yes, you are a good guy, for example. That's the difference.
+   Who is requesting the attestation? But you see that the attestation results,
+   in the end, goes to the relying party because it is the one relying on that
+   for creating security, trust, and so on. So there are several IETF working
+   groups. Some people ask, oh, can we do some hot topic presentation? Well,
+   here is a list. If you want to do a presentation, do a presentation, for
+   example, for trusted execution environment provisioning, TEEP. How is
+   attestation used in the group? Or software update for Internet of Things.
+   Great. Is attestation needed there? How is that attestation needed? So you
+   make a short summary of what that working group is trying to do, and then
+   you describe how attestation is being planned to be used. Limited additional
+   mechanism for PKI's, and for PKIX, and that's MIME. This is attestation
+   being used in certificate management, and, as MIME is, secure mail. Web
+   authorization protocol, what I have just described. Do you want a token?
+   Demonstrate your integrity state. Or privacy pass, which is another way of
+   using FIDO in a modern way. All these things may use attestation. This is
+   giving you an idea why I'm spending so much time about attestation. I found
+   it useful in several, several application areas. The problem is that we have
+   key lime, and then we have some proprietary solution. Google is doing
+   something. Microsoft is doing something. Amazon is doing something. But they
+   are not interoperable, because each company is creating its own attestation
+   solution. And now you have a problem. You cannot have mixing components
+   coming from different. So in order to address that, the Verizon project was
+   created. Verizon stands for verification of attestation. This is focusing on
+   the verifier only. We would like to have a generic verifier, which can be
+   used with any kind of attestation produced by any kind of company. So open
+   source project to enhance consistencies for verification service. Implements
+   various standards, as is providing a set of library as a basis for
+   customization. And this was initiated by the ARM Advanced Technology Group.
+   That is telling you that not only Intel-based, but also ARM-based solutions
+   are now becoming of age for attestation. That was where it started, and then
+   it has been adopted by the Confidential Computing Consortium as part of the
+   Linux Foundation. So it supports different architectures and different route
+   of trust. You may have the TPM, but you may have also something different
+   from the TPM. Of course, with different levels of security. So we don't
+   assume in Verizon a standard agent implementation, and it's a flexible
+   structure also for evidence provisioning. The point is on customization. We
+   have some basic things, and then you can customize so that everybody can
+   join Verizon. We can choose only the features that are necessary, and then
+   you can easily develop other custom features. This is the architecture. And
+   in blue, you see the parts that are managed in some sense by Verizon.
+   Verizon Trusted Services are managing some plugins so that we can get
+   attestation with a handler for the endorsement. So you can connect whatever
+   endorser you want, and then handler for evidence. In the provisioning, you
+   have a plugin manager. Then there is the verification, which is outside, and
+   there is a key value store for maintaining information. Verification is the
+   core of Verizon, and you see that it is quite complex in the sense that you
+   receive a request, perform verification. You have this handler that will do
+   a lot of steps. These are all part of Verizon. Different media types, okay,
+   we can handle them differently. Trust anchors, which is the root of trust,
+   which is the certification authority signing the TPM or signing your own
+   root of trust. Then claims, endorsements, validation, appraisal, signature,
+   and quite a lot of things. So data formats, which is one of the key to
+   achieving interoperability. There is native support for various attestation
+   types by ingestion, so we get, and then production of various formats.
+   Entity attestation token. So the attestation result is created in that
+   format that can be in CYBORG or JSON. Then the evidence, which is the
+   result, can be in the format named EAT, Evident Attestation Token, by PSA,
+   Platform Security Architecture, which is a security certification schema for
+   IoT devices. So if you are working with IoT devices, you should have a look
+   to this PSA. Or CCA format. This is the format used by ARM for their
+   confidential compute architecture. Or you may have evidence as created by
+   the TPM. TPM or DICE. Currently inside the Trusted Computing Group, there
+   are two things. TPM is the longstanding thing. DICE is a novelty for
+   embedded systems for Internet of Things. And we will now also study briefly
+   DICE. Or Amazon has its own solution, which is named Nitro. So also Nitro is
+   creating some kind of evidence for what they call secure enclaves. And we
+   need to support all these things if we really want interoperability. Because
+   you will, otherwise, you will stuck with just one solution, which is not
+   good. For endorsement and reference values, we have CORIM, Concise Reference
+   Integrity Measurement, with different things. COMID for hardware and
+   firmware modules. COSWID for software components. But we have COBOM, Concise
+   Bill of Material. This is one thing which is continually stressed. If you
+   remember the NIST model for security, there is a first phase in which there
+   is an inventory. Inventory does not mean only to know which computers are in
+   your system. Means for each element, I want to have the hardware bill of
+   material, how that component is composed by element. Software bill of
+   materials, what are the software components. And now we are talking about a
+   cryptographic bill of material. The list of algorithms that are supported by
+   that platform. So this is concise, this is concise bill of material, and
+   concise trust anchor stores, how to present the root of trust. For appraisal
+   point for policy for evidence, we have an open source implementation, which
+   is named Open Policy Agent, in which you can write your policy. And then
+   when you get to the result, you evaluate those results comparing with the
+   policy. And the attestation results can be in two format, ER, EAT
+   attestation results, or R4C attestation results for secure interactions. So
+   quite a lot of flexibility, perhaps too much. Okay, I think we can have
+   another small break, and then we go to the last part, which is this new
+   model, still by Trusted Computing Group, but it is DICE rather than TPM.
+   (silence) So, insofar we discussed the attestation as was originally
+   conceived, that is using a hardware root of trust implemented with the TPM.
+   That is perfectly fine, but it's a rather complex solution, because TPM is a
+   complex object that needs either to be implemented as a physical chip, or if
+   it is in firmware, it's a large component. There are some alternatives being
+   proposed for systems that cannot have additional hardware, and even running
+   large portions of firmware is not suitable for them. Typically, they are
+   internet of things or embedded systems with limited computational capacity.
+   For that kind of things, the Trusted Computing Group has created the DICE
+   solution, Device Identifier Composition Engine, where you see that the focus
+   already by the TALTLE is on identifier, which is something that the TPM is
+   providing through the endorsement key or the other keys. And then, based on
+   that, you can also create a station. So, let's see this DICE. DICE is
+   something to provide a secure identity to a device and to all its
+   components, constituting its PCB. It is based on the concept of Compound
+   Device Identifier, CDI. This is a secret value, typically a private key for
+   a symmetric encryption, which results from the application of a
+   cryptographic one-way function, hash, to a combination of the secret for the
+   current layer and the measurement for the next layer. The concept is, on
+   these systems, you typically start one thing, then you start another, you
+   start another, and there are layers, starting from the firmware and so on.
+   Each layer has got a private key. And before starting the next layer, they
+   will measure that and create a key for that layer. And the key is a
+   combination of the current layer and the measurement of the next one. So in
+   this sense, the keys are connected to the software. You understand that if I
+   attack one layer and I change it, next time that it needs to compute the
+   key, the key will be wrong, will not be the expected one. Of course, this is
+   a solution which bases on the fact that software is rather static. You load
+   the first part, then you load the second part, but that part is just one
+   binary. It's not starting 100 processes. And then you start another layer,
+   which is performing another action. This is typical of the system, embedded
+   or IoT. Then there is also the TCB component identifier, which is the
+   measurement of a system layer. So the compound device identifier is a key
+   created with the current compound device. Oops. And now, OK. With the
+   current CDI plus the TCI for the next layer. At the root of everything,
+   there is one unique device secret, UDS, because from some point, we must
+   start. That is a secret value of a specific platform, which is used to
+   compute the first CDI value. It must be statistically unique, so randomly
+   generated with low possibility of collision with the same value computed in
+   another device, and not correlated. It must be impossible to determine the
+   UDS of other devices having the UDS for this one, OK? Typically, for those
+   of you that have done something in a banded system, this is a poof,
+   physically unclonable function that will generate a unique random value for
+   this node. No, no, no. It means for the first layer, because you start from
+   something. What is the key for that? The key for that is created by the UDS
+   plus the measurement of this layer, because that is the definition of CDI.
+   So the CDI for the first layer is created from the UDS and the measurement
+   of this first layer. So each CDI, which are the keys, is always computed
+   taking into account the measurement of that layer. Keys are not stored. Only
+   the UDS is always present and protected. Next time that you reboot this
+   platform, the keys will be computed. So if the software is not changed, the
+   same keys will be generated. If the software has changed, different keys
+   will be generated. And now you can verify that with a public key
+   certificate, because on the contrary, the certificate will be the same. So
+   if the software has been manipulated, the generated key will not match the
+   one that was certified before. That is the concept. And this is the schema.
+   There is a very, very basic part, which is part of the boot, which is the
+   DICE layer. Because the DICE layer is taking the UDS-- is the only one that
+   is permitted to read the UDS-- is computing the TCI for layer zero. So it is
+   computing the hash of this software. And using a one-way function, a hash,
+   will create the key for the next layer. So the private and public key pair
+   has been generated by this layer. Now that is injected in the next layer.
+   Now the next layer is doing the same. It's measuring the next thing to be
+   started. And thanks to the hash and the key CDI, we generate another CDI,
+   and so on. You can repeat ad libitum as much layers as you want. Of course,
+   typically, we don't have 20 layers. We have a few of them. But the concept
+   is the keys depend upon the software. They are not static. And they will be
+   recreated equal only if the same software is being executed. Here is the
+   reference if you want to read the details of the architecture as specified
+   by the TCG. Now, I have simplified it because there is not just one key.
+   Each layer may have multiple keys and multiple certificates. So apart from
+   the first one, DICE, which is just used for creating the first CDI, at layer
+   0, starting from the CDI, we have a key derivation function or key
+   generation function that will be able to create other keys for layer 0. And
+   the same will happen to each layer. Each layer, in addition to that CDI,
+   will create the keys that are needed. So the CDI will not be used directly.
+   The keys that will be used in cryptographic operations are these ones. Each
+   layer may have an ECA-- that stands for Embedded Certification Authority--
+   that can be used for certification of something at the station and identity.
+   But this ECA is restricted, by design, to sign only known data. So some data
+   that I generate myself, not data that someone is sending me, because that
+   would be a risk. Or you can have an attestation key. And the attestation key
+   can be used for attestation and identity, and again, is only signing no
+   data. And finally, you have the identity key, which can only be used for
+   identity through a challenge response protocol. So we have different keys,
+   if you want. Because if you want, you just create VCA and do everything. But
+   if you want to distinguish the roles, you may have these different keys.
+   [AUDIO OUT] So Embedded CA is used to issue certificates for keys generated
+   for the current or next layer. So we don't have an external certification
+   authority. We have, if you want, a fake certification authority, which is
+   internal. Because Embedded, or IoT, is typically the only thing that you can
+   do. You can't wait for something external to give you a certificate. Maybe
+   you don't even have. The attestation key is used to sign attestation
+   evidence. And finally, the identity key is used to sign authentication
+   challenges. So each layer can act as an Embedded CA to create a hierarchy
+   based on the manufacturer root CA. So the manufacturer of the device using
+   Dice has got one root CA. And that's created the one first certificate for
+   the CDI of the Dice layer. Because the Dice layer should be immutable,
+   unless you do a firmware update of the platform. But that is fixed. Will
+   always be generated like that. So we can have external certificate for that.
+   Let's say, yes, this is a good platform with Dice. All the rest is certified
+   through the ECA. Each ECA can provide the device identity certificate and
+   the attestation certificate. Each certificate needs a specific ES509v3
+   extension, which is named the Dice PCB Info. The OID is this one. The first
+   part is until 23, normal. But then you have TCG, Rusted Computing Group, TCG
+   Platform, then Dice, and PCB Info. And it's just a sequence of fields of
+   information about the target level. So the names, vendor, model, layer,
+   measurements, version, software version, firmware ID list that can be the
+   hash algorithm plus the digest. So the certificate can contain inside it
+   various kind of information. This is a certificate for a platform created by
+   this manufacturer. This is a certificate for a platform containing the
+   following firmware. We don't give the name. But we give the hash and the
+   digest in order to protect privacy. If you know what we are talking about,
+   you can verify the digest. Otherwise, I don't tell you what is my firmware.
+   I just give you the digest. And this is the way in which this thing can be
+   applied. This is another project that we are running. Well, it has just
+   finished on September 30. And now we are launching the next step. We have
+   implemented the Dice on a RISC-V platform with a hardware accelerator for
+   cryptography. So we have this layer 0 CDI, which is basically named device
+   root key, because it is like that, which contains a device root key
+   certificate by the manufacturer, by the one that created that platform. Then
+   in this solution, we are using Keystone. And you remember that Keystone has
+   the security monitor as the most basic layer. So the device root key will
+   assign the key of the embedded CA for the security monitor. And the security
+   monitor will create an attestation key, the initial attestation key, and
+   will release a certificate, initial device ID, device certificate, and will
+   have the certificate associated to it. Then in that architecture, which uses
+   Keystone, we have the different enclaves that are the only trusted part,
+   because then we have the untrusted word, and we don't care. But the trusted
+   part is important. So for each enclave, we can create a local device
+   identifier with the corresponding certificate that was signed by the
+   previous layer, and the local attestation key. We don't need for the enclave
+   an embedded CA, because they are not generating other keys. That is good,
+   but you note that all this chain is rooted here at the manufacturer. So we,
+   again, we have a problem of privacy. I'm using this in my system. I don't
+   want to use the certificate of that one. So for that reason, when you deploy
+   a specific enclave, you have the possibility to associate to this device
+   identifier another certificate. So you are not generating another key. You
+   use that key, but supply the public key to your own certification authority,
+   and you give a certificate. Now, the root of trust is you. You don't need to
+   have all that chain. But when you sign something, you sign it with this
+   certificate. Of course, in the moment in which you have created this
+   certificate, you have verified this just to avoid having a compromise at the
+   node. But after you have verified once, you release the certificate. And
+   from now on, you use your own certificate for that. You say, OK, but next
+   time that I boot, the platform may be manipulated, attacked. If that
+   happens, this certificate becomes automatically invalid. Because if there is
+   any modification in the boot or in the security monitor or in the enclave,
+   so even in the application running in the trusted part, the keys generated
+   will be wrong. Because the keys, depending on the software executed. So if
+   you manipulate the software, you will generate the wrong keys. And that
+   certificate will not be valid, because that contains a different public key.
+   This is really different things. Normally, we generate keys and we store
+   them. No, we regenerate them as needed. And we make the keys depending on
+   the software. DICE is really important nowadays. There is an open profile
+   for DICE that was pushed by Google. So they call it open, but it is actually
+   Google DICE. Because we have DICE from the task group, and then we have DICE
+   by Google, in which each layer has two CDIs, one attestation, which is
+   mandatory, and then optional, which is for sealing. So they perform sealing
+   operations as if they had the TPM, if they don't have it. The CDI of the
+   next level is computed not only computing the hash of the binary, but using
+   also a set of specific input values, configuration data, authority data,
+   mode decision, if that device is working in one mode or the other, and other
+   hidden inputs that are values not included in any certificate. So they
+   wanted to extend the key to consider various aspects, and not only the hash
+   of the binary being executed. And each layer has an attestation key pair
+   derived from the attestation CDI. That is the Google solution. And then you
+   have Microsoft, which is doing yet another thing. Still DICE, but with a
+   different flavor. That is named Riot. Robust Internet of Things is the
+   Microsoft version of DICE. There is only one CDI for the entire device. You
+   say, no, no, no. What is this things of layers? We don't have layers. We are
+   monolithic. So it is computed combining together the UDS of the platform,
+   which is still there. We are lucky. With the measure of the Riot core, the
+   only part of the software that can access the CDI. And then there are
+   layers, but they have only an alias key pair used for attestation. The layer
+   N computes the alias key pair for the next layer, starting from the measure
+   of the layer N plus 1. For the Riot core, it's derived from the CDI. So
+   somehow it's a simplified version of what we have seen as general in ECG.
+   That is for DICE. Now I finish this presentation showing you what are doing
+   the major cloud providers. Do they support attestation? Is there anything
+   based on TPM? And the short answer is no. They claim to support attestation.
+   But Google Cloud, it can attest platforms via some policies. You need to buy
+   the service Google Kubernetes Engine, so it works only with Kubernetes, and
+   Cloud Run. Then that is a policy which performs binary authorization on the
+   images of containers that you want executed. But this policy, this
+   authorization, requires that you scan-- that Google scans and analyze your
+   binary with vulnerability scan, regression testing. And then we sign the
+   container image hash. If there is a signature, that is valid. And this
+   security control at the deploy time, in the moment you take that image and
+   you run it inside the container, we check the signature. If there is no
+   valid signature, Google Cloud will refuse to load that image in a container.
+   So it allows deployment of container only if matching policies. Maybe it was
+   signed, but it was not scanned for a vulnerability scan. You have a policy.
+   Do you load anything which was signed, or you require vulnerability,
+   regression testing, this, this, and that? But that is something that you do
+   prior. So you don't have a real measurement list. It's just only load the
+   time. If after the system has been loaded, it changes its behavior because
+   it's starting processes, good luck. No verification. And nothing based on
+   TPM. Amazon Web Services. Do you have attestation? Yes, yes, we have. No.
+   They have this elastic container registry that contains the images of the
+   containers that can be executed. Then there is Amazon Inspector, which can
+   scan container images every time you push a new image, every time you insert
+   a new vulnerability to be considered. And you have another feature which is
+   enhanced scanning, which checking also the vulnerability of the operating
+   system, or for various programming language, you must say, I have developed
+   using this language. And so they will load verification for well-known
+   vulnerabilities for that language. Service vulnerabilities about typically
+   the network access. That is, you see, not really attestation. They have
+   something which they call attestation, which is NITRO. Maybe you remember
+   that in Verizon, we had a token of type AWS NITRO. And NITRO is a specific
+   kind of enclave, which is isolated and constrained inside the VM. NITRO can
+   only talk to its parent. So there is someone, an EC2 instance that created
+   that enclave. And that is the only way in which they can talk. The enclave
+   can request attestation to the NITRO manager for proving some property to
+   request services. For example, I am here, NITRO enclave. I can ask to the
+   NITRO manager, please attest that I am good. And then this one can ask to
+   the parent, please perform a signature, please decrypt this data, and so on.
+   So in some sense, it's like a policy. When a secure enclave is requesting a
+   service, we want to check if that enclave is correct or not. But again, it
+   is load time, no run time, even if this is happening at runtime. But at
+   runtime, we only check the certificate. But the attestation is, have we
+   loaded the correct binary? After that, the rest is forgotten. OK? The fun
+   point is that even if AWS does not have a TPM, they call PCRs some values,
+   which is just the typical commercial thing. Let's use the same words so the
+   user does not understand. And they think we have TPM. OK? So PCR0, which has
+   a completely different meaning, is the enclave image file. So when they send
+   you the result of attestation and say, OK, PCR0 has got this value, it is
+   the hash of the image file of the enclave. PCR1 is the Linux kernel and the
+   bootstrap, because you start the virtual machine. So we measure those
+   things. PCR2 is application, measurement of the user application without the
+   boot RAM5 system. PCR3, YAM, identity and access management role assigned to
+   the parent. So since the parent is controlling the neutral enclave, what are
+   the role assigned to the parent? Attestation succeeds only when the parent
+   has the correct role specified in the policy. PCR4, instance ID of the
+   parent. Attestation succeeds only when the parent has a specific ID. And we
+   have different identifiers for different activities. And finally, PCR8 is
+   the enclave image file signing certificate. That succeeds only when the
+   enclave was booted from an image file, signed with a specific certificate,
+   maybe a developer, maybe an owner, and so on. So you see, they call that.
+   But they contain some random measures without any proper VPN. Microsoft
+   Cloud, Azure. They have confidential containers. On container deployment, a
+   token is generated, which is signed by the cloud node. And is verified by a
+   remote entity. So you have somehow an attestation that, yes, I have loaded
+   this image. And I create a signature. So Azure say, yes, I attest that I
+   have started this binary. Token contains information about the correct
+   deployment of the container in a TEE. And you must then decide which kind of
+   TEE is Azure supporting. Typically, they are much tied with the things like
+   SGX or TDX of Intel. Or with a virtual machine TEE, maybe it's our
+   well-based and attested TEE, with full guest attestation, and eventually,
+   additional data code protection. But that is unspecified in general. That is
+   their mechanism. The point is that, here, since they are just checking what
+   is the content of the TEE, there is no need for a specialized programming
+   model, which on the contrary, in Nitro, you must have. Because you must
+   perform those operations. Or for any special management. OK? And that's all
+   for this part. We stop here. As I told you, next week, you will have six
+   hours of social engineering and normal laboratory. After that, we will
+   continue with other topics about technical cybersecurity. Have a good long
+   weekend. [END] [BLANK_AUDIO]
