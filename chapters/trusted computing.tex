@@ -1198,30 +1198,50 @@ To enhance confidence in the TCB, several methods can be applied:
 \end{itemize}
 
 These methods, however, are often expensive and labor-intensive,
-making it essential to minimize the complexity of the TCB. A smaller,
-more streamlined TCB reduces the attack surface, yet simplification
-alone is insufficient if variability is not controlled.
+making it essential to minimize the complexity of the TCB. 
 
-The Trusted Platform Module (TPM) aims to establish a reliable TCB via
-the Core Root of Trust for Measurement (CRTM). However, the TCB has
-become increasingly large and dynamic, posing challenges to
-consistency. For example, two “identical” computers might report
-different TCB measurements due to slight variances, making it harder
-to maintain a uniform security baseline.
+\begin{boxH}
+A smaller, more streamlined TCB reduces the attack surface, yet
+simplification alone is insufficient if variability is not controlled.
+\end{boxH}
+
+The TPM aims to establish a reliable TCB via the CRTM. However, the
+TCB has become increasingly large and dynamic, making consistency more
+difficult to maintain. . For example, two “identical” computational
+nodes might report different TCB measurements due to slight variances,
+but be completely fine.
 
 \subsection{Dynamic Root of Trust for Measurement}
+The solution to the variability and complexity of the TCB is the 
+Dynamic Root of Trust for Measurement (DRTM).
 
-The Dynamic Root of Trust for Measurement (DRTM) is a technique that
-establishes a trusted environment on demand by resetting the CPU and
-starting measurements from a controlled point, rather than relying on
-the entire system boot sequence from BIOS onward. This approach helps
-mitigate issues with incorrect Platform Configuration Register (PCR)
-values when firmware is updated, which can otherwise cause problems
-with accessing sealed data.
+It is a technique that establishes a trusted environment on demand by
+resetting the CPU and starting measurements from a controlled point,
+rather than relying on the entire system boot sequence from BIOS
+onward. After all, the secure boot can't be tampered with, so we can
+start the measurements after that. 
+
+For that purpose, since TPM version 1.2, some dynamic PCRs were added
+from 17 to 23. Those are set to $-1$ at boot(the others are usually
+set to 0) and can be reset to $0$ by the OS(this operation is not
+allowed for the other PCRs, they can be only reset by hardware resets).
+
+PCR 17 is unique in that it is used specifically by DRTM commands,
+ensuring the integrity of this late-launch measurement. By allowing
+the TCB to start fresh from a known, controlled point, DRTM enables
+flexible and secure initialization of trusted environments.
+
+In any case, whatever is the real operation being executed, they have
+the same effect. They disable direct memory access, disable all the
+interrupts and disable any debugging mode. That means that the program
+executing that special instruction is the only thing being executed in
+this moment on this computer, cannot be interrupted, no one else can
+have access to the memory and no one else can trace it or modify it
+via debug. The purpose is to permit to this program to measure and
+then execute the secure loader block.
 
 DRTM leverages special processor commands to initiate a secure
-environment, often referred to as a "Late Launch." These commands
-include:
+environment. These commands include:
 \begin{itemize}
     \item \texttt{SENTER} for Intel's Trusted Execution Technology
       (TXT), which executes the SINIT binary module.
@@ -1232,29 +1252,45 @@ When either of these commands is executed, all processing on the
 platform is temporarily halted. DRTM then:
 \begin{itemize}
     \item Hashes the contents of a specified memory region, storing
-      this measurement in a dynamic PCR (PCRs 17–23 were added in TPM
-      v1.2 specifically for dynamic measurements).
+      this measurement in a dynamic PCR.
     \item Transfers control to a specific memory location, where the
-      Secure Loader Block (SLB) is measured and executed.
+      Secure Loader Block (SLB) is measured and executed. this is also
+      called \textbf{Late Launch} because it's not the original launch
+      of the system, but it's something that happens after the normal
+      launch. This helps in avoiding the problem with the PCR values
+      that are incorrect when firmware is updated. And the consequent
+      problem with the sealed data.
     \item Disables Direct Memory Access (DMA), interrupts, and
       debugging to secure the environment during this process.
 \end{itemize}
 
-PCR 17 is unique in that it is used specifically by DRTM commands,
-ensuring the integrity of this late-launch measurement. By allowing
-the TCB to start fresh from a known, controlled point, DRTM enables
-flexible and secure initialization of trusted environments.
+One last thing to help understand why firmware updates are a problem 
+for sealing.
+We have mentioned the fact that sealing is like encryption, but it is
+attached, it's related to a specific system state. So imagine that you
+have sealed data. Then your system say, okay, I'm performing an
+update, firmware update. Now you've got a new bias. Next time that you
+start your system, even if that bias is correct, so the measurements
+are perfect, the sealing will not work. Because they all, if you want
+to unseal, you must have that version because of that was the state.
+So it means that now we should seal the data, not against the
+firmware, but upon some operational state started after the dynamic
+route of trust for measurement was executed. Okay, so it's not only a
+problem of not having the correct measures because creating a very big
+database, it is of course possible to maintain a lot of measurements.
+But sealing is one of the worst thing because sealing requires exactly
+the same state.
+
 
 \subsection{Hypervisor TEE}
 
-The Dynamic Root of Trust for Measurement (DRTM) was designed to
-facilitate the secure loading of a hypervisor, such as Xen or VMware
-ESX, which in turn manages and isolates virtual machines (VMs). When
-initialized through DRTM, the Trusted Platform Module (TPM) can attest
-to the integrity of the hypervisor, ensuring it has loaded correctly
-and securely. Only after a proper load can TPM-sealed storage be
-accessed by the hypervisor, thus providing a robust mechanism for
-securing sensitive data in cloud computing environments.
+The DRTM was designed to facilitate the secure loading of a
+hypervisor, such as Xen or VMware ESX, which in turn manages and
+isolates VMs. When initialized through DRTM, the TPM can attest to the
+integrity of the hypervisor, ensuring it has loaded correctly and
+securely. Only after a proper load can TPM-sealed storage be accessed
+by the hypervisor, thus providing a robust mechanism for securing
+sensitive data in cloud computing environments.
 
 Although this approach enhances security, validating the hypervisor's
 integrity remains challenging due to its substantial codebase. For
@@ -1266,30 +1302,35 @@ instance:
 
 The extensive code size of these hypervisors necessitates rigorous
 validation to maintain trust, underscoring both the capabilities and
-challenges of using DRTM for hypervisor-based Trusted Execution
-Environments (TEEs).
+challenges of using DRTM for hypervisor-based TEEs.
 
 \subsection{Remote Attestation in Virtualized Environments}
 
-In virtualized environments, having a hardware Root of Trust (RoT)
-remains crucial for ensuring security. However, full virtualization,
-as seen in virtual machines (VMs), often provides only a
-software-based RoT, such as virtual TPMs (vTPMs) implemented by
-platforms like Xen, Google, and VMware. To strengthen security, a
-strong link between the virtual TPM (vTPM) and the physical TPM (pTPM)
-is necessary.
+In virtualized environments, having a hardware RoT remains crucial for
+ensuring security. However, full virtualization, as seen in VMs, often
+provides only a software-based RoT, such as virtual TPMs (vTPMs)
+implemented by platforms like Xen, Google, and VMware. To strengthen
+security, a strong link between the virtual TPM (vTPM) and the
+physical TPM (pTPM) is necessary.
 
-This approach involves \textit{deep attestation}, where hardware-based
-attestation is used to verify the integrity of the environment. By
-rooting sealed objects in the physical TPM, the vTPM gains added
-protection. This setup requires an extension of the standard
-TCG-defined interfaces, which is an area of ongoing development.
+This approach involves \textit{deep attestation}, which is basically a
+validation of the vTPM by the pTPM. Furthermore, by rooting sealed
+objects in the physical TPM, the vTPM gains added protection. This
+setup requires an extension of the standard TCG-defined interfaces,
+which is an area of ongoing development.
+
+\begin{boxH}
+  As a result in cloud environments, one should investigate if they
+  have really access to a pTPM, because "equivalents" are not 
+  really the same.
+\end{boxH}
 
 Alternatively, in lightweight virtualization environments, such as
 Docker containers, a different approach is feasible. Here, because the
 hardware resources, including the TPM, are shared directly with the
-host, the complexity of managing separate attestation layers can be
-reduced.
+host (the virtualization layer is not completely separated, they use
+namespaces after all), the complexity of managing separate attestation
+layers can be reduced.
 
 \subsection{Remote Attestation for OCI Containers}
 
@@ -1308,11 +1349,34 @@ hardware-based RoT to ensure the integrity of the system components.
   \includegraphics[width=0.6\textwidth]{img/container OCI .png}
   \caption{Remote attestation for OCI containers}
 \end{figure}
+This process works seamlessly with the container runtime and
+workloads, enabling remote attestation of both the host and
+containers. Attesting the host is essential since it's the base layer;
+if compromised, the integrity of all containers would be at risk. Once
+the host is verified, we can choose to attest containers individually
+or in specific groups, depending on our needs.
+
+The architecture includes a hardware root of trust, an attestation
+agent, and a virtualization layer tailored for container environments.
+When any operation is measured, it’s labeled to indicate where it was
+executed—either on the host or within a specific container. This
+labeling ensures clarity, as operations that appear to be running
+inside containers are actually executed on the host OS.
+
+During attestation, the verifier sends a request containing a nonce,
+and the platform responds with the measurement list, nonce, PCR
+values, and a TPM-signed response. The process first involves checking
+that the TPM’s digital signature matches the expected node
+certificate. Then, we verify the TPM quote to confirm that the
+signature aligns with the PCR values and that the PCRs tied to trusted
+boot contain the expected values. Following this, we assess the IMA
+measurement list for both the host and containers, comparing these
+against known good values, or “golden” values.
 
 \subsubsection{Implementation}
 
-The implementation of RA for OCI containers introduces a new Integrity
-Measurement Architecture (IMA) template called \texttt{ima-dep-cgn}.
+The implementation of RA for OCI containers extends IMA template
+called \texttt{ima-dep-cgn}.
 This template is designed to enhance the attestation process by
 addressing the following key aspects:
 
@@ -1337,14 +1401,35 @@ addressing the following key aspects:
 \end{figure}
 
 \subsection{Credentials chain of trust}
+Another main issue is privacy: in fact, the TPM is signing the
+measurements with its own private key, and if you move that machine to
+different environments you will be able to trace that it is always the
+same machine because the signature will be created always with the
+same public key. So we would like to create a chain of credentials
+ that are trusted but that protect privacy.
+
+ In the end we would like to move from TPM vendor issued keys, which
+ are traceable, to a customer-usable certificate. There's also a
+ specific standard for this, IEEE 802.1AR, which is a standard for 
+securing a device identity using a TPM, whicle also allowing zero
+touch management of a platform, but in order to do that you need the
+identity of that element, a trusted identity
+
 Inside the TPM, there's a Endorsement Key (EK) which is unique to each
-TPM, with the respestive EK certificate issued by the TPM vendor. We
-dont use that to avoid tracing by the vendor. Instead, the
-manifacturer additionally provides a IDevID based on the EK and the
-TPM vendor certificate. This IDevID is still inside the TMP, bu we
-dont use that either to avoid tracing by the vendor. Instead, we use
-a local device identifier (LDevID) which is based on the IDevID and
-the OEM certificate.
+TPM, with the respestive EK certificate issued by the TPM vendor(this
+is also a proof that the component is genuine). We dont use that to
+avoid tracing by the vendor. Instead, because the TPM is usually
+enbedded on another device, the manifacturer additionally provides a
+IDevID based on the EK and the TPM vendor certificate, which, top
+maintain chain of trust, is linked to the TPM vendor one and cannot be
+moved to another machine. This IDevID is still inside the TMP, but we
+dont use that either to avoid tracing by the vendor. Instead, in the
+moment in which you deploy this machine inside your IT infrastructure
+another key pair whose certificate depends on the IDevID and the OEM
+certificate is created. This is the local device identifier (LDevID)
+which is based on the IDevID and the OEM certificate, and one can use
+this key to perform operations without being traced by the vendor,
+while still demostrating that it's genuine.
 
 \begin{figure}[H]
   \centering
@@ -1352,6 +1437,29 @@ the OEM certificate.
   trust.png}
   \caption{Credentials chain of trust}
 \end{figure}
+
+Let's go through how the sequence for creating or activating a
+credential works. We have three main parts: the TPM itself, the host
+platform that contains the TPM, and an external certification
+authority. The process begins with the host platform asking the TPM to
+create a new key. This applies to any keys created after the
+endorsement key, like for IDevIDs or LDevIDs. The TPM responds with
+the new key, providing only the public part.
+
+Next, the host platform requests a certificate for this new key, and
+to prove its legitimacy, it includes its TPM endorsement credential.
+This credential demonstrates that the key request is coming from a
+trusted machine. The certification authority then provides a
+certificate for the new key, encrypting it with the TPM's endorsement
+key. This encryption serves as proof of possession since only the TPM
+that holds the endorsement key can decrypt it.
+
+The host platform then instructs the TPM to decrypt the certificate
+and verify that it indeed certifies the new key. Once decrypted, the
+certificate is confirmed to be tied to the same TPM that holds the
+endorsement key, establishing a genuine pairing. Now, we have a new
+key that’s verified and securely linked to the same TPM, ensuring its
+authenticity and security.
 
 \begin{figure}[H]
   \centering
@@ -1362,48 +1470,159 @@ the OEM certificate.
 
 \subsubsection{TPM Basic Authorization Mechanism}
 
-The Trusted Platform Module (TPM) implements a basic authorization
-mechanism designed to ensure secure command execution and object
-usage. The key features of this mechanism include:
+The TPM implements a basic authorization mechanism designed to ensure
+secure command execution and object usage. 
 
+The mechanisms available are:
 \begin{itemize}
-    \item \textbf{Direct Password-Based Authorization:} The TPM
-      supports direct password-based authorization for executing
-      single commands, enhancing security by requiring valid
-      credentials.
-    
-    \item \textbf{Password-Based HMAC:} Commands and responses are
-      authenticated using a password-based Hash-based Message
-      Authentication Code (HMAC), ensuring the integrity and
-      authenticity of the communication.
-    
-    \item \textbf{Nonces for Replay Protection:} The mechanism
-      utilizes both caller\_nonce and TPM\_nonce values to prevent
-      replay attacks, ensuring that each command and response pair is
-      unique and cannot be reused maliciously.
-    
-    \item \textbf{Platform State Awareness:} The TPM is aware of
-      various platform states and can be configured to enforce
-      specific policies regarding object usage, including:
-    \begin{itemize}
-        \item \textbf{PCR Value Dependency:} Object usage can be
-          restricted based on the values of selected Platform
-          Configuration Registers (PCRs), ensuring that operations are
-          only performed when the platform is in a trusted state.
-        
-        \item \textbf{Time-Based Restrictions:} The TPM can prevent
-          object usage after a specified time, enhancing security by
-          limiting the validity of operations to a defined time
-          window.
-        
-        \item \textbf{Multi-Entity Authorization:} Usage of certain
-          objects may require authorization from multiple entities,
-          such as key holders, ensuring that a consensus is reached
-          before critical operations are performed.
-    \end{itemize}
+  \item \textbf{Direct Password-Based Authorization:} The TPM
+    supports direct password-based authorization for executing
+    single commands, enhancing security by requiring valid
+    credentials.
+
+  \item \textbf{Password-Based HMAC:} Commands and responses are
+    authenticated using a password-based Hash-based Message
+    Authentication Code (HMAC), ensuring the integrity and
+    authenticity of the communication.  The mechanism utilizes both
+    caller\_nonce and TPM\_nonce values to prevent replay attacks,
+    ensuring that each command and response pair is unique and
+    cannot be reused maliciously.
 \end{itemize}
 
+    
+But the TPM is aware of various platform states and can be configured
+to enforce specific policies regarding object usage, including:
+\begin{itemize}
+  \item \textbf{PCR Value Dependency:} Object usage can be
+    restricted based on the values of selected Platform
+    Configuration Registers (PCRs), ensuring that operations are
+    only performed when the platform is in a trusted state.
+
+  \item \textbf{Time-Based Restrictions:} The TPM can prevent
+    object usage after a specified time, enhancing security by
+    limiting the validity of operations to a defined time
+    window.
+
+  \item \textbf{Multi-Entity Authorization:} Usage of certain
+    objects may require authorization from multiple entities,
+    such as key holders, ensuring that a consensus is reached
+    before critical operations are performed.
+\end{itemize}
+
+\subsection{Trust perimeter and attestation considerations}
+Now that we have a functioning TPM and certificates for various keys,
+there’s a critical issue around trust that we need to address,
+specifically concerning when and how to perform attestation. Many
+market solutions perform attestation when a software component is
+installed. If the component's hash doesn’t match the expected value,
+the installation (or in a cloud context, the download) is blocked. At
+this stage, the signature from the developer is often verified.
+Additionally, attestation may be conducted at load time, when the
+component is loaded into memory for execution. This approach ensures
+that components are measured at runtime.
+
+However, the concept of "executable" is nuanced. For compiled
+binaries, attestation is straightforward: we can measure the binary’s
+hash. But for interpreted languages like Python, the executable is
+actually the interpreter, while the script itself becomes an input to
+the interpreter, creating challenges for accurate measurement. In
+these cases, measurements must extend beyond the interpreter to the
+script or input itself, if it exists as a file.
+
+Moreover, even if a verified binary is running, its behavior might be
+influenced by configuration files. For instance, an application like
+IP tables reads configurations from files that can be modified during
+runtime. Therefore, it’s crucial to monitor configuration files in
+addition to binaries. Generally, attestation systems like IMA focus on
+the file name for efficiency, but this can lead to issues if the file
+contents change without a name change. To account for modifications,
+attributes like the last modification date should also be considered.
+
+The challenge intensifies with applications that store configurations
+in memory rather than on disk, as is common with routers, switches,
+and some firewalls. These devices are often configured through
+protocols like SNMP or netconf, which send UDP packets containing
+configuration data. Such configurations reside in memory, making
+disk-based attestation approaches ineffective. Hewlett-Packard, for
+instance, has implemented custom firmware for certain routers that can
+attest to specific memory regions where routing and filtering tables
+reside. This approach allows for memory-based attestation by hashing
+designated memory segments, but it requires that these memory
+addresses remain constant to avoid issues like memory randomization.
+
+For attestation to be complete, measurements need to be compared
+against "golden" or expected values. This becomes complex for
+in-memory configurations, as they vary over time. Here, the network or
+security management system becomes essential for providing the current
+expected values. Such integration allows the attestation system to
+verify in-memory configurations dynamically, rather than relying on
+static, file-based measurements.
+
+This approach to attestation is increasingly critical for audit and
+forensic purposes. When an incident occurs, attestation provides a way
+to verify the system’s state at the time, allowing us to determine
+whether an incident was caused by a design flaw or a security breach.
+This capability is essential in areas like autonomous vehicles, where
+accidents might involve significant legal or ethical implications. By
+attesting to the platform state, network path, and specific functions
+at any given time, attestation can support not only regular audits but
+also forensic investigations, helping identify the root cause of
+failures and assigning accountability.
+
+In addition to software attestation, there’s an emerging field called
+network path attestation. This aims to verify the exact path network
+packets took across routers, particularly in sensitive international
+contexts. Ensuring that packets didn’t pass through unauthorized
+regions, such as certain countries, could be essential in
+security-sensitive scenarios. This opens new avenues for research and
+potential thesis topics, particularly for those interested in
+enhancing trust and accountability in modern, distributed networks.
+
+In summary, attestation serves as a foundation for verifying what was
+executed and how it was configured, enabling effective auditing and
+forensic analysis. This capability is indispensable for confirming
+software integrity, assessing system states, and potentially informing
+legal or corrective actions when failures or breaches occur.
+
 \subsection{SHIELD project}
+To illustrate how attestation can support practical applications,
+let's look at an example from a European project we participated in,
+which focused on "security as a service." In this approach, security
+functions are deployed as needed over the network infrastructure used
+by the user. This is typically achieved by creating and deploying
+virtualized network security functions (VNSFs) where they are needed.
+In our project, we used a trust monitor to perform attestation on the
+infrastructure, which was primarily software-based.
+
+In the setup, the trust monitor worked in conjunction with an NFV
+(Network Function Virtualization) infrastructure. This infrastructure,
+managed by an orchestrator, was the target for deploying various
+security functions. Additionally, a store provided network security
+functions as software objects, while a security dashboard displayed
+the system's status. If any security misconfiguration or integrity
+issue was detected, there was also a reaction mechanism to address it.
+This framework was part of the Shield Horizon 2020 project, an
+NFV-based security infrastructure aimed at monitoring, enforcing
+security actions and reactions, and using remote attestation to verify
+the integrity of the entire infrastructure.
+
+The trust monitor received two key inputs. The first input came from
+the infrastructure itself, allowing the monitor to assess whether the
+system was correctly configured and running the expected components.
+This involved periodic requests to each component for attestation
+results, ensuring that the trust monitor could check each component’s
+current measurements. The second input came from the VNSF store,
+providing “golden” measurements—known values for expected
+configurations and software hashes, which serve as benchmarks for
+verifying each component's integrity.
+
+When there was a mismatch between a component's actual measurement and
+the golden measurement from the store, an alert was triggered. This
+alarm was then analyzed, allowing the system to identify what went
+wrong and initiate appropriate remediation actions. Through this
+combination of measurements and golden benchmarks, the trust monitor
+maintained a secure infrastructure by continuously verifying the
+integrity and correct configuration of deployed security functions.
 
 \begin{figure}[H]
   \centering
@@ -1411,29 +1630,191 @@ usage. The key features of this mechanism include:
   \caption{SHIELD project}
 \end{figure}
 
+\subsubsection{Golden value creation}
+Let's begin with creating the "golden values." Here, we have the store
+of network security functions. When the trust monitor starts, it will
+request the security manifest. Every piece of software comes with a
+manifest, which, among other things, specifies hash values. If a
+virtualized network security function (VNSF) consists of multiple
+components, the manifest includes a hash for each part.
+
+The trust monitor retrieves the VNSF's security manifest, extracting
+the measurements for each component. If a particular component's hash
+is already in the database (perhaps because it's used by another
+VNSF), the trust monitor will skip it. However, if the measurement is
+new—meaning this component hasn't appeared in any other VNSF yet—it
+will add this hash to the whitelist database. This list, also known as
+a "whitelist" or "accept list," identifies the components that are
+authorized to run on the system.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{img/shield golden value.png}
+  \caption{Golden value creation}
+\end{figure}
+
+\subsubsection{Initial deployment of a security function}
+When deploying a security function, the orchestrator initiates the
+process by requesting the trust monitor to verify the state of the
+host, or "middle box," where the function will run. Before placing a
+virtual network security function (VNSF) on a host, it’s essential to
+confirm that the host system is in a secure and trusted state. This
+includes checking that the operating system, Docker container runtime,
+and boot process are intact and secure.
+
+To do this, the trust monitor initiates a remote attestation by
+sending a nonce to the target host. In response, the host provides a
+TPM quote and event log as proof of its current integrity. If the
+attestation results match the expected, secure values, the trust
+monitor returns a "success" message to the orchestrator. This
+validation allows the orchestrator to include the middle box in the
+list of authorized nodes for deployment.
+
+However, if the attestation fails to verify, the trust monitor returns
+a "failure" message, and the host is excluded from further
+orchestration. An alarm is also triggered, notifying the security
+manager to investigate the physical node's status. Until resolved, the
+node remains isolated and is not considered for any subsequent
+deployment steps.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/shield deployment.png}
+  \caption{Initial deployment of a security function}
+\end{figure}
+
+\subsubsection{Periodic attestation of security functions}
+Next, there is the process of periodic attestation, which the trust
+monitor performs automatically at intervals determined by the security
+manager. These intervals are typically based on the expected speed of
+potential attacks and are usually set in the range of minutes—such as
+every 10, 30, or 60 seconds—rather than hours.
+
+For each cycle, the trust monitor requests the current network state
+from the orchestrator, which identifies the specific nodes currently
+involved in security functions. This ensures that only relevant nodes
+are attested, rather than the entire network, focusing on the nodes
+that a particular customer or application may be using (e.g., nodes 2,
+7, and 35).
+
+With the list of active nodes, the trust monitor requests a remote
+attestation proof from each middle box in this subset. Each node
+provides a TPM quote and event log as proof of its current integrity.
+If the attestation result is positive, the network continues to
+operate as normal. However, if a failure is detected, the trust
+monitor triggers an alert through the security dashboard, notifying
+the operator of a potential issue with the affected node. 
+
+At this point, the operator has the option to manually intervene, such
+as by terminating, isolating, or reconfiguring the problematic node.
+While automated responses could be implemented with AI, this project
+favors a "human-in-the-loop" approach, leaving the final decision to
+the operator after receiving the alert.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/shield periodic attestation.png}
+  \caption{Periodic attestation of security functions}
+\end{figure}
+
 \section{Keylime}
 
 Keylime is an open-source remote attestation project hosted at the
 Cloud-Native Computing Foundation (CNCF) that is designed with a focus
-on cloud-oriented environments. It leverages the Trusted Platform
-Module (TPM) to create a highly scalable remote attestation (RA)
-framework with a straightforward architecture.
+on cloud-oriented environments. It leverages a physical TPM to create
+a highly scalable RA framework with a straightforward architecture.
 
 Keylime includes several key features: remote boot attestation, which
 ensures the integrity of the boot process by verifying the platform's
 state at boot time; Linux IMA support, allowing for periodic runtime
-attestation through Linux Integrity Measurement Architecture (IMA) to
-verify system integrity during operation; registration of multiple
-agents to a verifier, enhancing flexibility and scalability in
-attestation processes; and a robust certificate infrastructure to
-facilitate secure communications and verifications within the
-framework.
+attestation through IMA to verify system integrity during operation;
+registration of multiple agents to a central verifier, enhancing
+flexibility and scalability in attestation processes, in fact, an
+agent is the piece of software that you need on the node to create the
+attestation port, m.t. one can have as much as needed ; and a
+additional certificate infrastructure to facilitate secure
+communications and verifications within the framework. Why it's part
+of the standard? Because at least initially, Keylime gave to each
+agent also a public key certificate in order to perform operations
+like signatures, but it's rarely used nowadays.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/keylime schema.png}
   \caption{Keylime schema}
 \end{figure}
+
+\subsection{Keylime Structure}
+
+The Keylime framework is composed of several key components that work
+together to enable remote attestation of nodes. 
+
+The \textbf{attester agent} is a software component installed on each
+node that needs to respond to remote attestation requests. Its primary
+function is to retrieve the TPM quote, which includes the PCR values
+signed by the TPM’s internal key. In addition to the quote, the agent
+gathers other necessary data, such as the IMA measurement list for PCR
+10. Optionally, the agent can also listen for revocation messages if
+certificate-based attestation is used and a certificate has been
+revoked.
+
+The \textbf{registrar} manages the enrollment of attester agents. When
+a node with an agent is deployed, it must be registered with the
+registrar, which assigns it a unique user identifier. The registrar
+also handles the management of agent keys, including the agent’s
+signing key and the endorsement keys stored in the TPM.
+
+The \textbf{verifier} is responsible for attesting the nodes by
+communicating with the attester agents. It requests and validates the
+TPM quotes and can send revocation messages if an agent is determined
+to be in an untrusted state, especially in cases where certificate
+revocation is utilized.
+
+Finally, the \textbf{tenant} represents the entity that owns or
+manages a specific part of the infrastructure. It provides a unified
+interface for managing the agents across the infrastructure, enabling
+consistent and centralized management of attestation operations.
+
+\subsection{General Schema}
+This is the schema we are discussing. In our network, we have two
+nodes that require attestation. Each of these nodes needs to run an
+attestation agent. Additionally, there will be a machine designated as
+the registrar and another as the verifier. While it's not mandatory to
+have them separate, they are distinct processes. You can run both the
+registrar and the verifier on the same machine.
+
+The registrar is responsible for enrollment. When an agent is
+deployed, it attempts to enroll itself, and the registrar notifies the
+verifier of this new registration, instructing it to perform periodic
+attestations for that node. The verifier will then regularly send
+verification requests to the various agents. Each agent gathers the
+necessary proofs, such as the PCR values and, if IMA is enabled, the
+IMA measurement list. It sends a quote containing all required
+information back to the verifier. This process is repeated for each
+node in the network.
+
+While this architecture functions well, it does have a vulnerability:
+the presence of a centralized verification point creates a single
+point of failure. If the node containing the registrar or verifier is
+compromised or subjected to a denial-of-service attack, we lose
+visibility into the network's state. A possible approach to mitigate 
+this is to adopt a decentralized architecture, and one of the
+possibilities that is being discussed is to use a blockchain.
+
+In the event of a critical node being compromised, there would need to
+be a protocol to notify administrators to deploy a replacement node.
+This concept of a self-healing network is significant, as it allows
+the network to recover autonomously from attacks by excluding
+malicious nodes.
+
+Regarding the chain of trust, you can choose to utilize an endorsement
+key or other keys as part of this framework. While the chain of trust
+is not strictly required, a minimum setup for a node with a TPM
+includes the endorsement key, which is always present. If privacy is a
+concern, the chain of trust can be established with identifiers like
+the IDevID and LDevID.
+
+At last, each time a quote is received, it will be verified against
+the golden measurements to ensure integrity.
 
 \subsection{Remote Attestation Procedures – RATS}
 
@@ -1442,32 +1823,70 @@ Engineering Task Force (IETF) to enhance support for different
 platforms during the load time. RATS defines various actors involved
 in the remote attestation procedures, including the Attester, Relying
 Party, Verifier, Relying Party Owner, Verifier Owner, Endorser, and
-Reference Value Provider.
+Reference Value Provider. The definition of all this roles sure helps
+in environments such as the cloud.
 
 Additionally, RATS specifies several topological patterns, such as the
-Background Check Model and the Passport Model, to organize the
-interactions among these actors. The framework is documented in
+\textbf{Background Check} and the \textbf{Passport} Model, to organize
+the interactions among these actors. The framework is documented in
 RFC-9334, titled "RATS Architecture," which lays the foundation for
 the remote attestation process. Numerous other RFC drafts are
 currently in progress, focusing on various aspects such as data
 formats, procedures, and attestation models to further develop the
 RATS framework.
 
+\subsubsection{Interaction schema}
+
+This diagram in figure \ref{fig:rats} outlines the schema of
+interactions, with the verifier as the central component. The
+\textbf{verifier}'s primary function is to receive quotes and
+determine their validity—whether they are good or bad. To make this
+determination, the verifier collects evidence from the
+\textbf{attesters}, including quotes, mailing lists, signed PCRs, and
+other relevant data. It then provides attestation results to a relying
+party, which is an entity that trusts the verifier to conduct this
+verification.
+
+However, this is just the basic setup. To enhance the process, we
+introduce the concept of the endorser. An endorser is an entity that
+designates the correct elements to be verified within the system. For
+example, if you've purchased a component from another company, you
+would need to measure it, but the measurements must be supplied by
+that vendor.
+
+The verifier has an owner responsible for setting up the appraisal
+policy for the evidence. This is particularly important for software
+components, as you may have both current and legacy versions in your
+network. Questions arise regarding which versions to accept: Is it
+only the latest version, or are older versions accepted as well? You might
+categorize versions based on their status—some may lack functionality,
+while others could have critical bugs or security vulnerabilities.
+Policies should be established to define acceptable conditions for
+older versions, allowing acceptance of those that only have missing
+functionality but rejecting those with known issues.
+
+In addition to the verifier owner, there is the relying party owner,
+who must decide the appropriate course of action based on the
+attestation results. They determine whether the results are acceptable
+and assess the severity of any issues identified.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/RATS.png}
+  \label{fig:rats}
   \caption{Remote Attestation Procedures (RATS)}
 \end{figure}
 
 \subsubsection{RATS – Main Roles}
 
-In the RATS framework, several key roles are defined to facilitate the
-remote attestation process. 
+Let's go now in details by providing a formal definition of the main
+actors.
 
 The \textbf{Attester} is responsible for generating evidence when
 attestation is needed, typically at the request of the Relying Party.
 This evidence is essential for accessing services, such as those that
-utilize OAuth for authentication.
+utilize OAuth for authentication. This is important because even if a
+node has the correct token it may be infected.
 
 The \textbf{Verifier} plays a critical role in comparing the evidence
 provided by the Attester against predefined reference values, applying
@@ -1479,6 +1898,44 @@ based on its specific policy, known as the Relying Party Policy. It is
 important to note that the Relying Party and the Verifier may be part
 of the same service, streamlining the attestation process.
 
+\subsubsection{Attestation Models}
+
+There are two main models for running attestation: the background
+check model and the passport model.
+
+\paragraph{Background Check Model}: In this model, the attester
+provides evidence, which is then passed on to the relying party.
+However, the relying party cannot evaluate the evidence on its own, so
+it sends the evidence to a verifier. The verifier reviews the evidence
+and sends back an attestation result to the relying party. This is
+similar to a background check, where an external authority is
+consulted to verify someone’s status. For instance, when you go to buy
+a firearm, the shop (acting as the relying party) contacts law
+enforcement (the verifier) to confirm if you’re eligible to make the
+purchase. Similarly, when a company hires an employee, it might
+conduct a background check, examining the candidate’s online history
+to ensure they align with company values. Many companies now require
+applicants to share their social media profiles for such checks. In
+both cases, external evidence is checked by an independent verifier on
+behalf of the relying party.
+
+\paragraph{Passport Model}: In this model, the attester creates
+evidence and submits it directly to the verifier. The verifier then
+reviews this evidence and issues an attestation result back to the
+attester, who can present it to the relying party. It’s like
+presenting a passport when traveling: instead of the relying party
+(e.g., a border control officer) having to verify your identity
+independently, you present a pre-verified document. This model allows
+the attester to proactively acquire verification from the verifier,
+making it readily available for the relying party. Using the previous
+example, imagine obtaining a certificate of good standing from the
+police before entering a store. This way, you’re pre-approved, and the
+store doesn’t need to conduct further checks.
+
+In both models, the final attestation result is provided to the
+relying party, which relies on this verification to establish security
+and trust.
+
 
 \begin{figure}[H]
   \centering
@@ -1489,12 +1946,18 @@ of the same service, streamlining the attestation process.
 
 \section{Veraison (VERificAtIon of atteStatiON)}
 
+Nowadays, one of the main problems in attestation is that every
+companby is developing its own solution, and this is a problem because
+there's no interoperability. We would like to have a generic verifier,
+which can be used with any kind of attestation produced by any kind of
+company.
+
 Veraison is an open-source project designed to enhance consistency for
 Verification Services in the realm of remote attestation. It
 implements various standards and provides a set of libraries that
 allow for extensive customizations.
 
-Originally generated by ARM's Architecture Technology Group (ATG),
+Originally generated by ARM's Advanced Technology Group (ATG),
 Veraison was later adopted by the Confidential Computing Consortium
 within the Linux Foundation. It supports a variety of architectures
 and RoT implementations, making it a versatile
@@ -1505,4 +1968,437 @@ features a flexible structure for evidence provisioning. Its high
 customizability enables users to select only the necessary features
 for their applications, facilitating the easy development of custom
 functionalities tailored to specific requirements.
+
+\subsection{Veraison Architecture}
+The architecture of Veraison is shown in figure
+\ref{fig:veraison-architecture}. The components highlighted in blue
+are managed by Verizon Trusted Services. Verizon handles several
+plugins to facilitate attestation, including a handler for
+endorsements that allows connection to any endorser of your choice, as
+well as a handler for evidence. Within the provisioning process, there
+is a plugin manager for coordinating these plugins. Verification
+occurs outside of this managed area, and there is also a key-value
+store for maintaining relevant information. 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/veraison architecture.png}
+  \label{fig:veraison-architecture}
+  \caption{Veraison architecture}
+\end{figure}
+
+\subsection{Verification}
+Verification is at the core of Verizon's functionality, and it
+involves a complex, multi-step process. Upon receiving a request, the
+handler performs the verification steps, all of which are integral to
+Verizon’s operations. This includes support for different media types,
+which can each be processed in a customized way. The process also
+involves establishing trust anchors—root authorities that certify the
+TPM or your own root of trust. Key stages include handling claims,
+endorsements, validation, appraisal, and signatures, among other
+tasks.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/verizon verification.png}
+  \caption{Veraison verification}
+\end{figure}
+\subsection{Data formats}
+
+Data formats are essential for achieving interoperability in
+attestation. Verizon’s architecture natively supports ingestion and
+generation of various attestation formats.
+
+\paragraph{Entity Attestation Tokens (EAT)}  
+The attestation results are formatted as Entity Attestation Tokens,
+which can be encoded in CBOR or JSON. EAT is used as a standardized
+format for representing evidence, especially within the PSA (Platform
+Security Architecture) ecosystem—a security certification schema
+designed for IoT devices.
+
+\paragraph{Evidence Formats}  
+Evidence can be presented in multiple formats, including:
+\begin{itemize}
+    \item \textbf{PSA-EAT} — Developed under the PSA framework,
+      primarily for IoT security.
+    \item \textbf{CCA (Confidential Compute Architecture)} — The
+      format used by ARM for secure compute environments.
+    \item \textbf{TPM and DICE} — Trusted Computing Group (TCG)
+      standards, where TPM is a longstanding standard, while DICE is
+      designed for embedded and IoT systems.
+    \item \textbf{Amazon Nitro} — Amazon’s format for creating
+      evidence within secure enclaves.
+\end{itemize}
+
+\paragraph{Endorsements and Reference Values}  
+Endorsement and reference values are represented using CORIM (Concise
+Reference Integrity Measurement). CORIM includes:
+\begin{itemize}
+    \item \textbf{COMID} for hardware and firmware modules,
+    \item \textbf{COSWID} for software components, and
+    \item \textbf{COBOM} (Concise Bill of Materials) for hardware,
+      software, and cryptographic inventories.
+\end{itemize}
+The bill of materials is essential in security frameworks, such as
+NIST’s, where inventory management is a primary phase of security
+planning. Each element's hardware, software, and cryptographic
+components are listed to support system transparency.
+
+\paragraph{Appraisal Policy for Evidence}  
+For appraising evidence against policies, Open Policy Agent (OPA)
+provides an open-source solution where policies can be defined and
+applied. This enables a comparison between attestation results and the
+established policy.
+
+\paragraph{Attestation Result Formats}  
+Attestation results can be formatted in EAR for general attestation
+and R4C for secure interactions, offering flexibility in secure
+communication.
+
+This broad range of formats ensures compatibility across platforms,
+though the variety also introduces significant complexity.
+
+\section{Device Identity Composition Engine (DICE)}
+So, insofar we discussed the attestation as was originally conceived,
+that is using a hardware root of trust implemented with the TPM. That
+is perfectly fine, but it's a rather complex solution, because TPM is
+a complex object that needs either to be implemented as a physical
+chip, or if it is in firmware, it's a large component. There are some
+alternatives being proposed for systems that cannot have additional
+hardware, and even running large portions of firmware is not suitable
+for them. Typically, they are internet of things or embedded systems
+with limited computational capacity.
+
+The Trusted Computing Group developed the Device Identifier
+Composition Engine (DICE) to establish secure device identities,
+focusing on identifying each layer of the device through cryptographic
+keys. DICE’s approach centers on the Compound Device Identifier (CDI),
+a unique secret value, usually a private key, generated by applying a
+one-way cryptographic hash to combine a secret for the current layer
+and a measurement of the next.
+
+DICE’s process involves layered identity verification. Each layer,
+beginning with firmware, is measured and linked to a unique key. When
+a new layer is initialized, DICE generates a new key based on the
+prior layer’s key and the measurement of the upcoming layer. This
+ensures that any tampering at one layer disrupts the chain, as the
+altered measurement would produce a mismatched key.
+
+At the base of this chain is the Unique Device Secret (UDS), a
+distinct and randomly generated secret that initializes the first CDI
+value. The UDS is statistically unique, ensuring it cannot correlate
+with UDS values on other devices. In practice, this may be created
+using a physically unclonable function (PUF) to generate a unique
+random value specific to the device.
+
+Each CDI is recalculated upon reboot, depending on the device’s static
+software state. If the software remains unchanged, the same keys are
+generated; otherwise, new keys indicate tampering. Verification
+against a public key certificate confirms the integrity of the
+system—any unauthorized software changes disrupt this chain of trust,
+invalidating the certification.
+
+\subsection{DICE Layered Architecture}
+
+The DICE architecture begins at the boot stage, forming the
+foundational layer for secure identity. The DICE layer alone has
+access to the UDS, a crucial element for establishing trust, and
+calculates the initial TCI for layer zero by hashing the software code
+of this layer. Using a one-way function (hash), the DICE layer then
+generates a unique key for the next layer in the boot sequence.
+
+Each subsequent layer repeats this process: it measures the software
+of the following layer, applies a hash function, and combines it with
+the current CDI to generate a new CDI for the next layer. This
+recursive measurement and key generation process continues across
+layers, linking each layer’s identity to its software integrity.
+Typically, only a few layers are involved, but the approach allows for
+as many layers as needed.
+
+In essence, these keys are dynamically generated based on the software
+at each layer. Identical keys are recreated only if the software at
+each layer remains unchanged, thereby ensuring that any modification
+to a layer disrupts the integrity chain.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/dice layered
+  architecture.png}
+  \caption{DICE layer architecture}
+\end{figure}
+
+\subsection{Dice keys and certificates}
+In the DICE architecture, each layer can have multiple keys and
+certificates, expanding beyond the initial key generated by the DICE
+layer for the first Compound Device Identifier (CDI). Starting from
+layer 0, a key derivation or key generation function produces
+additional keys for that layer, with each subsequent layer performing
+the same process. Rather than using the CDI directly, these derived
+keys serve in cryptographic operations.
+
+Each layer may include an Embedded Certification Authority (ECA),
+which issues certificates for attestation or identity verification.
+This ECA is designed to sign only data it generates, preventing
+potential risks associated with signing external data. There are three
+primary types of keys:
+
+\begin{itemize}
+  \item ECA Key: Used to issue certificates for keys generated in the
+    current or next layer, eliminating the need for an external
+    certification authority—a practical approach for embedded or IoT
+    devices.
+  \item Attestation Key: Used to sign attestation evidence, ensuring
+    integrity in reporting the device's state.
+  \item Identity Key: Used exclusively for identity verification
+    through challenge-response protocols, maintaining secure device
+    authentication.
+\end{itemize}
+
+This layered approach allows for distinct roles for each key, although
+a single versatile certification authority could be employed for
+simplicity.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/dice keycert.png}
+  \caption{DICE keys and certificates}
+\end{figure}
+
+\subsection{Dice layered certification}
+\begin{boxH}
+  Each layer in the DICE framework can act as an ECA, establishing a
+  certification hierarchy rooted in the manufacturer’s root CA. 
+\end{boxH}
+Each ECA can produce two different types of certificate.
+The device manufacturer provides this root CA, which issues the first
+certificate for the CDI (Compound Device Identifier) of the DICE
+layer. Since the DICE layer is meant to be immutable, except when a
+firmware update is performed, this initial certificate remains
+constant and can be externally verified as a marker of platform
+authenticity.
+The ECAs in subsequent layers issue certificates (the second kind)
+that represent the device's identity and attestation status. 
+
+Each certificate includes specific X.509 v3 extensions crucial to DICE
+architecture compliance, namely `DICE PCB Info` and `DiceTcbInfo`.
+These extensions contain vital identification and measurement data
+required for device authentication and security.
+
+\begin{itemize}
+    \item \textbf{DiceTcbInfo Extension}: Each certificate must
+      include the `DiceTcbInfo` extension with OID:
+    \[
+    2.23.133.5.4.1 =
+    \text{joint-iso-itu(2).international-org(23).tcg(133).tcg-platformClass(5).dice(4).TcbInfo(1)}
+    \]
+    This extension provides a SEQUENCE of information specific to the
+    device’s target level, containing:
+    \begin{itemize}
+        \item \textbf{Names}: Identification fields such as
+          \textit{vendor, model, and layer}.
+        \item \textbf{Measurements}: Versioning and security
+          attributes, such as \textit{version, security version number
+          (svn)}, and \textit{fwidlist} (a list of firmware IDs, each
+          represented by a \textit{hash algorithm and digest}).
+    \end{itemize}
+    
+\end{itemize}
+
+
+The certificate, therefore, holds key information about the platform,
+without revealing its full details. Instead of explicitly naming
+firmware, it provides a digest. This digest allows anyone with the
+necessary knowledge to validate the platform’s firmware identity,
+while keeping exact firmware information private.
+\subsection{Dice on RISC-V}
+The professor recenly completed another project on September 30 and
+are now preparing to launch the next phase. This project involved
+implementing DICE on a RISC-V platform equipped with a hardware
+cryptography accelerator. In this setup, layer 0 contains the Compound
+Device Identifier (CDI), also referred to as the device root key,
+which is accompanied by a root key certificate issued by the platform
+manufacturer.
+
+For this solution, we integrated with Keystone, a system where the
+security monitor serves as the foundational layer. Here, the device
+root key signs the key of the Embedded Certification Authority (CA)
+specifically for the security monitor. The security monitor, in turn,
+generates an initial attestation key and issues the initial device ID
+certificate for the device, establishing a certified identity for the
+device.
+
+In Keystone’s architecture, trusted enclaves are established, isolated
+from the untrusted parts of the system. Each enclave can generate a
+local device identifier with its own certificate, signed by the
+previous layer, along with a local attestation key. Embedded CAs are
+not necessary within each enclave since they do not generate additional
+keys. Importantly, this entire chain of trust originates from the
+manufacturer’s root certificate, which could pose privacy concerns if
+used directly in a user's system.
+
+To address privacy, an option exists to associate a new certificate
+with the device identifier of each enclave. This approach allows users
+to use the same keys while issuing the public key to their own
+certification authority for signing. Consequently, the root of trust
+can shift from the manufacturer to the user’s chosen authority. Once
+verified, this new certificate can be used exclusively.
+
+If an attack or modification occurs in the platform, security monitor,
+or enclave, the system will automatically invalidate the certificate.
+Any changes in the trusted software or applications alter the generated
+keys, making the certificate invalid as it would now contain a
+different public key. Rather than storing keys persistently, keys are
+regenerated as needed and remain bound to the executing software,
+thereby reinforcing security.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/dice riscv.png}
+  \caption{DICE on RISC-V}
+\end{figure}
+
+\subsection{Open Profile for DICE}
+
+The Open Profile for DICE is a specification from Google for
+implementing DICE. In this model, each layer in the system is
+equipped with two types of Compound Device Identifiers (CDIs):
+\begin{itemize}
+    \item \textbf{Attestation CDI} (mandatory)
+    \item \textbf{Sealing CDI} (optional)
+\end{itemize}
+
+The CDI for each subsequent layer is derived using additional specific
+input values, depending on the CDI type. These inputs include:
+\begin{itemize}
+    \item \textbf{Configuration Data:} Information regarding the
+    integrity of the system.
+    \item \textbf{Authority Data:} A hash representing information
+    about the trusted authority used in verified boot.
+    \item \textbf{Mode Decision:} The current operating mode of the
+    device.
+    \item \textbf{Hidden Inputs:} Values that are not disclosed in
+    any certificate.
+\end{itemize}
+
+Furthermore, each layer has an Attestation keypair, which is derived
+from its corresponding Attestation CDI, enabling cryptographic
+attestation at each stage.
+
+\subsection{DICE and RIOT}
+
+RIOT (Robust Internet of Things) is Microsoft's specification for
+implementing DICE. Unlike the standard DICE implementation, RIOT
+utilizes a single Compound Device Identifier (CDI) for the entire
+device. Key aspects of RIOT's DICE model include:
+
+\begin{itemize}
+    \item \textbf{Single CDI:} The CDI is generated by combining the
+    platform's Unique Device Secret (UDS) with the measurement of the
+    RIOT core, which is the only software component permitted to
+    access the CDI.
+    \item \textbf{Alias Keypairs for Attestation:} Each layer
+    includes an Alias keypair for attestation.
+    \item \textbf{Recursive Key Derivation:} Each layer \(N\) uses
+    the measurement of the subsequent layer \(N+1\) to compute its
+    Alias keypair. For the RIOT core, this Alias keypair is derived
+    directly from the CDI.
+\end{itemize}
+
+\subsection{Cloud providers and DICE}
+Let's wrap this chapter up by showing what the major cloud providers 
+are doing with DICE.
+
+\subsubsection{Google Cloud Attestation}
+
+Google Cloud provides optional attestation for platform security, with
+key capabilities supported on services such as Google Kubernetes
+Engine (GKE) and Cloud Run. A central feature is binary authorization,
+which includes various scans and analyses—such as vulnerability scans,
+regression tests, and signing of the container image hash—to ensure
+container integrity.
+
+At deploy-time, Google Cloud enforces security controls by blocking
+any container deployment lacking a valid signature. If the container
+meets the specified policies, deployment is allowed, ensuring
+policy-compliant security for containerized applications.
+
+\subsubsection{Amazon Web Services Attestation and Security}
+
+Amazon Web Services (AWS) provides several security features related
+to container integrity, though not traditional attestation. AWS
+Elastic Container Registry (ECR) stores container images that can be
+executed, and Amazon Inspector offers scanning capabilities for these
+images.
+
+Amazon Inspector scans container images each time a new image is
+pushed or a new vulnerability definition is added. An additional
+feature, enhanced scanning, checks for vulnerabilities in the
+operating system and within specific programming languages. Users can
+specify the programming language used, allowing AWS to scan for known
+vulnerabilities relevant to that language. AWS also checks service
+vulnerabilities, particularly regarding network access, to enhance
+container security.
+
+\subsubsection{Amazon Web Services NITRO Attestation}
+
+AWS provides a form of attestation through NITRO, a specific type of
+enclave used for secure execution within a VM. NITRO enclaves are
+isolated and constrained, only able to communicate with their parent
+EC2 instance. The enclave can request attestation from the NITRO
+manager to prove its integrity and request services. For example, an
+enclave can ask the NITRO manager to attest its state, and the NITRO
+manager can request the parent EC2 instance to sign or decrypt data on
+behalf of the enclave.
+
+The attestation process in NITRO occurs during load time, ensuring
+that the correct binary is loaded into the enclave. Once the correct
+binary is confirmed, runtime services are provided, and the
+attestation process is no longer necessary. While attestation takes
+place at runtime, it primarily verifies the initial loading of the
+enclave, rather than continuous runtime checks.
+
+
+\subsubsection{AWS Nitro's PCRs}
+
+AWS Nitro utilizes PCRs intead of TPMs for various attestation
+measurements. The following PCRs are defined for different components:
+
+\begin{itemize}
+    \item \textbf{PCR0 (Enclave Image File):} Measures the enclave
+      image file, excluding the section data.
+    \item \textbf{PCR1 (Linux Kernel and Bootstrap):} Measures the
+      Linux kernel and boot RAM filesystem (ramfs) data.
+    \item \textbf{PCR2 (Application):} Measures the user applications,
+      excluding the boot ramfs.
+    \item \textbf{PCR3 (IAM Role Assigned to the Parent):} Attestation
+      succeeds only if the parent EC2 instance has the correct IAM
+      role assigned.
+    \item \textbf{PCR4 (Instance ID of the Parent):} Attestation
+      succeeds only when the parent EC2 instance has a specific
+      instance ID.
+    \item \textbf{PCR8 (Enclave Image File Signing Certificate):}
+      Attestation succeeds only if the enclave was booted from an
+      image file signed by a specific certificate.
+\end{itemize}
+
+\subsubsection{Azure Confidential Containers}
+
+Azure Confidential Containers provide secure deployment and
+attestation of containers through the following process:
+
+\begin{itemize}
+    \item Upon container deployment, a token is generated and signed
+      by the cloud node.
+    \item The token is verifiable by a remote entity.
+    \item The token includes information about:
+    \begin{itemize}
+        \item The correct deployment of the container in a Trusted
+          Execution Environment (TEE).
+        \item The use of a VM-based TEE.
+        \item A hardware-based and attested TEE.
+        \item Full guest attestation.
+    \end{itemize}
+    \item The solution provides additional data and code protection.
+    \item There is no need for a specialized programming model or
+      special management.
+\end{itemize}
 
