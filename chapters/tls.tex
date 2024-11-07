@@ -1,6 +1,6 @@
 \chapter{Transport Layer Security}
 TLS, or Transport Layer Security, was originally proposed by Netscape
-in 1995 as a way to secure communications between a web browser and a
+as a way to secure communications between a web browser and a
 web server. It is the successor to SSL, or Secure Sockets Layer, which
 was first introduced by Netscape in 1995. The two terms are often used
 interchangeably, but TLS is the more modern and secure protocol.\\ 
@@ -11,11 +11,11 @@ services that neither TCP nor IP provides:
   \item \textbf{peer authentication} based on asymmetric
     challenge-response authentication(the challenge for the service is
     implicit, while for the client is explicit). Server authentication
-    is alway compulsory, while client authentication is optional and
+    is always compulsory, while client authentication is optional and
     requested by the server.
   \item \textbf{message confidentiality} base on symmetric encryption
   \item \textbf{message integrity} and authentication based on MAC
-    computed on the trasmitted data
+    computed on the transmitted data
   \item \textbf{replay, filtering and reordering attack protection}
     using implicit record numbers( the correct order of transmission
     is provided by TCP, for this reason the number is implicit). This
@@ -76,8 +76,8 @@ Data protection is achieved by using symmetric encryption algorithms
 to encrypt the data and Message Authentication Codes(MAC) to ensure
 the integrity of the data and the authentication of the sender.\\
 Figure \ref{fig:tls-data-protection} shows how the data protection is 
-achived in TLS using authenticate-then-encrypt approachm, but also
-encrypt-then-authenticate is possible.\\
+achieved in TLS using \textbf{authenticate-then-encrypt} approach, but
+also encrypt-then-authenticate is possible.\\
 The MAC is computed over the data(compressed or not), the TLS sequence 
 number and the key used for the MAC computation. The padding is also
 part of the MAC computation to avoid those attacks that change the
@@ -128,7 +128,7 @@ Since the keys are generated from symmetric crypto, if the private key
 used to perform encryption and decryption of the pre-master secret is
 compromised, all the previous communication can be decrypted because
 it is possible to derive the master-secret. This is only possible if
-the server has a certificate valid for both signature and encryption
+the server has a certificate valid for both signature and encryption.
 In this context, perfect forward secrecy is desirable.
 \begin{boxH}
   \textbf{Perfect Forward Secrecy} is a property of key-agreement
@@ -164,8 +164,8 @@ contains:
     supported(2=SSL-2, 3.0=SSL-3, 3.1=TLS-1.0, \dots)
   \item a 28 bytes pseudo-random number, which is the client random
   \item a session-id, which is \textit{0} if the client is starting a
-    new session, and \textit{1} if the client is trying to resume a
-    previous session
+    new session, and different from it if the client is trying to
+    resume a previous session
   \item a list of cipher suites supported by the client, in order to 
     let the server choose the most secure one (the set of algorithms
     used for encryption, for key exchange, and for integrity)
@@ -223,7 +223,7 @@ After the initial exchange, the server is ready to authenticate
 itself.\\
 The server sends its long-term public key certificate to the client
 for server authentication. Actually, the whole certificate chain, up
-to the root CA, must be sent. Furthermore , the subject of the 
+to the root CA, must be sent. Furthermore, the subject of the 
 certificate must match the server name.\\
 Server authentication is implicit, because its private key is used to
 decrypt the pre-master secret, while client authentication is 
@@ -359,10 +359,10 @@ resumable.
 TLS 1.2 was released in 2008, and it introduced some new features and 
 improvements. The chipersuite also specifies the pseudo random
 function instead of leaving the choice to the implementation. The
-sha-1 algorithm was replaced with SHA-256, and its also added support
+SHA-1 algorithm was replaced with SHA-256, and its also added support
 for authenticated encryption, such as AES in GCN or CCM mode.
 
-All the chipersuites tat use IDEA and DES are deprecated.
+All the chipersuites that use IDEA and DES are deprecated.
 
 \section{TLS attacks}
 \subsection{Heartbleed}
@@ -401,25 +401,26 @@ user requests, for example by using a form or choosing fraudulently an
 username that is displayed, and then measure the size of the encrypted
 traffic, an attacker could recover specific plaintext parts exploiting
 information leaked from the compression, and this is part of the
-reason why the compression is deprecated in TLS 1.3.\\
-\textbf{BREACH} is an attack against the \textbf{HTTP compression} to
-deduce a secret within the HTTP response provided by the server. It is
-different from Crime because the former is an attack against the
-compression algorithm used in SSL/TLS, while the latter is an attack
-against the HTTP compression.\\
-\textbf{BEAST} is an attack that exploits a vulnerability in the way
+reason why the compression is deprecated in TLS 1.3.
+\paragraph{BREACH} 
+Is an attack against the \textbf{HTTP compression} to deduce a secret
+within the HTTP response provided by the server. It is different from
+Crime because the former is an attack against the compression
+algorithm used in SSL/TLS, while the latter is an attack against the
+HTTP compression.
+\paragraph{BEAST} Is an attack that exploits a vulnerability in the way
 the \textbf{CBC} mode of operation is used in SSL/TLS. The attack is
 possible if \textbf{IV concatenation}is used, meaning that the initial
 vector for the next encryption is taken from the end of the previous
 encryption. A MITM may decrypt HTTP headers with a blockwise-adaptive
 chosen-plaintext attack, and by doing so, he's able to decrypt HTTPS
-requests and steal information such as session cookies.\\
-\textbf{POODLE}, or Padding Oracle On Downgraded Legacy Encryption, is
-an attack that exploits the fact that SSL 3.0 uses a padding scheme
+requests and steal information such as session cookies.
+\paragraph{POODLE}, or Padding Oracle On Downgraded Legacy Encryption,
+is an attack that exploits the fact that SSL 3.0 uses a padding scheme
 that is vulnerable to a \textbf{padding oracle attack}, by acting as a
 MITM. This is done by exploiting SSL-3 fallbacks to decrypt data. This
-is also the only attack among those that still works today.\\
-\textbf{FREAK}, or Factoring RSA Export Keys, is an attack that
+is also the only attack among those that still works today.
+\paragraph{FREAK}, or Factoring RSA Export Keys, is an attack that
 exploits the downgrades on TLS to export-level RSA keys to a
 factorizable bit length(512 bits). It is also possible to carry this
 out by downgrading the symmetric key too and then perform a brute
@@ -437,7 +438,8 @@ then brute force the master secret on-the-fly, recompute the MAC so
 that the server will accept the message. Since the attacker have
 access to the premaster secret and the master secret, all traffic
 beyond this point is encrypted with a weak shared key and the
-middleman can read and even modify the traffic.\\
+middleman can read and even modify the traffic.
+
 For all those reasons SSL-3 has been disabled on most browsers, but
 its still needed for some browsers, for example IE6 by Microsoft,
 which is outlasting its expected life span, because its the default
@@ -453,14 +455,16 @@ meaning that the window of exposure for those attacks is still open.
 
 \section{ALPN extension}
 The ALPN extension, or Application-Layer Protocol Negotiation, is an
-extension that allow to negotiate the application protocol to speed up
-the connection creation, avoiding additional round-trips for
-application negotiation. It is used to negotiate the protocol to be 
-used on top of the TLS connection, such as HTTP/2, SPDY, or QUIC,
-before the connection is established. This is useful because it saves
-time, obviously, because after the connection is established, the
-client and server could still fail to communicate because the
-application protocol is not supported by the server.\\
+\textbf{extension} that allow to \textbf{negotiate} the
+\textbf{application protocol} to speed up the connection creation,
+\textbf{avoiding additional round-trips} for application negotiation.
+It is used to negotiate the protocol to be used on top of the TLS
+connection, such as HTTP/2, SPDY, or QUIC, before the connection is
+established. This is useful because it saves time, obviously, because
+after the connection is established, the client and server could still
+fail to communicate because the application protocol is not supported
+by the server.
+
 The extension is inserted in the client hello message, by setting the
 ALPN flag to true and providing a list of supported protocols in the
 client HELLO message. The server will respond with the ALPN flag set
@@ -541,14 +545,15 @@ because TLS is activated before the HTTP request is sent, which makes
 it difficult to know which certificate should be provided in advance.
 The solutions are quire simple:
 \begin{itemize}
-  \item use a wildcard certificate, which is a certificate that is
-    valid for all the subdomains of a domain (ie: *.myweb.it)
-  \item use the SNI (Server Name Indication) extension, which is an
-    extension that allows the client to specify the hostname of the
-    server it is trying to connect to, allowing the server to provide
-    the correct certificate. This is sent in the ClientHello message.
-  \item provide a certificate with a list of servers in
-    subjectAltName, which allow to share the same private key for 
+  \item use a \textbf{wildcard certificate}, which is a certificate
+    that is valid for all the subdomains of a domain (ie: *.myweb.it)
+  \item use the \textbf{SNI} (Server Name Indication)
+    \textbf{extension}, which is an extension that allows the client
+    to specify the hostname of the server it is trying to connect to,
+    allowing the server to provide the correct certificate. This is
+    sent in the ClientHello message.
+  \item provide a certificate with a \textbf{list of servers in
+    subjectAltName}, which allow to share the same private key for
     different servers.
 \end{itemize}
 
