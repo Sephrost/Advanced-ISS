@@ -1,0 +1,890 @@
+ So, good afternoon everybody. I think we can start before starting
+ just a quick check with students remotely connected. Can you can you
+ hear me and can you see the shared screen? Okay, thank you so much.
+ So we can start. Okay. So, welcome to my module. We will get into
+ some peripherical perspective compared to the ones you have been
+ sharing since the very first day you entered Polytechnical. Before
+ giving you a glimpse on what is waiting for you ahead, I think maybe
+ we should spend some minutes sharing some very basic instructions.
+ And my, thank you, my first, my first attention is to try and
+ accompany you during the whole module, my class, in a way that at the
+ end of the day, you will be able to be equipped enough to mix your
+ technical capabilities, your knowledge in engineering and computer
+ science, and more particularly in cyber crimes and cyber security
+ with some, let me say soft skills in a sense that almost anything is
+ softer compared to being at Polytechnical. So, when I say soft, I'm
+ not meaning we're going to spend time like doing some coaching stuff.
+ I'm just speaking about being, been doing an intersection between
+ STEM disciplines and the knowledge we've drawn from them and social
+ sciences. In order to provide you with the most comfortable journey
+ within this hybrid path, I would like to assure you that I'm very
+ keen on trying that my class be based on some kind of interactions. I
+ know it's difficult today to have quite interactive classes because
+ we all come from the COVID experience where it was quite difficult to
+ remain concentrated, where we had several issues about what we were
+ experiencing, the detachment from the physical world, and that may
+ have impacted your generation more than mine. So, I will very much
+ understand these kind of difficulties. Then I also can quite well
+ understand being shy. So, maybe sometimes you don't want to say
+ something, to ask something, to comment on something just because you
+ are shy. You don't want to expose yourself. And I can understand it
+ so much that I have to admit that over my entire career as student,
+ both in the BA, MA and the PhD, I think I never made a question
+ during a class. So, I very well understand you. Then, you know, life
+ is ironical, sometimes it's ironic. And then I had to cope with my
+ shyness to just to do this job, you know. But why I'm saying this?
+ I'm saying this because the main reason or one among the main reasons
+ we don't expose ourselves is because I'm a sociologist, as I will
+ tell you in a minute, is because we are social animals and we are
+ very well aware that we live in groups, in social groups. And what is
+ relevant about trying to cope with living in a social group is the
+ social group judgments. So, we don't expose ourselves, not because we
+ are silly, no, not because we don't have ideas, not because we have
+ nothing to ask about, not because we don't want to comment on
+ anything. We don't expose sometimes because we don't feel the
+ environment is safe. And I want to assure you that more than teaching
+ you something, I'm here to provide you with the safest environment
+ possible within the compass of my possibilities, which mainly is that
+ I'm very, very keen on respectful, open-minded, acceptable
+ interactions among you and me and among you, OK? So, everybody, if
+ you want, please interact, don't be shy. It's a new matter, so you
+ can't even think that, "Oh, if I ask this, it means I have forgotten
+ something "I have studied previously, and you never studied my
+ matter." So, that's not an issue at all. There's no naivety, so,
+ because you can't be naive if that's completely new, because
+ everything is naive when something is new. So, if naivety is a
+ constant, as you teach me from your calculus exams, you can delete
+ it, you cannot consider it, OK? And secondly, never think that if you
+ have questions to raise to me, it's because you haven't understood
+ something. It's not about understanding or not being capable of
+ understanding. It's the opposite. It's about the will to understand.
+ So, you ask something because you want to understand. That's a very
+ good sign. As I told yesterday to your mates from the bachelor degree
+ class, at the end of a class, the most valuable sign from the class
+ for a teacher is that at least one question is reasoned by somebody.
+ That's a sign that at least I was capable to interest you first. And
+ second, you invest some energy in trying to understand what I said.
+ Because it's impossible to get everything at the end of three hours
+ not having a single question, OK? I'm not going to promise you that
+ we'll be joyful. We're still in a class and it's a sociology class.
+ So, probably, if we were in Disney's Pixar's Inside Out, your
+ emotions would range between disgust. I'm not going to say fear
+ because nobody fears sociology. We are not economists. We are not
+ political scientists. We are not technicians. So, you know, we are
+ relegated to not being relevant for anyone about anything. But, yeah,
+ disgust could be. Maybe anger if you feel you're wasting your time.
+ But I can promise you will feel joyful about studying sociology. But
+ if by chance you will kind of think that you are grasping that
+ feeling even for a moment, try to ride it, OK? And what I can promise
+ is that no matter the sentiment connected to my matter, at the end of
+ the day, the mix of technical skills and social sciences skills in a
+ very complicated set of phenomenon like cyber crimes and cyber
+ security is needed. And, of course, I'm not asking to take my work
+ for granted. I will demonstrate from the very first day of this class
+ with the starting journey through definitions, policies, scientific
+ literature and classifications. OK, that's my first set of
+ instructions. What about the second set of instructions? Well, we
+ only have 20 hours. So we might say that even if it won't be joyful,
+ it will be very quick, OK? Second, what I'm looking for here, I'm
+ looking to provide you with some sort of tools to interpret complex
+ phenomena. And to do so, I will rely mainly on some sort of
+ sociological theories about risk, risk perception, trust, digital
+ interactions. And before that, we will see that what makes the topic
+ quite complicated is that it is not even clear today what kind of
+ topic it is. We lack, for example, some clear definition. And, of
+ course, many scientists from many disciplines tried to classify, to
+ explain, to describe, first of all, cyber security as a set of
+ solutions and cyber crimes as a very diverse set of attacks. But we
+ didn't make it yet. We do have quite a wide knowledge, but that's not
+ enough, OK? Then we will try from the very first moment to emphasize
+ the fact that not even, no matter how complicated, how entangling,
+ how deep-rooted technologies are, there are still cultural objects.
+ At least for the moment, technology is not able to make itself be
+ born, OK? We are not living yet in that system. And behind
+ technology, there is human knowledge, needs, mistakes, perceptions,
+ perspectives, values, roles. All the things that we will learn in a
+ few moments are called, from a sociological point of view, culture.
+ There are also economical interests and political interests, and also
+ some sort of media interests. Just to give you an example, because I
+ don't like to speak in abstract, because sociology is very empirical.
+ You don't speak of sociology properly if you don't make some data
+ analysis, OK? It's not theoretical philosophy, which I really love,
+ but that's kind of speculative. Sociology is less noble. You need to
+ get your hands dirty just as you are doing in your fields of
+ knowledge. And just to give you an example, let's just consider the
+ fact that over the last weeks, it seems that cybercrime as an issue
+ made to reach the top of the public agenda also in Italy. If you move
+ back of 12 months or 12 years, you will notice that it wasn't like
+ that. And it wasn't like that, not because there weren't crimes in
+ the digital sphere. They were there. Cybercrimes are quite old, but
+ they didn't make to reach public attention and political attention as
+ well. So that's not about technology. That is not about equations.
+ It's about social and political decisions. It's about, for example,
+ the media as an intervening variable in building up public attention,
+ political awareness and decision making. That's not at all technical.
+ And then we will conclude trying to discuss a general framework to
+ analyze social impacts of cybercrimes and what kind of awareness and
+ perception are out there within policymakers and stakeholders like
+ companies all over Europe. We will deal mainly with the Eurobarometer
+ data. Eurobarometer is the European agency for public opinion
+ analysis. Before starting, as I said, I'm a sociologist. I'm
+ associate professor at the Department of Control and Computer
+ Engineering. I'm mainly interested in studying, from an empirical and
+ theoretical point of view, technoscientific conflicts and the impact
+ of technology and science into politics, society and the media
+ environment. I love Metallica, Dream Theater, Slipknot. I play prog
+ drums since I was a kid. I mean, unfortunately for the moment, for
+ the last years, I'm a Juventus supporter, also Juventus women
+ supporter. And I love the Indiana Fever in the WNBA, the Orlando
+ Magic in the NBA because of Shaquille O'Neal. And then I'm in love
+ with manga and anime, mainly mecha and fighting anime, like, you
+ know, Tiger Man, Diatom 3, Marcos and Saint Seiya. That's, I think,
+ enough to introduce me to you. I have two children of three and
+ seven, the mother, Nicola, which I quite often use as example to try
+ and make sociology more understandable. That's the agenda. So we will
+ start a very brief journey into sociology just to share a common
+ ground. Then we will open quite a wider window on giving names to
+ things, because if we can't put a label on phenomena under many
+ aspects, we can't see them. You only see something when you are able
+ to recognize it. And sooner or later, if you recognize something,
+ that becomes a piece of information and the piece of information is
+ something you can speak about. And if you can speak about something,
+ it means you will hold some vocabulary to describe it. It might seem
+ quite, you know, childish to say this, but as I told you already,
+ cybercrimes and cybersecurity are two topics, two very well connected
+ topics that are still lacking some wide shared definition. OK, then
+ we will focus on social engineering activities, which is the very
+ sociological part of this class. It means that we will read stories
+ about cyber activities, criminal cyber activities, and we will use
+ them to try and identify those kind of simple elements, simple, not
+ as a judgment, but just as a description. So minimal elements that
+ are part of a more general set of mechanisms which may have produced,
+ not in a deterministic way, the outcomes we will see in the story. So
+ the criminal activities we will be discussing to properly address
+ this part, we will need to take into account some theoretical parts
+ of sociology of culture, sociology of risk and keywords like trust,
+ like hazards and so on and so forth. Then we will close the
+ sociological part mainly with a discussion about a new way to
+ perceive and represent machines and humans. There is an issue online.
+ They can't see the slides? That's nice. It must be today because I
+ was in an online conference today and the very same thing happened.
+ So that's not a plus on my tech abilities. Let's see this. Why, why,
+ why? OK, let me say entire screen. Oh, sorry. Thank you. You know,
+ just to justify a bit myself, I may say your honor, I'm coming from
+ another university where there were completely different systems for
+ the teaching rooms and online teaching was forbidden. So that's
+ probably my second week of using this stuff or first, maybe. Yeah,
+ first by second. Yeah. Now it should be clear. Can you just ask for a
+ check online? Let's see if somebody of you is connected and receiving
+ a feedback from those. In remote. I'm just looking. For a positive
+ feedback. As I'm waiting for a goal from Blavich. OK, is it OK? OK,
+ that's thank you so much. So let me just go back just to show you
+ that. We have simply been discussing these agenda with nothing more
+ than this. But anyway, that's that is giving me the opportunity to
+ remind you that slides are already online. OK, so you can download
+ them. I put them online some days ago. So you will find within the
+ teaching materials. OK. It's a PDF labelled with my name. Then I was
+ saying that we will apply some sociological theories to think of a
+ new way to perceive and represent the complex relationships among
+ machines and human beings. OK. Before. Why? Before starting with the
+ brief journey across sociology. Let me just remind you one more
+ thing, even though I'm I'm seeing it's not necessary because the room
+ is tiny. You are not too many, but I prefer to be clear. Just as I
+ said that I'd love to listen to your questions and comments and you
+ can interrupt me whenever you want and ask me to repeat for how many
+ times you need. Let me just stress this point. Today's class are in a
+ sort of augmented reality environment where every one of us has at
+ least one device and one screen that can tempt him or her to be
+ distracted. So you may be chatting. You may be posting. You may be
+ watching, listening and reading anything else than the topic of this
+ class. It will be sooner or later addressed as an L.C. issue. The
+ this kind of temptation of not being able and I'm speaking starting
+ from myself. It's about me, first and foremost, about the temptation
+ to not being able to maintain the attention to something different
+ from our mobile devices and our screens than than 30 seconds or one
+ minute. I strongly believe that in-presence classes are still useful
+ because they are not simply the analogical equivalent of a digital
+ class. You can stare at people, you can get meaningful information
+ from non-verbal communication, you can adjust and tune in with
+ several elements which are not just watching to something, listening
+ to something. And I do believe that even though I really love
+ technology, probably the worst consequence it brought into our lives
+ is the fact that it claims. A 24/7, 365 a year attention on it. You
+ can take notes using whatever you want, but please, if you if you're
+ staying in the class, just try to concentrate and trust me, even
+ though I'm trying to pretend I'm not seeing, it's quite clear and
+ it's very easy to notice who is paying attention and who is doing
+ something else. And let me say, even though it might sound quite
+ boomer to to do so, even though it's clear that you are seeing, it's
+ unrespectful. There's no other way to say it. So that said, what
+ about sociology? The word itself was invented by this man, a French
+ philosopher called Auguste Comte. It's not very important for this
+ class to know that Auguste Comte invented the word sociology. What is
+ important here, because it's the first piece of evidence of a general
+ frame I would like you to acquire day after day, is that this very
+ definition from what we can call the grandfather of sociology is
+ imbued in culture. Let's start making it interactive. Just guess what
+ you can infer from this definition about the cultural context of
+ 1839, the year in which Auguste Comte invented the word sociology.
+ Just guess. You won't win anything, but you won't lose either. Just
+ think we are in some sort of Netflix series about criminal minds and
+ so on and so forth. And guess, you are the detective. That's the only
+ piece of evidence. Yeah. OK, first, there is a focus on the
+ scientific method, trying to quantify something that, generally
+ speaking, we don't think it's quantifiable. OK, then. It's
+ deterministic. It's, you know, I never opened my book during high
+ school, but then I tried to catch up later. Maybe you remember better
+ than me Michelangelo, the famous artist from the Renaissance, the one
+ who made these unforgettable sculptures like the Moses or the Petey.
+ Just he used to say that his method was to uncover the artwork within
+ the stone. So he basically said that the artwork was already inside.
+ He only had to free it from the extra. Being deterministic in the
+ study of natural laws, it means that you believe that things are
+ perfectly already there. And you just have to clean up noises or to
+ improve your ability to see what you can't see in a yacht. But once
+ you reach these equipments, be it symbolic and cognitive or
+ practical, like an emmer and discovering the artwork and freeing it
+ from a piece of marble, then it's done. But natural laws are more
+ complicated than these and human laws are even more complicated. So
+ if we have to sum up your suggestions, first, it's undisputable that
+ you can quantify social interactions. And of course, today we do
+ apply maths and statistics to social facts, but that's a choice.
+ That's a means. That's a means. It's not a destiny. You can apply
+ different methods to learn from society. Second. There's a sort of
+ cause effect relationship. So just as at that time they believed that
+ nature was describable in this way, they came up with the idea that
+ society could be as well. And that society, sociology, coming as the
+ last scientific discipline in the history of humankind, would find
+ itself to be the most complete one. Two hundred years later, more or
+ less, we discovered that there was quite, you know, a dream that
+ never came true. But that gave us the cultural background of what we
+ have studied from philosophy books. It was called positivism. Now,
+ let's move forward. And Sir Anthony Giddens, the advisor of the
+ former PM from the United Kingdom, Tony Blair, you know, re-resized
+ the scope of sociology, making it quite smaller. So no general laws,
+ no laws of nature, but just studying something involving humans.
+ That's it. But the most interesting definition comes from Chad G.P.T.
+ And we read it just to provide you with the different elements and
+ the different dimensions involved in the study of cybercrime and
+ cybersecurity. I will try to be, I will help you be acquainted with.
+ Sociology is the scientific study of society, including the intricate
+ patterns of relationship, behaviours and other human interactions. It
+ is a systematic examination of social institutions, cultural norms,
+ we'll be defining all these words in a minute, and social change
+ using empirical research and critical analysis. And it deals with the
+ micro, meso and macro level. Those in sociology investigate various
+ aspects of human life, including social stratification, movement and
+ change, with an emphasis on how collective and individual behaviour
+ shapes and are shaped in return by the broader social context. Two
+ main figures. Here it is important to remember German sociologist and
+ economist Max Weber, because he guides us in understanding two key
+ aspects of sociological inquiry. First, it is evolutive. That's not
+ naive at all to stress it. We live in a context of digital and
+ analogical interactions in which, if you don't take a stand for
+ something or for somebody, it means you're out of the debate. Social
+ media algorithms have been coded in order to emphasise this sort of
+ polarisation effect, because the more polarised the debate, the more
+ engaged the debate becomes. There's a huge literature that
+ demonstrates this. And I'm not saying it's made because there's some
+ sort of master of puppets, to quote my friends Metallica. It's about
+ just the fact that you need within your business model to gain your
+ users' attention. You don't do this. You're losing money to some
+ competitors. So it seems quite natural today that any sort of topic,
+ specifically if it gets to become a trending topic, needs to be
+ discussed and asks you to talk about it and to take a stance about
+ it. I'm not saying that we do it every single time that this occasion
+ hits us, but it's quite often. It's becoming natural of the way we
+ interact. Yet, as social sciences study phenomena that are quite
+ common to any one of us, those many of the sociological and
+ politological or the historic facts that social sciences study are
+ something that at least we have heard about once, at least once, or
+ we have experienced. Just think about those studies about
+ inequalities or minority exclusion or, let me say, or some health
+ policy. I think we have very well touched this during the lockdown
+ and the COVID period. We were living it. There were experts or
+ so-called on the media trying to explain to us what was going on.
+ Some of them didn't even know. And it was so impactful that every one
+ of us had ideas, opinions, dilemmas, feelings about it. Just think
+ about studying this, not taking into account what Weber said, the
+ fact that you must try to minimise your subjectivity, which doesn't
+ mean that a social scientist doesn't have opinions, doesn't make
+ mistakes, doesn't have stereotypes or can be rude or unpolite. It's
+ just that at least when you're studying something, your goal should
+ not be judging. Because we already judge about anything and everybody
+ the rest of the time. At least when we wear the invisible cloak of
+ social scientist, we should try to minimise this kind of biases. And
+ second, the second lesson we learned from Weber is no matter how good
+ at math you are, no matter how very respectful statistician you are.
+ The epistemic status of the data you are dealing with, it's of
+ uncertain information. There might be systemic errors in your data
+ sets, accidental errors, and they are due to the sometimes the
+ impossibility to have direct access to some sort of phenomenon. Just
+ thinking about studying criminality, of course, social sciences study
+ criminality a lot. We are going to have this example in cyber
+ criminal and cyber crimes, but. But you can't have access the way you
+ would like to have in these kind of environments. Unless you are a
+ criminal yourself and then you want to make a sociological study. But
+ that's I think it's an exception. Normally, if you study from
+ outside, you can try and enter these new groups and study new
+ activities. But the fact that they are somehow at least partly
+ accessible limits the scope of the conclusions you are reaching. And
+ then even when you can full access to your sources, just think of
+ applying some social science theory to marketing or to user interface
+ design or to the user experience or to the impact of generative
+ artificial intelligence into classes and schools and so on and so
+ forth. In that cases, you do have complete access to your
+ environment. But you have social desirability. It means that when you
+ interview people, they may act strategically and tell you.
+ Information that will became data, they may be partly biased because
+ people and every one of us, when they try to recall the past. That's
+ not objective. That's subjective. You reinvent the past once you
+ recall it. And that's not because you are a liar. It's because that's
+ the way our mind works. And then sometimes you want to be a liar. And
+ that's not because you are a liar in the sense of a bad person. It's
+ because we are completely aware of the importance to project outside
+ of us a certain image of us in order to be accepted. And that may be
+ conflict with the need of truth that the researcher is looking for
+ when he interviews, when he or she interviews you. So those are just
+ a few examples in order to justify why Max Weber, almost 100 years
+ ago, warned us about the fact that social sciences, just like
+ archaeology and just like history, are made of uncertain data. Even
+ when statistical significance is strong, it doesn't mean that you
+ can't theorize anything in social sciences. It means that you cannot
+ think that studying human interactions is the same of putting a
+ molecule under a microscope. Before the break, let's just talk about
+ the second relevant figure I want to introduce to you. Charles Wright
+ Mills, a sociologist from the US, the 50s and the 60s, the one who
+ studied the white collars. And I'm going to take his lesson here just
+ to focus on one single element. What he used to call sociological
+ imagination, because this is basically just summing up everything we
+ are going to see together. If you're going to ask me what is
+ important to keep with me at the end of the day. Don't take it, you
+ know, just keep quite several things, because otherwise it would be
+ difficult to pass the exam. But after you have passed, and I hope
+ very successfully pass the exam. If one thing could be useful to
+ remain with you is this kind of cognitive skill, the sociological
+ imagination. Because this is the very key element that in my personal
+ point of view, the Polytechnical was looking for when over the last
+ years, it decided to shift to the idea that the Polytechnical wanted
+ to open to a new figure, public figure of engineer. The, let me say,
+ the humanity engineer. So very skilled at technical stuff, very well
+ equipped with math, physics, chem and so on and so forth. But. Very
+ well aware of the main elements related to social sciences, not just
+ because it's, you know, it's cool to have today this kind of old
+ fashioned renaissance period, cultural heritage in which, you know,
+ Brunelleschi, the one who was able to close the Dome in Florence
+ after a hundred years, he remained open, you know, the story of the
+ Dome in Florence. They they had these walls built, but they weren't
+ able to close the Dome. And then he invented a way to. But he was,
+ you know, he was an orphe, he was working with gold. It wasn't even
+ an engineer, but he also invented perspective. He was a
+ mathematician. And then he was also an artist. And then he was also a
+ philosopher, as all the artists of that time. So and then he invented
+ the Argonaum, a new kind of Argonaum in order to make it quicker and
+ safer to bring heavy weights to the top. And that's why he made it to
+ close the Dome, because he needed to have the materials faster than
+ usual, than usual to close it in a way that otherwise the Dome would
+ have collapsed inside. And then he invented these two layers, a
+ smaller and lighter one and a bigger and visible one. So what would
+ you say Brunelleschi is a genius? Yeah, maybe. But then what he is,
+ he's an architect. He's an architect, he is a physicist, he is an
+ artist, he is a mathematician, he is what? He's an artisan. That was
+ his real job. He was an artisan. So if you have to, if I have to say
+ at the end of the day, if the model is trying to translate this ideal
+ type in today's context, what you should hold with you after my
+ class, the sociological imagination, the capability to see when you
+ want to social phenomena through the eyes of scientific inquiry, not
+ through common sense and stereotypes. It's not an ethical or a moral
+ praise, OK? I'm not a moral philosopher and I'm not a religious
+ opinion leader or official, OK? So it's not about morality. You do
+ whatever you want in your life. Take care of you and the others and
+ then you do whatever you want. It's about scientific method applied
+ to social sciences. And in doing so, that means that you should be
+ able to get unsatisfied with common sense answers and explanations.
+ Let me just provide you with an example. When we will be reading the
+ stories of social engineering attacks, the first thing that might
+ bump on minds smart and very well equipped like yours, it will be
+ that will never happen to me. That's too stupid. That's about
+ illiteracy. Maybe sometimes it might be we are. Let me say we all are
+ stupid, at least sometimes. And it's part of being human. But if we
+ take the answer, it's about illiteracy or stupidity for granted. We
+ don't need this class. But it's not because I need to have this class
+ to feed my children. It's about the fact that those answers are not
+ enough. And they are not enough because we will see that this kind of
+ mistake or scams rely on dimensions, which are not fully filled by
+ one single variable as explanantes, as the variable which explains
+ the phenomenon. And if we completely move to something else, just to
+ give you another example, when you're studying opposition to
+ vaccines, you might think it might be stupidity or it might be. Let
+ me say it might be illiteracy. You don't you you haven't studied
+ science, health or medicine. So you are scared of. So how can you
+ possibly explain doctors, physicians, nurses being scared of vaccines
+ and choosing not to vaccinate themselves? Second, how do you explain
+ the some very big research is all over the world, which cross
+ tabulates income level of education to opposition to vaccines,
+ demonstrating that it's not the more ignorant, the most ignorant or
+ the poorer, which don't want to be vaccinated? It's the opposite. The
+ problem is some sort of very wealthy people all over the world, which
+ believe in some sort of pseudoscientific philosophies and decided not
+ to vaccinate for papillomavirus, their daughters, for example. And
+ papillomavirus bring a virus, brings cancer. And it's free in many
+ countries. It's not about praising for or against being vaccinated.
+ Let's go back. Avalutativity. It's not a moral class. Everyone
+ decides and takes responsibility. It's about good or bad
+ explanations. If you are stick to the common sense, the more you are
+ ignorant, the more you will likely to be scammed or not to vaccinate
+ your children. That's false in the statistical sense of the matter.
+ It's false because when you gain, when you gather data and you
+ analyze them, you see that under many aspects, the opposite
+ relationship is seen. It's just of being creative in the sense of
+ right meals. You have to stay, stick to the data. Of course, you may
+ have theories you want to try to verify. But in social sciences, we
+ barely use the verb verifying. We use the Popperian ones, the
+ philosopher of science since the London School of Economics, which
+ was falsifying. So you taste that the zero hypothesis is false. And
+ then if you see a significant gap in expected and observed
+ frequencies, then you may say that it would be more likely to make a
+ mistake if you reject the one hypothesis. OK, that's the logic. And
+ with the same logic, and then I'm concluding this first part of the
+ class, as you have to overcome stereotypes and common sense at the
+ same time, don't put your prejudices, don't think that your values,
+ don't think that your system of coordinates is the only one available
+ out there. So that when something particularly far from your system
+ of inertia, if you let me use this terminology, hits you, you reject
+ it. Of course, we do it in everyday life. We don't get on well
+ together with everybody. We don't like any kind of music, movies. We
+ don't have the same taste at the table. So it's not about saying we
+ have to conform to a sort of general agreement. It's about the
+ opposite. When you are trying to provide scientific explanations
+ about social phenomena, you don't have to be skewed by the fact that
+ the object of your study seems too far from your perceptions and
+ perspectives. Because if you accept and react to this diversity,
+ refusing it, you become valutative. So you are building a sort of
+ prerequisite which assesses what has the dignity to be studied and
+ what hasn't. And I don't want to speak in abstract. Let's talk about
+ concrete things. Anthropology at the end of the 19th century, the
+ mainstream anthropology was racist. Today, we would say that those
+ scholars wouldn't be allowed to universities and to publications.
+ Because they moved abroad considering savages, the tribes and the
+ groups, the social groups they would have met. That's the sort of
+ lacking sociological creativity, sociological imagination. Of course,
+ we today, at least in social sciences, are not that naive. But you
+ don't need to be racist and clearly racist to apply some sort of
+ filter so dramatically strong that impedes you to look at the object
+ with some sort of detachment and suspending the judgment. This is the
+ key word. Suspend the judgment. OK, any questions. Comments and
+ doubts. OK, 10 minutes break. [BLANK_AUDIO] [BLANK_AUDIO]
+ [BLANK_AUDIO] [BLANK_AUDIO] OK, let's start again. We are moving
+ toward the end of the sociological journey and about to enter the
+ social crimes and social security set of definitions. But before
+ doing that, let me give you some definitions about key words in
+ sociology that we will very frequently happen to encounter during the
+ remaining parts of this class. And we may start from norms. The term
+ norm describes rules and expectations by which a society guides the
+ way its components behave. When we talk about people in a society
+ from the point of view of social sciences, we often use the term
+ social actors or only actors. So if you're going to hear me from now
+ on using the word actor or actors, it's not about transforming this
+ class in a drama class. It's about the fact that sociology uses the
+ theatrical metaphors to describe the interactions within a society.
+ And that's mainly thanks to one sociologist that I didn't put here.
+ But we will be talking about his theory sooner or later. And I'm
+ referring to American sociologist of the 50s and 60s, Irving Goffman.
+ Which, by the way, if you have seen the most beautiful interrupted
+ Netflix TV series, Mindhunters. Did you watch it? Yeah. I'm still
+ hoping that with the petition we managed to convince Netflix to
+ rebuild the series. But it's a series about I'm not going to spoiler
+ up anything because there's nothing to spoiler about because he never
+ came to an end. But it's the story of the detective team,
+ multidisciplinary team made of one university professor and two
+ detectives, a junior and a senior one. And that was the team which
+ invented the word serial killer. But before inventing the word, they
+ analysed also from what we can say a sociological perspective,
+ different crime scenes. And they've studied patterns with common
+ traits and peculiarities in several cases. And then they reach the
+ psychological level. So the mind. Of of such criminals. But there is
+ this scene. Which the first time I saw I was moved because, you know,
+ there are very there are very relevant political scientists in
+ politics, in finance, in in business and institutions that are
+ relevant economists all over the the main roles in the world. But you
+ never heard about the sociologists become that important. So my
+ personal victory was seeing in a series that one of the main
+ character, the junior one, one night was in bed reading a book. And
+ that book was Irving Goffman's book. The one that we still today
+ refer to when we want to interpret social interactions and social
+ communications as a TV drama, as a theatrical drama. So words like
+ actors, front stage, backstage, back end, front end, roles, norms. We
+ can gather them and somehow connect them to the work of Irving
+ Goffman. There wasn't only Irving Goffman, of course, but he is
+ probably the most relevant sociologist about this perspective. So
+ norms are sets of rules that you are given because you are recognised
+ as a member, as an actor within a context, a society. This, this very
+ room is a society. The survivors of the Andes plane crash in the 60s
+ or 70s, when it was a society. Indeed, the new, the recent movie
+ about it was called There's No Society. The world itself is a
+ society. Your country is a society. Your sports team is a society.
+ Your family is a society. We usually speak of groups when they are
+ not very big. But some sort of mechanisms, we can see them at the
+ very micro as well as the macro level. So I'm not saying it's
+ precisely the same, but the format, it's almost the same. OK, so
+ norms are rules. But what kind of rules? There are mainly two types
+ of rules. Explicit norms and implicit or tacit norms. Why it is
+ important to stress on this, because we will see that. Cyber
+ criminals. Mostly reliance on tacit norms to get the attacked. Behave
+ in the way they want to behave, it to behave or him or her to behave.
+ It's mostly about tacit norms. Explicit norms are the rules you have
+ when you apply to a university. Explicit norms are the codes of law
+ within a nation. The explicit norms is another example is the code,
+ the book code. You have to study if you want to get a license, a
+ driving license. That's an explicit. But there is also an implicit
+ one. The implicit code is that if nobody sees you, maybe you do
+ something and I'm not suggesting to do so. So please don't do this at
+ home. But. Every one of us has witnessed at least once one case in
+ which we knew that was red, but somebody has passed the crossing with
+ the red, even though the code is quite clear about it. You stop if
+ it's red, OK, or you don't go with an electric kick scooter on the
+ walking side. Or you don't go with your bicycle in the opposite sense
+ is if it's a one way road. OK. So, you know, that means that you can
+ break explicit norms, but it's even easier to break implicit norms.
+ But the fact that they are implicit, it doesn't mean they don't
+ exist. They may be invisible for newcomers. The Martian look we
+ spoke, I put in the slide of right meals. It's precisely this.
+ Imagine someone coming from Mars. Knowing nothing about how in our
+ culture, the university environment works. If he, it, she, you decide
+ the pranam, would ask, why are you sitting? Why are you staring at
+ him? Why are you not moving? Or why is somebody staring at him and
+ some others are staring at the screens before them? Why somebody is
+ speaking to his neighbor and others are quiet? Why is he holding
+ something in the hand and putting this close to the mouth? And why,
+ if he, if it sets it away from the mouth, you listen, the volume gets
+ lower. And if you put it closer, the volume raises. So almost
+ anything could be, could raise a question if you comes from Mars,
+ metaphorically speaking. So that's about when you learn about
+ implicit norms. You learn about implicit norms when you come in and
+ you are treated as a weirdo because you can't comply to the norms of
+ the group because you didn't have the occasion to learn them yet.
+ That's the same when you enter a new group, maybe you are on the
+ holiday. You have one friend and he or she introduces you to he, her
+ group. You don't, you know nothing about them. Probably, the vast
+ majority of us would move with care. Why you move with care? Because
+ the environment is new. And depending on how far that context, the
+ cultural context is from you, you may feel more comfortable. It's
+ quite different if you go on holiday on an isolated island in the
+ middle of the Pacific Ocean. You know, you don't know the language,
+ you don't know the routines, you don't know the culture. You don't,
+ you know nothing. You only know that's on planet Earth. So that's
+ water. Yeah, that's salty water because it's not lava, of course. But
+ you know nothing about the history of the place, how people interact.
+ You know nothing about the rules. You know nothing about the norms.
+ So you become prudent. And the opposite is when you may estimate that
+ that group is a group maybe in Liguria, which is a hundred and a half
+ kilometers from here. So you may estimate that the culture is
+ precisely the same. It might change the subculture, starting from the
+ accent, starting from maybe the possibilities you have, because, you
+ know, in a village at sea, it's not like in a town with no sea. There
+ are many differences, but those are very little, little differences.
+ You may estimate that the vast majority of the norms, also the tacit
+ ones, are the same. Unless that's a very bonded group with very, very
+ strict ties. So they, you know, they work as a whole, even though
+ there are many people inside. And you, maybe you are not being
+ accepted at the beginning, because you look different, because you
+ are a stranger. So just to say that norms may be codified, but from a
+ sociological point of view, the tacit norms are even more interesting
+ than the explicit ones. OK, because you have to live to learn from
+ them. That's why social scientists want to acquire very well and put
+ roots within a group, within a social group, they decide to spend
+ several days with it, with people of the group. Just think about
+ studying seps, for example, or movements or subcultures. OK, then we
+ have values. Values are tricky elements, because the more they are
+ social, the less they seem social. Because if a set of values is very
+ well spread within a group, each member of the group feels like the
+ values are obvious. They don't put values in discussion every single
+ day when they are very well accepted within a group. It's obvious.
+ OK. And that's also what's interesting in traveling, because if you
+ move to another culture, another group of religions, another
+ folkloristic approach to life, what's obvious in your own culture, it
+ becomes strange in the other one. And what's strange for you, it's
+ obvious for the other culture. OK, so values are what is believed to
+ be good. And what helps you to define what you should be doing and
+ what you should be avoiding to do. OK. Then role, as I anticipated a
+ few minutes ago, role is strictly connected with the idea of playing
+ the game or acting society. So we usually believe that roles are
+ something like actors and actresses playing a character in a movie or
+ in theatre. But it's quite different from that. It comes from this
+ idea. But, you know, a role is more than being a character. We all
+ are characters here. We can't be defined just for being students or
+ professors. We are more than that. But we don't show this more than
+ that to anybody, to everybody. We decide what we want to show
+ depending on the context and on personal or public relationships we
+ have with other people. And if we consider this, we may say that from
+ a social point of view, a role is not just you need to play the
+ character of university professor or university student or tennis
+ player or bass player in a band and so on and so forth. It's about.
+ The norms. And the social expectations that gather on you. Because
+ you are occupying a node in a network, the network is society,
+ society is network. So it's it's this kind of web made of hubs,
+ nodes, central areas, peripheries and ties. OK. Every one of us
+ occupies at least one node, but in today's society, in today's
+ societies, things are so complicated that it's impossible to occupy
+ just one node. You are a student and a son or a daughter, a sister or
+ a brother. That was since the dawn of time. You're also a sportsman
+ or a sportswoman. You are also an artist. You are also an hobbyist.
+ You are also a civil rights defendants. You are also an influencers
+ or what else? You are also whatever you want to be. And so we all
+ have different roles. But that means that we simultaneously, in a
+ sort of hyperplane, we occupy. Different nodes, which comes with
+ several expectations. So that means that when we are speaking of
+ roles in sociology, we are speaking of some sort of trait of the
+ individual. Which others entitle him or her. So you don't give the
+ role or something to yourself. You are given, you are more precisely
+ recognized in that role. And indeed, sometimes when you feel you are
+ not recognized in one role, you feel uncomfortable. You feel pain.
+ You feel there is what's called an inconsistency of status. Culture.
+ What is culture? If you add norms, values, roles and their concrete
+ applications and their immaterial symbols, you got culture. In the
+ end, humankind was able to organize social interactions against
+ chaos. That's why we can speak of societies, no matter how simple,
+ small or very complex and big they are. But they are very well
+ structured. OK, and that kind of social structure is not. And also
+ the roles. And the norms, norms, roles and structures are not just a
+ peculiar trait of humankind. There are several, several animal
+ species which share norms, roles and structures. OK, but what
+ differentiates us is that just a few of species have values and
+ probably known as culture. Unless humankind. Are there any doubts,
+ questions, considerations? So let me move forward. We will end class
+ in advance so we don't have a second break. So we will end at a
+ quarter to five. It's three. No, sorry. That's too much. We could.
+ I'm sorry, but I'm having from Monday to Wednesday the same class to
+ the bachelor degree. So, you know, I'm getting confused. This class
+ ends in an hour at five thirty. OK, so we are going to if you agree,
+ we may we may have just the five minutes break in 15 minutes. And
+ then we go to five twenty and we end the class at five twenty. OK, is
+ it OK? OK, let's go. So to conclude the sociological journey, let me
+ use the image of an iceberg. I think it's useful to depict social
+ relations with the image of an iceberg because it's a good metaphor
+ or about what happens in reality over the surface. You find two main
+ dimensions. One dimension is strictly related to corporality. Let me
+ call it this way. It means that we use the body, the nervous system
+ and the senses to to perceive and interact with the what's outside of
+ us. OK, so one dimension is what we see, what we hear, what we touch,
+ what we taste or what we believe we saw. We touched, we felt, we
+ tested. And I say and I say what we believe because we can't even be
+ completely objective of our senses. They trick us several times.
+ Hallucinations, for example, it's not something that only generative
+ artificial intelligence is experiencing. Humankind has been
+ experiencing since the beginning of its journey on planet Earth. You
+ may think you have heard something, but that was only in your mind.
+ You may think you have certainly see something which is not what you
+ remember. If we take the example of a car, a very simple, not severe
+ car accident at the crossroads and we have 10 witnesses, we may
+ experience that at least 50 percent of them have different stories to
+ tell about what really happened. And then if if some cameras are
+ there, we may test that what we can see from the video is even
+ different from the from what the witnesses are recalling. That's why
+ that's simply because we are not perfect and we are not fully aware
+ of every single element around us. So senses are the gates to the
+ environment, but also a limitation. Then the second dimension above
+ the surface is that we use this information from the senses and the
+ way we process them with the filters in our mind, our previous
+ experiences, our memory, our trial and mistake system of learning,
+ our ability to adapt, our resilience, whatever. So we process this
+ information and then we decide how to act or not to act. But from a
+ sociological perspective, acting or not acting are always acts. OK.
+ What's more interesting is below the surface, below the surface,
+ there are other dimensions. First, in this sort of ocean of
+ sociological imagination, we have the key elements we use to
+ automate, to human learn the way in a more complicated way that
+ machines learn. So to automate the vast majority of our activities,
+ we don't meta-think and we don't meta-act every single moment of our
+ life. Meta means that you don't stop your processing unit thinking,
+ I'm thinking. We don't do that all the time. We don't stop thinking,
+ I'm doing this every time. You know, there was a nice mimi, but we
+ don't learn how to sit down every time we sit down on a chair. OK.
+ That's the moment in which if I sit down, the chair breaks and that
+ would become a mimi. So I won't sit. I will wait at least less than
+ two to become your mimi. So the point is that so those are the
+ ingredients that work in our mind as a sort of autopilot. You get
+ some sort of consciousness about them when something crops up. When a
+ problem arises, when your expectations and your routine is stopped or
+ broken. OK, then you start asking what's happening here. And then you
+ learn that your autopilot was built on some certainty, certainties
+ that you perceived so just because then they never betrayed you
+ before. You know, if you have studied philosophy, it's like what the
+ British philosopher Hume used to say. You believe that the sun
+ tomorrow morning will rise just because it did so all the days
+ before. But the day in which this false axiom will be proved false
+ will come sooner or later. There will be the last night of a sunset
+ and the incoming morning that will be no sun. It will happen in four
+ billion years, more or less, but it will come. And so the idea
+ basically here is that we take for granted all these things and we
+ function thanks to these things, just because we were able to cope
+ with the delusion of expectations. And then there is the fourth and
+ final dimension. So we may say that as as kids, we learn about useful
+ lessons. About life. Since we start to build the sort of encephalic
+ system within our mother's belly. And then we start to make this.
+ Huge, impressive data retrieval since we come out to the world. So
+ those who take care of us, no matter who they are, are transferring
+ tons of data about how to ask for being fed, to be cleaned when you
+ have some bellyache, when you have some gas in your belly, when you
+ want to sleep and you can't, when you don't want to sleep and they
+ force you to sleep, when you want to be taken in somebody's arms and
+ so on and so forth. And then you grow up and you start learning many
+ other things. You start to interact with objects and then go and then
+ you move. All this kind of data retrieval and learning is what
+ sociologists call primary socialization. So those kind of
+ instructions you learn because you imitate, you instinctively react
+ to stimuli and then you are told something. When you start to
+ understand, you are told something. You are given instructions in
+ verbal mode. But that's just the beginning of the journey. Then we
+ have the secondary socialization. That means that you feed the
+ autopilot with your schooling experiences, with your friendships,
+ with your social interactions and the social capital you were able to
+ gain, building a network of friends, of acquaintances, of colleagues
+ or teammates, of those who you love outside your family or based on
+ your professional activities and your media and cultural
+ consumptions. The music you listen to, what you watch, the travels
+ you make and so on and so forth. OK, so let's have this very quick
+ break and then we conclude with this part. OK, just five minutes and
+ then we go till 5.20. Thank you. [BREAK] [BREAK] [BREAK] [BREAK]
+ [BREAK] [BREAK] [BREAK] [BREAK] [BREAK] [BREAK] [BREAK] [BREAK] OK,
+ let's go back to the last part of today's class. Take your seat. So,
+ sociology is over. Let's move to cyber security. And first of all,
+ why it is important to have clear definitions of complex phenomena
+ like the ones involved in cyber security? Because, you know, if you
+ don't have names, it is difficult to focus on reality because even
+ not in a deterministic way, but we mainly, mainly learn from
+ topology. So from the idea that we can give name to things and with a
+ name, we are able to give something more than a label to reality. But
+ we attach with names, descriptions, sometimes also judgments. So we
+ will mainly focus on the left part of this scheme and we will try to
+ analyze different attempts used to give a name to cyber criminal
+ activities. And we will say that it's been a while since the first
+ attempt. That even though it's been a while, we are not fully
+ satisfied of where we have arrived. Then we will learn also that
+ there are so many definitions that we need to find a way to classify
+ them. And then also that the strategy we want to implement to
+ classify these definitions somehow interfere with the general
+ phenomenon known as cyber crime, so that there is no perfect strategy
+ to classify cyber crimes, but each strategy comes with pluses and
+ minuses. I know you are good people and you trust me, but I want to
+ show you that it's not my only worry to look for a definition. It's
+ scholars in cyber crime who warn that one of the leading factors of
+ the luck in precisely measuring the phenomenon is exactly the fact
+ that we don't have very well formed definitions at the moment and we
+ don't hold a rigorous classification method, so that the variability
+ in cyber crime terms and language highlights the lack of a shared
+ lexicon amongst professionals that work in the field. So, if you will
+ excuse my allegory, but it's kind of we still today are children
+ learning to speak the language of cyber crime. You know that the
+ wider and richer the vocabulary, the more complex the thoughts you
+ can make, you can formulate. So, just a few coordinates to trace over
+ time the popularity of the words used to describe the same objects.
+ We start from the window 1995-2000 in which cyber crime wasn't even
+ the most popular word used in the field. Very differently from the
+ second window 2001-2018 in which by far the word cyber crime became
+ the most popular in the scientific literature. Just to say that 30
+ years ago we didn't even come together on the most popular level to
+ be used to speak about cyber crime from a scientific point of view.
+ You may think 30 years is a lot, but it's not. At the pace of
+ scientific research, 30 years is a relevant amount of time, but it's
+ not that much. And if you want to give a look to one of the attempts
+ to classify all the possible species of cyber crime, you will come
+ across some sort of classifications like this one here. It's quite
+ clear that no matter how long the list is, we will never reach the
+ point in which a classification is completely filling the gap between
+ the attempt to describe something from a scientific point of view and
+ what's happening in reality. And also we can learn from this one that
+ maybe some sort of categories are needed to try and be more efficient
+ in addressing some issues so that you don't have to enlist every
+ single item when you want to talk about a class or a subclass. Now
+ this table three shows you, I think, seven definitions of cyber
+ crime. They come from different organizations, the United Nations,
+ the Council of Europe, the Commission of Europe, the Shanghai
+ Cooperation Organization, again the European Union and the
+ Commonwealth. Now, I'm asking you to focus on this table for 10
+ minutes. And you spend 10 minutes looking at these seven definitions.
+ And I need you to come up after 10 minutes with a list of
+ considerations that reading these definitions has brought to your
+ mind. It might be about they are clear because they are not very well
+ clear, not very much clear, because I think that, let me say,
+ definitions one and six share this trait in common. None of them is
+ addressing this. All of them seem to. So the kind of, you know, just
+ elaborate on these seven definitions and provide me with some
+ meaningful comments, trying to highlight commonalities, differences,
+ and any other possible relevant comments you may want to come up
+ with. So it's five o'clock. Let me say at 10 past five, we will start
+ discussing, and I will be asking to every row so don't try to hide
+ yourself. Just spend this time, 10 minutes together, trying to
+ analyze what you have, what you're seeing here. Okay. Thank you very
+ much. [ Applause ] [ Silence ] [ Silence ] [ Silence ] [ Silence ] So
+ let's listen to your comments, and I would like to start from the
+ very last group over there. Please go. Yeah. Then, okay. Any other
+ comments? No. So, basically, your idea is the one from 2000 and the
+ 10th United Nations Congress is the more complete, if I got it right.
+ Okay. Okay. So number two and number three is complete. No other
+ comments. What about you? Okay. Okay. Okay. So, as the previous
+ group, also the second one is for the second and the third, but with
+ the merge, and we're trying to clarify some too blurred terms like
+ misuse that could be, yeah, I agree, too generic, and depending on
+ some subjective judgments, for example. Other comments from that
+ side? Mm-hmm. Mm-hmm. Okay. Yeah. Okay. So, maybe attacking some sort
+ of technological systems, or you're using technological system to
+ attack something else or whatever. That could be a bit confusional,
+ and actually both things happen, but maybe it is not that clear from
+ these seven definitions. Any other considerations about maybe what
+ you, what you think is lacking? Is any group felt that there is
+ something missing here? Does anyone feel satisfied with what you have
+ read? Okay, so what your colleagues said is that the way they put the
+ thing in within this definition is that you, you can really tell
+ apart. What's really happening in real world, you just, you tell me
+ if I'm, if I got it correctly, but it's kind of, they are using this
+ information system as an umbrella term. Almost everything under it,
+ but yeah, but then how can I possibly detect what you are referring
+ to if you don't give me any kind of clue to say, okay, this is it,
+ this is not, and why? [INAUDIBLE] Okay, okay. So, two more elements
+ in the second part of the comment. The fact that different
+ stakeholders or potential targets of attacks may perceive and
+ represent criminal activities on the cyber sphere in a different way.
+ And the other one is that if you keep the definition too tool
+ dependent, we may think that once maybe one tool is deactivated, let
+ me just say, or it is protected because you put some sort of
+ firewalls or antiviruses. Let's just say the perspective of some very
+ poorly equipped person interacting with digital tools, you may think
+ that if you just put some antivirus or some firewalls on your
+ machine, then it's okay, nothing can touch you. So, probably the idea
+ is that there should be a more deep understanding of different layers
+ connected together with the technological one. Other comments? No?
+ Okay. We conclude with this slide. We will keep going on from this
+ point tomorrow. So, that's basically the answer to some of your
+ comments. There are several attempts to try and make it more clear
+ and try to classify those definitions in order to make it simpler to
+ understand for those maybe who lack some tech knowledge about
+ cybersecurity. For example, one proposal is to adopt a sort of
+ categorical approach to the systematization of definitions. And in
+ this sense, you might consider these two levels here as discrete
+ states of a property. So, it's a discrete variable. And if you follow
+ this logic, you come to group together those kind of events that are
+ cyber-enabled. What does it mean? It means that all those criminal
+ activities that have been empowered, have been pushed forward, have
+ been increased in magnitude of impact, but they already existed. So,
+ they don't depend from, let me use a very philosophical term, they
+ don't exist ontologically because of technology. So, those kind of
+ robberies that happened even, let me say, in the medieval age, you
+ don't have digital technology, but those kind of activities already
+ existed. They changed, they've been enlarged, empowered, amplified,
+ whatever, but they were not born because of the cyberspace. On the
+ opposite side, we find cyber-dependent activities, which are those
+ kind of situations that arose thanks to the advent of technology. So,
+ if we, by absurd, consider a world without this kind of technology,
+ they wouldn't be there. So, please consider, this is the first
+ attempt to classify definitions like this, like the ones we have
+ discussed today. Tomorrow, we will see more definitions and more
+ attempts to classify things. But I promise that we didn't have the
+ third break, so I think that we can close today's lessons this way. I
+ would like for tomorrow you to come with at least one story, I think
+ it will take five minutes to Google it, that you might think it's
+ more appropriate to the cyber-enabled activities, and with one story,
+ with the cyber-dependent one. So, tomorrow, we will start listening
+ to these stories, and then we will try to think whether there could
+ be something in the middle here. Okay? So, I'll see you tomorrow.
+ Have a good afternoon, and thank you for your attention.
