@@ -2,19 +2,19 @@
 Nowadays, the modern computing system is made up of many highly
 distributed components.
 
-Let's take into consideration the typical distributed infrastructure,
-it's made up of a cloud for storage and computation, which communicate
-with other devices outside its cluster, such as IoT devices, via edge
-routers. Securing all those components it's a real challenge, because
-each of those devices could be different, as well as their
-communication technologies(Wired, Wireless, etc.). 
+For instance, take into consideration the typical distributed
+infrastructure: it's made up of a cloud for storage and computation,
+which communicate with other devices outside its cluster, such as IoT
+devices, via edge routers. Securing all those components it's a real
+challenge, because each of those devices could be different, as well
+as their communication technologies(Wired, Wireless, etc.). 
 
 While in the past we had physical components, nowadays the trend is
 \textbf{softwarization of the components} on top of a generic
 commodity hardware, with "tools" such as SDN, NVF, etc.
 \begin{boxH}
-  As a consequence, systems \textbf{more flexible} but \textbf{more
-  vulnerable}.
+  As a consequence, systems are \textbf{more flexible} but
+  \textbf{more vulnerable}.
 \end{boxH}
 After all, the larger the software base, the higher the probability of
 bugs, especially in the software, but hardware bugs are to be taken 
@@ -71,7 +71,7 @@ Systems are complex, and its difficult to trust every single
 component, but we can create a small environment that we can trust.
 But first, let's give again a definition of what trust is.
 \begin{boxH}
-  Something sor someone is \textbf{trusted} if one can \textbf{rely}
+  Something or someone is \textbf{trusted} if one can \textbf{rely}
   upon to \textbf{not compromise your security}, without any
   guarantees.
 \end{boxH}
@@ -82,16 +82,19 @@ something or not.
 
 If something is trustworthy it is trusted, but not vice versa.
 
-Trusted Execution Environment is what you may choose to rely upon to
-execute sensitive tasks, which are called \textbf{Trusted
-Applications} (TA), and which one hope to be trustworthy. 
+\begin{boxH}
+  A \textbf{Trusted Execution Environment} is what one may choose to
+  rely upon to execute sensitive tasks, which are called
+  \textbf{Trusted Applications} (TA), and which one hope to be
+  trustworthy. 
+\end{boxH}
 
 TEE were originally developer for smartphones, which made them
 necessary due to the high number of apps running on the same
 environment, some of those with critical data(CC numbers, etc.), but
 nowadays they are used in a variety of devices.
 
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.5\textwidth]{img/Tee and REE.png}
   \label{fig:tee and ree}
@@ -100,12 +103,12 @@ nowadays they are used in a variety of devices.
 \end{figure}
 
 As you can see from figure \ref{fig:tee and ree}, one one device can
-run different enviroments at the same time On of those is a
+run different environments at the same time. One of those is a
 \textbf{Rich Execution Environment} (REE), which is the normal
 environment in which one runs any applications or OS. On the other
 hand, the TEE is a separate environment isolated from the rest of the
 system to run critical tasks and has access to some trusted ankles
-like the hwardware keys, the secure storage, peripherals, etc.
+like the hardware keys, the secure storage, peripherals, etc.
 TEE can only run on some specific hardware platform made up of trusted
 components(not trustworthy, but trusted): the trusted drivers, the
 core framework(the execution core) and a set of API accessible only
