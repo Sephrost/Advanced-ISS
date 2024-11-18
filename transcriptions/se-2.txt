@@ -1,0 +1,1009 @@
+ Restart recording. So hopefully now everything should be fine. And as
+ I was saying, full screen. So you worked in groups on these
+ definitions, then we moved on and we were saying that a first
+ strategy to classify all these very diverse definitions was to
+ consider them as elements of a group of definitions with the same
+ relevant traits. And these, let me say, these two categories were
+ about considering cybercrime activities as part of enabled by
+ technology or dependent from technology. And then we said that these
+ classification is very rigid 'cause if you belong to group A, the
+ cyber enabled activities, you can belong, you can be part of cyber
+ dependent ones. It means that if you belong to A, you don't belong to
+ B and vice versa. But things are more complicated than this, so
+ sometimes you might need to consider that different activities are
+ sort of probabilistic function in a continuum, not in two discrete
+ states. States within a property. And so an alternative is this one,
+ where you can, well, these other, these new proposal just simply
+ changed the label, but the things are almost the same. So type one is
+ enabled, type two is some sort of a human activity. Human, human
+ enabled criminal activities. So they may change somehow, the two
+ labels may a bit change, but what's relevant here is that we consider
+ that if we take these two labels as the extreme of a function, all
+ the criminal activities should be somehow placed within these sort of
+ continuum. So this is to try and fix the rigidity of the previous
+ definition, okay? And then there is another proposal, which is not
+ based on the idea of a continuum. It goes back to finding categories.
+ So discrete states of a general property of cybercrime, and it
+ distinguishes these different activities. There are three, but they
+ change depending on the official documents you're reading. So at the
+ upper side, you see the labels from 2007 classification by Wall, and
+ on the lower side, you'll see the classification made in 2013 by the
+ European Commission. Let's read them together. In the Wall's
+ classification, we can distinguish three different types. The first
+ one is crimes against the machine. So you might also read as computer
+ integrity crimes. Then the second activities are crimes using the
+ machine. So the so-called computer-assisted crimes. And then we see
+ the crimes in the machine, as you might find, for example, computer
+ content crimes like online hate, harassment, and illegal pornography.
+ The European Commission almost provide the same labels, sorry, the
+ same definitions, but gives different labels. Those are offenses
+ unique to computers and information systems, which in the EU
+ Commission perspective are about the computer integrity crimes. Then
+ we have what they call traditional offenses, so the computer-assisted
+ crimes. And finally, we have content-related offenses, as we already
+ said, hate, harassment, and so on and so forth. This is just to show
+ you that we still don't have a clear definition, but there were
+ several attempts. So that today, if you had to introduce, for
+ example, a speech, or maybe one lecture like this one on cybercrime,
+ and if you were asked to answer the question, what is cybercrime?
+ Your first answer should not be a definition, but probably should be
+ something like, well, it depends, it's complicated. It depends on, it
+ depends on your perspective. It depends on your sensitivity,
+ scientific sensitivity, of course. It depends on what kind of sources
+ you are consulting. And it depends on what kind of traits you believe
+ are very peculiar of these general social phenomenon so that they are
+ so peculiar that you want to stress and to highlight them within your
+ definition. So we may say that different stakeholders, different
+ institutions, different perspectives, and also different interests
+ produce different outcomes in saying what we are talking about. And
+ let's dig a bit more in some of these traits. For example, Mr.
+ Frederick Chung, the former director of research at the National
+ Security Agency in the United States, provides us with this
+ definition. A science of cybersecurity offers many opportunities for
+ advances based on multidisciplinary approach because, after all, it's
+ fundamentally about an adversarial engagement. So what Mr. Chung is
+ saying here is that cybersecurity is basically about conflicting
+ social interactions. That is to say that, of course, cybersecurity as
+ cyber, as the prefix of the term, so it's about technology and
+ engineering. Yet what mainly distinguish cybersecurity from any other
+ field of knowledge is the fact that it is about the science of
+ society and social interactions. And then he describes this sort of
+ social interaction, conflicting social interactions, and he says,
+ basically, there are humans who must defend something attacked by
+ other humans. So it's a sort of humans trying to defend machines from
+ human attacks carried out by other machines. And that's why he says,
+ we need something more than what we are used to consider the main
+ disciplines directly involved in cybersecurity and in cybercrime
+ analysis. But what about cyber? Well, the history of the term cyber
+ comes from a mix of philosophy, literature, art, and of course, tech
+ sciences. Basically, the idea is that when we use cyber, we are
+ referring to the fact that we are focusing on communication dynamics
+ within a context based on electric or electronical networks. The term
+ cyberspace, we already have used it quite a lot in these first two
+ days of class. It comes from the 1984 novel from Gibson and
+ Neuromancer, as you can read from the slide. So it's something that
+ is a sort of neologism that was considered quite useful to describe
+ environments that are being studied also from a scientific point of
+ view, just not for artistic or entertainment reasons. And so the
+ definition of cyber and the term cyberspace stress the fact that it's
+ about computer-mediated communication. But the possibilities you may
+ witness, encounter in studying the cyberspace are very dynamic. And
+ in order to take this element into account, let's read what Public
+ Safety Canada in 2010 wrote about it. Cyberspace is an electronic
+ world created by interconnected networks of information technology
+ and the information of those networks. So we might say, let me be
+ maybe rude and a bit naive, but we might say that cyberspace is
+ simultaneously the hardware, the software. So the machines you need
+ to build an environment, the information produced and circulating
+ within the environment and all the possible interactions that you
+ might see and you may experience from those participating in this
+ kind of space. So there may be interactions among humans and humans
+ via machines, humans and machines, of course, vice versa, machines
+ and machines, but there is also this new element, humans and
+ information, machines and information. So we might say that
+ information is a kind of stimulus that may be connecting humans and
+ humans, machine and machines, and humans and machines. And if we
+ don't take into account these third element, we are missing a
+ relevant part of what can explain cyber engineering attacks. Any
+ doubts till now, questions, comments, nothing? Okay. Let's add two
+ more dimensions. So just to recap, we moved from cyber crime to
+ cybersecurity. We just said that they're very strictly connected. And
+ we said also that as we are speaking about cyber, we are concentrated
+ on computer mediated communication in a set of very dynamical
+ activities. Involving hardware, softwares and the information which
+ they are imbued of. Now let's add a third and the fourth element. The
+ third element is about the common meaning of security, which is about
+ taking into account and mitigate for as much as possible risks and
+ control, control hazards. In our case, hazards are mostly represented
+ by attackers, being them humans or machines. There's something or
+ someone that decided to attack us or our properties. And you want to
+ control your properties. You want to protect them. You also want to
+ control hazards. So those things that may become ill and dangerous,
+ evil and dangerous towards you and your properties. And then the
+ fourth dimension we want to take into account is the capability to
+ ask the correct questions. And this is summed up in the work from
+ 1998 from Buzz and Weaver and Wild where they say that if you are
+ discussing security in a cyberspace environment, you should be able
+ to understand who securitizes on what issues, meaning threats, for
+ whom, why, what results and under what conditions. It's a sort of,
+ let me say, let me put it this way. It's a sort of checklist, a
+ cognitive checklist, not an empirical one. Just to take clear all the
+ passes you have to control before starting something about maybe a
+ security strategy and or an ex post analysis. Then if we keep
+ following Craig and Alia work from 2014, we may identify nine
+ different definitions about cybersecurity. Let's read them and not in
+ a very, let me say, automatic way just to read something. It's about
+ doing together today the work I asked you to do in groups yesterday.
+ And actually, I already done the job for you. Let's think about it.
+ Six out of nine definitions very much remark what we could call a
+ defense paradigm. A paradigm is a very general, wide, cognitive,
+ mental and knowledge window you apply to recognize, identify, then
+ study, describe and explain a reality. So just to say, I'm not gonna
+ have a philosophy of science class now, but just to help you get
+ acquainted with names, a set of theories consistent among them are
+ part of a general paradigm, okay? So in this case, of course, the six
+ definitions might differ quite a while one from the other, but they
+ do have one common ground. This common ground is the general paradigm
+ they want to stick to. And that's stressing about the defensive
+ attitude in cyber security. So if you tag the first one, cyber
+ security consists largely of defensive methods. It's quite clear
+ here. They are using the adjective, so it's explicit, but it's a
+ definition from camera from 21 years ago. Then we have Lewis three
+ years later, another scholar, another timeframe, the same paradigm.
+ We different words, safeguarding. And then if you take number four,
+ for example, the ability to protect and defend. So it's about, it's
+ about protection from hazards, from evil behaviors, but that's not
+ the only paradigm we might find in the literature. For example, quite
+ a different one is the continuity paradigm. And I'm calling it this
+ way, 'cause if we read definition from Kanonja and Mandarino 2014, we
+ may see the art, meaning that soft skills and creativity are strongly
+ needed. Otherwise you would have said the science. If it's art, it
+ means that you rely quite a lot on soft attitudes and skills, which
+ do not always overlap scientific method. It's not to say that you're
+ not scientific in doing cybersecurity this way. It's that you do have
+ the theory, but holding theory, holding tech knowledge, it's not
+ enough to be a very good professional in cybersecurity. That's the
+ same they say about surgeons. Of course, surgery is a scientific
+ discipline, but medicine in general can be deemed as completely
+ scientific and period. It requires intuition, creativity somehow,
+ practical skills, the art of sewing, the art of cutting, the art
+ of... Have you ever watched some sort of medical TV series? So why am
+ I wasting my time? You know, that's too much stressed. Of course,
+ it's fiction, but a little of that fictional representation, it is
+ real. So you're not a very good physician or a surgeon just because
+ you study it a lot and you can theoretically speak about your matter,
+ okay? You are required to have some practical ability, some sort of
+ intuition, some sort of empathy and geniality sometimes that mixed
+ together these traits will help you deal and cope with those cases
+ where books and previously checked methods maybe are not enough,
+ okay? So the paradigm here is the art of ensuring the existence, so
+ survival and continuity of the employees of the information society
+ of a nation. Yeah, they want to address the issue at the national
+ level, but what is important here is to stress that you are not
+ focusing on a total defense, okay? You know that when an attack
+ happens, you might be wounded, you might lose something, but your
+ first goal should be not a major failure. You should be able to avoid
+ any major failure. And in order to do so, you should also be ready to
+ decide where you have to concentrate first. Like in a natural
+ disaster, of course you would want to fix immediately everything and
+ help immediately everyone, but resources are limited and not all the
+ situations are the same. So you have to get ready to apply different
+ scenarios depending on the severity of what's happening. And you
+ should be able to consider what are your major critical elements that
+ you don't want at all to be lost. And then of course, the more
+ energy, the more resources, the more capabilities you have to
+ simultaneously address everything, of course you do it. You do it,
+ but it depends on the scenario. There are some very several very bad
+ scenarios in which being omniscient, being everywhere, it's
+ practically impossible, even though from a general point of view, you
+ really would want to do it. That means continuity. If you have to
+ keep alive a system, you should be able to put in a list the critical
+ cores of the system and the secondary tertiary collateral resources
+ that of course, if it were on you, you wouldn't want to lose. But if
+ you have to, you consider that losing them, it's bad. It does come
+ with impacts, but it's less worse than losing the other thing. 'Cause
+ you might be wounded. It might be painful. It might be critical to
+ lose these things, but not that painful, critical or life-threatening
+ as losing the others, okay? So I know it's not at all easy to talk
+ about this, but that's the only protocol you may be able to apply in
+ very critical conditions, okay? Then there's also a definition with
+ the more ecological perspective. Ecology in this case means that you
+ take into account that the system is a complex environment populated
+ by different elements and that the system itself works and works
+ properly when all the elements in the environment are somehow
+ balanced. So ecology, it's complexity due to the interactions of many
+ elements in a sort of balance. An ecological system like ours, for
+ example, with the climate crisis is a risk. Not because there won't
+ be any sort of ecosystem if we keep going down the precipice of the
+ climate crisis. It's that the system as we know it won't be balanced
+ enough to preserve our own lives. So even here, when we talk about
+ being balanced and ecosystems, we need to take into account some sort
+ of perspective. Balance or unbalance depend on the perspective and
+ the stakes you are taking into account, okay? And so this very
+ definition is relevant also because probably following the idea from
+ the continuity paradigm, it states that mitigation is a key resource.
+ So, you know, we might say that the defense paradigm is more about
+ let's avoid and let's be totally protected at least in abstract.
+ These new paradigms, these other paradigms, there's not something new
+ or old. You may find them simultaneously right now around the
+ scientific literature on cybersecurity, but these other paradigms are
+ more like, no, it's simply an illusion to protect the systems
+ completely. So let's work hard to protect them completely, but let's
+ design some different situations in which that was not possible. And
+ so how can we mitigate? How can we guarantee some sort of continuity?
+ How can we take into account the fact that the system is like a body?
+ So not all the parts are worth the same. Of course, you want to
+ preserve the integrity of the system, like the integrity of the body,
+ but if you can't 'cause you're attacked. If we hadn't evolved as a
+ species taking into account the fact that also our body is a complex
+ system where different parts have different priorities, we wouldn't
+ have learned to protect ourselves. For example, putting the arm
+ before the head if something is striking it. We would say, no, I'm
+ too fond of my arm. Please just crash my head. We are putting an arm
+ before the head because we're saying let's do it. That's better to
+ break an arm than to be squashed in the head, okay? 'Cause we very
+ well know that for as painful that might be, for as severe it might
+ be, a wound to the arm, it is on average on a lower level of severity
+ than a wound or a very strong hit to the head, okay? So let's say
+ that continuity and ecosystem are just considering that because
+ damages happen, let's get ready, let's be very well trained to
+ completely protect us. But because that's hypothetical, let's
+ consider what we should preserve from damages if some sort of an
+ attack happens. And then the last one is about risk. Cybersecurity,
+ so here they shift the perspective from the ecological metaphor, the
+ body metaphor, the life continuity of the system metaphor to the
+ theory of risk. So they are saying cybersecurity involves reducing
+ the risk of militia and attack to software, computers and networks,
+ ta-ta-ta-ta-ta. Okay, so the most important thing here is we can
+ measure the magnitude of an attack. 'Cause when you hear the word
+ risk, the first thing that should bump on your mind is there is some
+ sort of equation to measure something, mostly in the form of
+ probability. And then in today's society, also some sort of
+ economical forecast of damages that you have to compare to your
+ investments to protect yourself. In fact, there are some goods out
+ there, some services out there that can be protected by any sort of
+ insurance. 'Cause to protect them, it will cost that much that you
+ won't ever reach some sort of break even. Or on the opposite, that
+ you don't want to protect 'cause you know that your investment should
+ be so high that you will never recover. So you better risk to have an
+ attack than to try and economically protect you from something that
+ it will never pay off, right? So when you listen, when you hear risk,
+ those are the kind of discourses that are being made in assessing
+ security and crimes. And so nine definitions. Do we really need a
+ 10th? And my answer after having studied the literature that I'm
+ bringing to you in class is that, yeah, we do. We do it very much
+ 'cause we learn a lot from all these nine definitions. We can take
+ useful elements to better focus on what cybersecurity is about, the
+ complexity, the multidisciplinary approach needed, the role of
+ machines and humans and information combined together. But at the end
+ of the day, we still can't reply to the questions what cybersecurity
+ is about. Oh, we can do it. But now we know that if we take only one
+ of these definitions, we will cover just a small part of a more
+ general phenomenon. So before going to the first break, let's see
+ what kind of ingredients it would be wise to take if we had to mix
+ together all the definitions we already have read. Let's focus first
+ on common things. So that's a sort of step two of the work I asked
+ you to do yesterday. So we have read them, we have commented them.
+ Then we have to sketch something to make it easier to remember what
+ is worth to be taken and what we can drop. So from common elements, I
+ would say that, of course, there's no definitions that doesn't take
+ into account the technicalities. That's quite obvious. We are
+ speaking of something which deals mainly with technology. Cyberspace
+ is first and foremost a technological environment. It's not only a
+ technological environment, but it wouldn't exist without technology,
+ okay? So that's the first. Second, another element in common is
+ cybersecurity is about something happening. So it's about events. You
+ don't have events, you can't, you have nothing in your hands. And
+ that is why cyber crimes are getting subtle and subtle and subtle,
+ 'cause if you are able to become invisible, if you don't leave any
+ trace behind you, nobody will notice that you committed a crime,
+ okay? So today, most of the technical part, but I'm not the most
+ expert person you're gonna meet in the class to say it, but let me
+ just tell this. Most of the job now is about pulling above the
+ surface what is going very deeply below in order to have some sort of
+ body of evidence to start with, to mitigate, to fix, and then to
+ learn from. You don't have evidence, you can't make any scientific or
+ practical consideration about what you want to study, what you want
+ to understand. Third, even though the nine definitions talked about
+ them in a very different and diverse way, each of them took into
+ consideration methods, the need for strategies, and some sort of
+ process to implement the will to securitize the system. And then
+ fourth, even though machines, and we will see before the end of the
+ class, we will deal with this element, even though machines with
+ today's tools of artificial intelligence and deep learning are
+ getting more and more autonomous in move attacks and try to defend,
+ we still today need some sort of human interaction. And finally, all
+ the definitions have, while setting goals, cybersecurity is for this
+ reason, they are also setting what you need to protect. And then we
+ could try, some of you did it, did this yesterday, actually,
+ depending on the period, we might reconstruct in a sort of reverse
+ historical engineering, what kind of objects were the most relevant
+ in a given period, machines, computers, then data, then privacy, then
+ that, then also from a legislative point of view, things changed a
+ lot in this field. We now consider crimes, activities, we didn't have
+ even a word to describe them 10, 20, 30 years ago. So those are the
+ common traits. Let's see three distinguishing aspects. Not only the
+ definitions address the sociotechnical perspective, the idea that in
+ order to properly assess cybersecurity today, you need as many
+ technical capabilities as those coming from humanities and the social
+ sciences. You remember the first definition, the first suggestion
+ from the former director from the United States, he said, "Because
+ it's about human and human machine interactions, "we need
+ multidisciplinary approach." Second, the fact that some of them put
+ into the analysis a different scale. There was a definition, I don't
+ remember which one, but just recall the keyword. It was saying, "Is
+ made to mitigate at the national level." So we might assume that that
+ definition was considering cyber attacks, an issue from both a
+ technical, but also from a political point of view. It's about the
+ security of a site. It's about diplomacy. It's about economical and
+ financial investments. It's about espionage and so on and so forth.
+ And third, let me add, it's about war and peace, unfortunately. Cyber
+ crimes are now very much part of the warfare everywhere. You don't
+ see today's conflicts without some sort of cyber activity. And
+ unfortunately, we have plenty of examples, so I think I don't need to
+ justify my statement. And then the third element is about stressing
+ the importance of be very reactive, the importance of being reliable
+ and resilient to changes and build system capable of surviving
+ somehow with a high degree of connectedness. So these are common
+ traits and peculiarities from those nine definitions. This should be
+ the way in which, if I had to ask you again to work on something, as
+ I will do, I'm expecting you to work. Let's have this 10, 12 minutes
+ break, and then we keep going. And hopefully we open some doors
+ 'cause I feel it's quite... , okay. So let's start again. Now let's
+ move to this 10th definition and let's see it together. So the 10th
+ definition could sound more or less like this. Cybersecurity is the
+ organization and collection, I will first read it, then I will
+ explain any single element in it. So cybersecurity is the
+ organization and collection of resources, processes, and structures
+ used to protect cyberspace and cyberspace enabled systems from
+ occurrences that misalign the Euro from the fact or property rights.
+ So this is the legal conclusion. I was spoiling up yesterday to some
+ of you which to which I talked about at the end of the class, to whom
+ I talked about. And let's see element by element what this definition
+ is about. First, let me say the sociological element of the need for
+ organization as cybersecurity is a complex activity is addressed as
+ the first keyword in this definition. And I can swear that definition
+ was not made by me. So I'm not bringing here a vested interest. Let
+ me open. I was talking about the legal conclusion we were spoken
+ about with you yesterday. That's the definition which contains that
+ conclusion. And so I was saying that the first keyword here is that
+ the social and sociological traits of cybersecurity is addressed
+ considering that we think of cybersecurity as an activity which need
+ some sort of structural definition. And when I say a structural
+ definition, I'm saying that cybersecurity needs an organization. And
+ so we can now go back to the keywords we have discussed at the
+ beginning of the class yesterday. When I told you, please keep in
+ mind, it's about sociology, but we will be needing them very soon.
+ Roles, norms, values, relationships, backstage, front stage. All of
+ these elements go within the keywords of organization and resources.
+ 'Cause when we speak of resources, of course we are first and
+ foremost attract to thinking of, we need technologies, we need money,
+ we need connections, we need energy. Yeah. But we also need people
+ capable of interpreting and entering the mind of an attacker or of a
+ group. We need people maybe sometimes in some sort of complex
+ investigation to mimic to pretend to be someone else and to act in
+ order to be credible. When you apply some sort of virtual
+ infiltration in some online groups in the dark web, for example, you
+ don't improvise. And to be very skilled from a technological point of
+ view, it's not enough. That's not enough. You can design a 500,000
+ euros camera, but that doesn't mean you are an actress, you are an
+ actor or you are a director, a movie director. But then sometimes it
+ happens that the more you apply to technology, the more you become
+ also skilled in producing or thinking about content within the
+ technological environment. Just think of James Cameron. And you will
+ tell me he entered the board of one of the most promising Gen AI
+ company because he is very good at using tech. He co-designed some of
+ the stuff he used in his movies. He became who he is because he was a
+ very famous director. So he's the kind of mixed role I was talking
+ about yesterday with the idea of mixing humanities and social
+ sciences to engineering. I'm not saying you must follow his path. I
+ wish you very much if you want because he's famous, smart. He's very
+ good at doing many things. And of course he was able to gain plenty
+ of money. But the general idea is there are different kinds of
+ resources to be fully equipped from a technical point of view. It's
+ not enough. Then you need the roles. So then you have to precisely
+ clarify what sort of expectations draw on each person involved in the
+ organization because of his or her position. And then you have to
+ plan what kind of processes depending on different scenarios the
+ organization must stay stick to because you don't improvise because
+ you don't follow completely your instinct. Sometimes you have to, but
+ generally speaking, the moment in which the emergency strikes, it's
+ not the moment you must be creative. Creativity should be a very huge
+ part of the process in advance. You don't get creative the moment in
+ which the emergency is there and you're asked to do something. So the
+ scope now, it's that you use these resources, processes and
+ structures in a very well-organized design to protect cyberspace and
+ cyberspace enabled system from what? Before answering this, let's
+ consider that it's not just about being emphatic that the definition
+ is addressing the scope of cybersecurity to cyberspace and something
+ else because by the definition we read at the beginning, cyber is
+ everything connected to electrical and let me say digital networks,
+ machine softwares, people, but today there's a huge part of
+ applications, tools, open, demi-open, private digital environments
+ which rely somehow on, the general system we call cyberspace, but
+ they are not completely part of it in the sense that they have some
+ overlaps. Let's think to something that it is not even new at all
+ today, but it was when I started to do these jobs 15 years ago, the
+ internet of things, and we can say it's not cyberspace, but it's not
+ only cyberspace. Your smart fridge, I don't know if you have one, if
+ you do, please tell me your feedbacks. It remains an appliance, but
+ we can't say it's detached from cyberspace. If you wear smart
+ glasses, the coffee machines around the Politecnico, they are all
+ connected. I must be very unlucky, 'cause yeah, they are connected,
+ but I barely make to connect my phone to them when I want a coffee,
+ but that's just being unlucky, but there's no reason to consider them
+ something completely detached from cyberspace. They are not simply
+ cyberspace. They are first and foremost some sort of vending machine
+ to provide you with drinks, but if someone want to attacks the
+ university, he, she, it, they, who knows, want to find some sort of
+ hole within the very machine. So we must consider that cybersecurity
+ is about protecting the cyberspace as a whole. So for example, the
+ internet in the broadest sense of the term, it's many different
+ completely digital environments and hold the possible hybridations we
+ are witnessing. Things, smart appliances, mobile communication
+ systems, and wearables, and who knows what's ahead, okay? So that's
+ the objects. And finally, what is the hazard you want to protect them
+ from? And as I told to some of you yesterday, what's fun here is that
+ instead of trying, as some of the past classifications did, you
+ remember those tables with dozens of items saying cyber crimes could
+ be these, but also these, but also these, and then you have to list
+ something like 30, 40, 50, 100 different items. Instead of doing
+ this, this definition is quite good because it try to sum up and to
+ abstract all the different possibilities. This is interesting 'cause
+ even though tomorrow we invent something new like instead of the
+ electric kick scooter, we invent some flying kick scooter, I pray the
+ destiny not to have these quite soon 'cause if there is these cows
+ around with kick scooters, which I usually them on, which I use them
+ very often on a daily basis, but that's why I see why they are so
+ dangerous 'cause people are rushing at 20, 30 kilometers per hour on
+ every sidewalks. And I hope that we will be educated in using them
+ quite soon, but if we invent something like that, that is something
+ that will become a possible object of attack in the future. So you
+ see that if we had to enlist everything that already exists or that
+ could be in the near or in the mid or far future, I think there is no
+ space on any presentation to do so. So they came up with this idea.
+ What do all the possible items of cyber crimes have in common? And
+ that's a sort of lateral thinking. They share the fact that they are
+ based on some rights as individuals, institutions, companies, we get
+ our social and moral dignity because we are considered human beings
+ with the capability of reasoning, thinking, and with the sort of, let
+ me say, moral dignity that is there just because we are alive. I'm
+ not inventing anything. I'm just trying to very badly and quickly
+ resume some of the main outcomes of that historical period that in
+ Europe happened across the 70 and the 18th century, which is called
+ Enlightenment, right? And some basis idea of the Enlightenment were
+ that when humans supply their culture supply their cognitive
+ processes, reasoning capabilities to themselves and to the
+ environment around them, they discover that they become citizens, not
+ people of some sort of, of untouchable power. The idea to make, for
+ example, religious and political powers accountable is an idea that
+ was born during the Enlightenment and brought to, after decades or
+ centuries, to put into discussion the absolute monarchy, for example.
+ To help secularize the Catholic church, for example. And then to
+ bring in some chart of rights and in the end, parliaments and
+ contemporary democracy. So this brief historical philosophical
+ journey to say what? That thinking of cybersecurity as a matter of
+ civil rights and particularly a very specific type of rights, the
+ property rights is the key that these definition used to be brief,
+ very sharp, focused, and to make it finally clear what is the final
+ aim or of protecting people systems from cyber attacks. There is this
+ sort of gap that is generated by every cyber attack. You attack
+ something that is not your, and it's not yours, and you want to take
+ control of it or you want to have access. The access is illegal, not
+ because of some metaphysical issue. There is no some sort of entity
+ say, no, you are not, you don't enter this place. It's not that, it
+ is not about that. It is about something very practical, very
+ empirical related to the concept of right. If you do not have access
+ in something, it's because you don't own the property of it or you
+ don't, you can't claim any right on it. And also the idea of private
+ is something new that was born in the very Enlightenment era. It was
+ brought about the following decades with the idea of making the
+ monarch accountable. Why I am saying so, because of many reasons.
+ First, because I'm a sociologist, so you have to excuse me. Second,
+ because if we don't open these black boxes, we just take for granted
+ what is given, but that's not the case. The sense of violation, you
+ as a subject of an attack, you feel, and we will see it by the end of
+ the class, is something that may impact your sense of security, your
+ psychological tranquility, your will to expose your facts or not to
+ somebody, but not to everybody. But this idea of privacy, it's
+ something very modern. We invented it during the Alignment and in the
+ following decades as a sort of empowerment of the people against the
+ absolute power of the monarchy and of the church. And that was the
+ moment in which people, driven by philosophers like Diderot,
+ d'Alembert, Immanuel Kant, started to think that there was no
+ abstract reason to passively have another entity decide on your life
+ and your death, that you wanted to have your dignity, your personal
+ dignity and the dignity of your group recognized so that you could
+ pursue your happiness in life as far as other privileged groups like
+ nobles, clergymen, and, of course, the monarchy did for centuries.
+ It's not that, of course, this brought also revolutions, but it's not
+ about, speaking of revolution, it's about considering where rights
+ come from and that the impact of a right violation is something that
+ it's pervasive. It influences any dimension from a personal, inner,
+ so psychological, health, and also the social and political level. So
+ the misalignment, it's something that, if you don't know what a right
+ is and where it comes from, and the philosophical and moral
+ perspectives it embraces to justify itself. So that we do have the
+ word violation to describe when a right isn't respected. If we don't
+ take account all these kind of reasonments, I think we can grasp the
+ value of concluding the definition of cybersecurity as an act against
+ cybersecurity is when we see a misalignment in property rights. It's
+ from a technical point of view, we would say no, an attack is when
+ this happens from a technical point of view, yeah. And then if
+ technology changes, what? A criminal cyber act is when we are able to
+ detect this with this instrument, okay. And then when instruments
+ changes, when we change the scale, when we rephrase completely the
+ concept below that tech, that technology, are very good having a
+ digital microscope, but what if we change the law of light? You will
+ say that will never happen. Well, maybe, yeah, I can agree. That's
+ just a metaphor, but we have to consider that the way we think of
+ light today is not the way Newton thought of light. So he did change.
+ That's why we need to think to a criminal cyber attack as something
+ that we can start addressing when we have some technical or let me
+ say social scientific tool and procedure that can verify that the
+ property rights are misaligned. What does it mean? It means that
+ there is a subject, no matter if an individual or an institutions or
+ a company, that from an abstract point of view is entitled for the
+ property rights of a good. And that if we check some sort of key
+ indicators like the privacy of the data, if the owner wants the data
+ to be private, the number of accesses in the environment, the kind of
+ accesses or the consistencies of the data and the systems within the
+ property or any other possible thing that may be against the privacy
+ of the data the power of decision of the owner, every time we see
+ these kind of situations, we may hypothesize that a misalignment is
+ there. Any questions or comments or what else about this 10th
+ definition? Yeah. (faintly speaking) (faintly speaking) (faintly
+ speaking) Yep. Okay. So basically if I may translate the questions
+ 'cause maybe those that are connected without the microphone can hear
+ properly. So I repeat the question and I will rephrase it, you will
+ tell me if I'm getting it right or not. Basically the idea is that,
+ yeah, that's very interesting, but if you hadn't been here telling us
+ that's the 10th definition, it has some sort of plus compared to the
+ others, we wouldn't have noticed it. And I can basically say, yeah,
+ you're right. That's why I'm here. That's not a joke. It's of course
+ you need some sort of guide through these sort of wild wilderness of
+ buzz around how can we define cyber security and cyber crime. So
+ yeah, it's not strange to feel a bit confused. If I had to suggest
+ what kind of definition it's important for you to remember, the 10th,
+ the last one is the most important. For the reasons I tried to
+ explain to you. What about the others? What I can swear is that I
+ will never ask in the test. My part is formatted as Professor Leo is
+ one. So you won't notice the difference in term of what type of test
+ are we gonna be asked to solve to pass the exam. It's the same system
+ of questions that Professor Leo is thinking of. So if I remember
+ well, it's based on mainly open questions. And I will put a small
+ amount of questions compared to the general topics of the class. So
+ the vast majority of questions will be Professor Leo's ones. But the
+ way, a small part of questions could be, it depends on how many
+ questions we decided to have in the test or maybe he has already
+ decided. And he told me probably, but you know, it was before the
+ summer, the summer holidays. And I don't remember quite well the exam
+ number. But you know, it's a small proportion of the whole. So it
+ could be maybe two questions out of 10 in general or some kind of
+ proportion like that. But don't take this for granted. What you have
+ to take for granted that as you only have 20 hours with me, that will
+ be reproportionate in term of number of questions about sociology in
+ the class. But if the test is based on open questions, there will be
+ open questions for sociology as well. I will never put a question
+ asking you, tell me definition number three in slide seven. That's
+ simply stupid. It will be stupid for me. That will be that I think I
+ don't know how to do my job and I have a very low consideration of
+ you. But I have a very high consideration of students. I really like
+ my job and I really like having you in my class. So my duty is to
+ help you be empowered with sociological knowledge, not to trick you
+ in a test. So if, and I feel like I would try and trick you if I ask
+ like, tell me definition number four. But definition number 10 could
+ be asked. Yeah, it's the only one among all the definitions 'cause I
+ believe and that's not an absolute, but it's my personal
+ consideration after having explored a very big part of the scientific
+ literature on this, that this definition deserves to be remembered.
+ What I can ask about what we have seen is, can you briefly resume the
+ main common elements and peculiarities from all the definitions apart
+ the 10th we have seen in class? That's not claiming and expecting
+ that you remember all the ninth definition word by word, but you may
+ have made starting some notes about these elements is in common, this
+ is not in common. And I don't care if you remember the element two is
+ from definition six and eight, that's not relevant. It's just the key
+ features. So it's kind of, you know, trying to do maybe something
+ like that. I could ask in a questions considering, or I could even
+ put all the definitions in the test. So you read them. And then I ask
+ you to produce something like that. And because it's an open
+ question, what I'm expecting is that depending on your study,
+ depending on the time you spend trying to think about these things,
+ your attention in class, my capability to be clear, but that's a
+ constant. So, you know, if I'm poor, I'm poor for everybody. If I'm
+ on average, I'm on average for everybody. There's no some sort of
+ filter in your ears that sensor some words, that's a constant. But
+ then I will expect you to comment on it, okay? That's why we need
+ open questions 'cause the most relevant part of the sociological
+ class on a cybersecurity class is improving your reasoning
+ capabilities in a way that is different from what you could do with
+ common sense stereotypes. So, you know, I think that after
+ sociological class is not very, it's not a very well, it's not a good
+ way to start an answer. I think it's something we may say outside the
+ class, drinking a coffee at the bar with the friends, within the
+ family, within ourselves. But if we have studied some social
+ sciences, that it's not about I think, it's evolutivity, you
+ remember? So it's based on scientific literacy, based on what these
+ scholars, this study, this theory, these philosophical sociological
+ perspective, we might say that that's very different from I think,
+ right? But more generally, you know, there are still quite a lot of
+ topics. So I know now you have, you feel the need to be clarified,
+ but this is just a minimal part of what we're gonna see. So what I
+ can say is that I want you to be rigorous, but for me, being rigorous
+ doesn't mean you, you just repeat as a poem what you have studied.
+ You need to memorize something, because without memorization, you
+ don't hold the terms and the logic. But then you have to apply some
+ reasonment about what I'm asking. So you will expect from me
+ questions in which rigor and reasonment are quite mixed together. If
+ you lack one of them, you won't have the top score. But, and then
+ what you, because we are speaking about how to study and how to get
+ ready for the exam, let me also say that. I know you won't be asked
+ to apply any maths in my class, at least not in this one. There are
+ classes where there's maths also in sociology. But not in this case.
+ That may be risky for some of you, 'cause if you are very well
+ trained in applying formulas and so on and so forth, you might feel
+ overconfident in studying sociology, 'cause it's only made about
+ reasoning and words and speaking about something that is very much
+ qualitative from your point of view, from the point of view of
+ engineering students. I had the very same feeling at the beginning of
+ my university coming from a scientific high school, the Galfer next
+ to the Politecnico here. And so my very first sociological exam was
+ very poor. And that was not because that wasn't interesting. I ended
+ up being a sociologist. It was because coming from maths and physics
+ in the high school, I deemed very easy and qualitative. Everything I
+ was reading about sociology. And then I thought that whatever
+ question I would have found a way to trick the professor just
+ describing and, you know, if I don't remember, I will say something
+ more or less, it's about that. No, it's that more or less, which I
+ really discourage you to try in my exams. Not being coded with
+ numbers and formulas doesn't mean you don't have to be rigorous.
+ Words have meaning. I spent six hours yesterday and today just
+ talking about definitions and terms. So when you use a term, you are
+ asked to know very well the meaning, the scientific meaning, the
+ technical meaning of that term. And if you don't use a proper
+ terminology, that's like mistakenly calculating some sort of formulas
+ in a practical exercise. It's precisely the same. That's a mistake.
+ And of course, I can help you over the class. We can maybe simulate
+ some sort of questions to have you trained to the sociological
+ writing and studying, but please remember this. You won't undergo
+ surgery with some physician that doesn't know every single meaning of
+ the element is gonna touch within your body, okay? And that's the
+ same even though nobody's risking his or her life like in sociology,
+ okay? But the kind of being sharp and clean in thinking is reachable
+ only if you study very well things and you remain rigorous with a
+ very technical terminology. This is my first and most important, I
+ believe, suggestion. Then you will, I can assure you, I will never
+ trick you. I will never ask things that are, as I said, are useless
+ like studying nine different definitions. No, remember the common
+ traits. Yeah, that's about reasoning. Of course, you have to memorize
+ something, but I won't ask you the perfect definition. This 10th, as
+ I said, it's useful, but it's not very important to know it word by
+ word, but you can't miss the fact that it is based on the idea of
+ organization, resources, processes, and misalignment, okay? That's
+ it. Then you might be, you may act like an LLM. You guess
+ stochastically and see what happens mixing those keywords, and
+ hopefully you will come with a thousand different definitions using
+ the same word. But the idea is basically that this definition has two
+ key elements, sociology at the beginning, resources, organizations,
+ processes. Low at the end, misalignment in a property rights. That's
+ it. (faintly speaking) , yeah, I may translate misalignment , into
+ this. For misalignment, it is intended, the fact that, you remember
+ we said that roles are about norms and expectations. A property right
+ comes with some sort of expectations for you as an owner, okay? When
+ you feel, when you experience that your expectations are diluted,
+ that's a misalignment. So let me say, I own my Instagram profile, but
+ if Mita decides to block me, I feel a misalignment. It doesn't mean
+ it's a cybersecurity reason, or it could be, my profile could be
+ hacked. So it's been suspended, and I have to demonstrate that I
+ didn't do anything, I was hacked, and I get it back. But what are
+ the, what is the least of expectations for the attacked, as owner of
+ the object being attacked? For example, that if I own a profile
+ online, I can access whenever I want through that profile. If that
+ doesn't happen, there may be some connectivity issue. So it doesn't
+ mean that any misalignment has a cybersecurity threat below, but it
+ could also be. So the misalignment is a sort of first alarm that is
+ raised to tell apart those cases which have nothing to do with cyber
+ crimes, to those that at least might be so suspected cases. But to
+ try and think what a misalignment is, you have to take into
+ consideration expectations of being entitled with some sort of right.
+ For example, as a former video gamer, my device is in the cabinet,
+ waiting for my oldest child to grow up a bit. But I moved from
+ cassettes to CDs to DVDs to download it online directly on your
+ platform. Okay, when you download something, you depend on the
+ provider. If I buy a game and I installed it on my hard disk or I
+ have access to it on the cloud, I am expecting to play any time I
+ want as if I had the old DVD or CD. If that doesn't happen for some
+ reason, that's a misalignment from my expectation as owner, even
+ though I don't own any object 'cause I don't even have the CD, I
+ don't have anything in my hand, but I bow the right to have access to
+ that feature anytime I want. Then agreements may change. There might
+ be some issues with the provider, it's databases, it's data centers,
+ it's hosting capabilities and so on and so forth, and that is against
+ my right. Most of the times we don't do anything, we just wait. Then
+ you could, if you want, and that happens many times, you can sue
+ maybe because I have rights, you weren't able to respect those
+ rights, I have paid for, and maybe in the worst case scenario, you
+ may, as a provider, you may have a class actions from the users, from
+ the gamers, for example. Why I'm saying that? 'Cause every single
+ time you buy or you have some sort of right of accessing, using,
+ owning something, you have expectations about that property. The
+ moment in which those expectations are not respected under many
+ circumstances, you have a misalignment. In the scope of
+ cybersecurity, for example, it might be, let me say the most stupid
+ thing, let me say the most stupid thing, maybe I have some sort of
+ folder on a cloud and I want to duplicate a file, and then I discover
+ that I don't have access to the file anymore, and it pops up a
+ message with insert password. What's happening there? That's a
+ misalignment. As the owner of that file, then, of course, we don't
+ really own them. It's Dropbox, Google, Apple, Amazon, or what else,
+ which really owns them. But as a user, you have your property rights
+ or your usage rights. It depends. We should be reading all the
+ thousand of pages that we skip when we accept the service, but
+ there's very well written what kind of rights you may exercise toward
+ the providers and the object you're in the services. But anyway, it's
+ just that, that was free. I just had to put my account and password,
+ and then it doesn't work anymore. It asks me something more. That's a
+ misalignment. It could be, again, a failure on the provider without
+ any cybersecurity threat, or it could be something like that. You
+ have a WordPress website, and they managed to enter it, and they
+ changed the password, and they are asking you, if you want to receive
+ your website back, just paying Bitcoins or whatever, that's a
+ misalignment 'cause the website is yours. It's an asset of yours. You
+ are the owner, the master of the backend. You decide the colors, the
+ content, and then you see that you still have the DNS, but instead of
+ your website, there's something else, or some local data have been
+ exposed, and so on and so forth. So as an owner, you decide also the
+ level of privacy of your data, unless in the contract, it's
+ differently stated. But then somebody takes your data and exposes
+ them. You still own your data 'cause you have a copy, and you may
+ even have access to your digital asset, but somebody copied part of
+ the data and put them publicly. That's another misalignment 'cause as
+ the owner, you can decide the level of privacy of those data. And if
+ these changes without your consent, that's a violation, and then
+ that's a cyber crime. And again, it's a misalignment. So it's not
+ about owning, it's also about deciding some sort of metadata about
+ your data and your properties. Is it more clear now? If not, we can
+ repeat it. Don't worry, okay? Shall we keep going and closing
+ advance, or do you want a break? Let's vote. Raise your hands for a
+ break now. Okay, great, that's the vast majority. You want to get rid
+ of me, I can understand. It's Friday and it's sociology. Okay. So
+ let's recap. What are we talking about when we speak of
+ cybersecurity? First, complexity. This definition addresses the fact
+ that cybersecurity is about complex organizations, okay? Complexity
+ is given, arises from interactions between humans, between systems,
+ and between humans and systems. Second, extensiveness. Extensiveness
+ is about the idea that the idea that protection is something very
+ wide. It includes systems integrity, data privacy, assets ownership,
+ and whatever. But it's about any kind of security. It's about any
+ kind of violation of your expectations filtered through the rights of
+ property. Let me say, let me put it very rudely. In a non-democracy
+ governmental system, it's very normal, even though you don't notice,
+ that the government, the state, have access to your personal digital
+ assets, like your chats, your profiles, and so on and so forth. Your
+ conversations. That's totally legal, unless in a democracy, unless
+ there is a reason. And any magistrate in a democracy must have been
+ allowed, for example, to listen to your personal conversations or to
+ have access to your personal data. Some of the scandals of past years
+ were about discovering that what I just said, was violated even if
+ the state was a democracy. But extensiveness, it's not only about
+ what do we need to be protected from, but also what may have
+ generated the cyber threat. but also what may have generated the
+ cyber threat. It could be a criminal activity. It means there is an
+ intention to harm. It might be negligency. So it might be an
+ accident, poor procedures, mistakes, or negligence. The fact that you
+ don't want to harm and you want nothing bad to happen, but you don't
+ put all the attention required and all the care requested to avoid
+ something happens. And third, it might be also some sort of natural
+ hazard. And third, it might be also some sort of natural hazard. Let
+ me say, as we have seen, unfortunately in Valencia, the big tragedy
+ caused by the floods. And when chaos struck in a social environment,
+ free riders come up. So they had to put, law enforcement, both to try
+ and save people, to try and fix all the damages, but also to
+ discourage groups of thefts from stealing things from homes, shops.
+ from stealing things from homes, shops. Malls, and so on and so
+ forth. Malls, and so on and so forth. So we may think that something
+ similar happens when a natural hazard struck an environment where
+ some crucial technology has been settled where some crucial
+ technology has been settled so that the access to that technology so
+ that the access to some property that was very well regulated before
+ the hazard stroke. It's not working properly now. So maybe you may
+ very easily have access to some sort of resources, digital resources.
+ You might take control of digital properties. You may, you know what?
+ Or a natural hazard stroke in some cyber criminal decides to spread
+ fake news to have an impact on public opinion or to have people
+ already shocked by the natural event, feel insecure even more, or
+ behave in a way that might be revealed or behave in a way that might
+ be revealed to be harmful or dangerous for themselves. And that they
+ wouldn't have taken into consideration if that fake news hadn't been
+ created. The third element is about unpredictability. The idea to
+ protect here is addressed to a full range of events. And as we said
+ already, but takes also into account some sort of situations that are
+ still virtual that didn't happen yet, but that you want to be ready
+ to cope with just in case. So there is a sort of justification for
+ the investment in knowledge and resources for prevention. And
+ finally, the most peculiar part of the definition is the conclusion,
+ which brings in some legal theory. So there's the theory of property
+ rights that is used to detect and define what is cyber crime from the
+ side of the consequences. So when you read the Euro, it means that
+ institutionally speaking, code of law in your hand, things should be
+ like that. De facto, for those not Latin speakers, it means in
+ concrete. So from a theoretical point of view, from the point of view
+ of law, things should be like this. But in practice, what are you
+ experiencing? If there's an overlap between the two, it's okay. If
+ there's a difference, if there's a gap, the wider the gap, the most
+ critical the attack, okay? Any questions about this? Nothing,
+ everything is unclear enough to move on. Okay, yeah. Yeah, they are
+ very similar in the sense that, we might consider extensiveness as a
+ function on the x-axis and the broadness as a function in the y-axis.
+ So that we may say that here is about how many different type of
+ hazards you may happen to encounter. And here, how strong is the
+ magnitude? What differentiates the most, the two ones, is the
+ unpredictability here. So it's the idea that at this level, you may
+ have case studies. At this level, you may want to push forward. Like,
+ okay, let's see the case that an attack like this one, which has
+ stolen 1,000 objects, 10,000 of credit card, secret codes, is pushed
+ to the extreme. Let's see if 1 million of them within the same
+ context would be affected with such a criminal attack. What will be
+ the main consequences from a technical point of view, from a fixing,
+ so solutions, point of view of solutions, and also from the very
+ sociological impact of will customers still entrust us, or what
+ should we do? That would be the main difference between the two. But
+ they, of course, they are quite similar in the general sense. Other
+ questions? No, okay. Okay. So now let's move to the right side of the
+ scheme I showed you yesterday before closing today's class. And let's
+ go back to classifications and let's comment then. As you may see,
+ this table is a typology of offenses which dates back to 2001. So we
+ may say it's quite old, but it's interesting to try and plot some
+ sort of trend in assessing cyber crime over time. In this first
+ categorization, there are five categories. Number one, gathers those
+ criminal activities dealing with confidentiality, breaches,
+ integrity, and availability of data. So illegal access, illegal
+ interception, data interference, misuse of devices, system
+ interference. Then category two is about computer-related offenses.
+ And for the Council of Europe, that was based on computer-related
+ forgery, computer-related fraud. So you use a computer to make some
+ sort of scam. And then category number three, it's content-related
+ offenses. And at least in the 2001 classification, that was addressed
+ by only one article with one object that was offenses related to
+ child pornography. So category number four was offenses related to
+ infringements of copyright and related rights. So that's the case of
+ Napster in that very year. More or less, that was the period. And
+ then the last one was about racism, xenophobia that were committed
+ using user computers. And then they specified that that was about
+ dissemination of racist and xenophobic material, racist and
+ xenophobic motivated threat, racist and xenophobic motivated insult,
+ denial, gross minimization, approval, or justification of genocide or
+ crimes against humanity, and then aiding and abetting. That was it.
+ That's not the only classification. And another one we have already
+ identified and talked about quickly, it reduces categories to four.
+ Let's see the main difference. In this case, it's not only about
+ giving different labels to the same things, it's assuming somehow a
+ different perspective. 'Cause if we read the first category, for
+ example, it's called cyber trespass. So here, we might say that, let
+ me rephrase it. This classification is very strongly in depth with
+ the defense paradigm. This is either, but we might say in a slightly
+ different way 'cause first of all, instead of thinking cyber crime as
+ a sort of fight of an attacker, let me put it brutally, punching the
+ attacked. In this case, there's these stress on the social dimension
+ of spaces, of environments. To understand category number one, it's
+ useful to go back to Irving Goffman. You remember the one whose book
+ was being read in the "Mindhunters" Netflix series I talked to you
+ yesterday. Yeah, Irving Goffman used to say that any social activity
+ as basically is based on two complementary moments. One moment is
+ what is seen by the vast majority of people or stakeholders involved
+ or actors, as we say in his metaphor, involved in some sort of play.
+ So we might say that this is a play and I'm acting as a professor and
+ you as students. So there are expectations attached to one's own
+ role. There are tacit and explicit norms. An explicit norm is that if
+ we don't respect each other, we are reported and that's very
+ explicit. A tacit norm is that, which is becoming even, which is
+ actually becoming explicit years after years, but that was very tacit
+ at the beginning, is that I am supposed to be a good teacher. So I'm
+ supposed to entertain you, to provide you with reliant and solid and
+ profound content. And I'm supposed to public speak, okay? To know how
+ to public speak. Of course, I know I have limits, but those are two
+ examples of what is expected. The same from you, it's not written. So
+ it's implicit, but I have put it quite clear yesterday. I'm
+ requesting your attention during my classes. You won't find it in any
+ norm at any university around the world. That's an implicit norm. I'm
+ requested to be good at teaching or to be the best I can. And you are
+ requested to do your best at being attentive and concentrated during
+ a class, okay? Even though I know it's Friday and it's five o'clock
+ in the autumn, I know. So, and then explicit norm from your side is
+ that if you want to get a degree, you have to pass exam and make a
+ thesis. That's very explicit, okay? So just to say that these, if we
+ consider the situation of a classroom at the university, these are
+ expectations, roles, environments, equipments, and explicit and tacit
+ norms as well. But this very play as a backstage, the front stage is
+ the moment in which we meet in public, the exams, the thesis, the
+ lesson. Then we all have backstages. The backstage, for example,
+ limited to this very class was when during summer I was building up
+ the slides and studying the literature, right? That was my backstage
+ of this class. Your backstage could be when you go home and try to
+ reorganise your notes on where you will try to remember what I said.
+ So go back to the recordings and so on and so forth when you will be
+ getting ready for the exam. That's your backstage. Why it is
+ important? Because when we feel that an improper overlap, improper
+ meaning, not wanted, not desired, not asked, overlap between the
+ front stage and the backstage is happening, we feel a sort of
+ violation, okay? That could be, let me go on with this very silly
+ example. If a group of you jumped in my room, in my office during my
+ preparation, saying, "Please, Prof, no, don't put this topic, "no, we
+ don't want to hear it." That's funny 'cause these kinds of violations
+ may be embarrassing, may be funny, may be epic fails or may be
+ violence. There's a degree of possibilities. It might be funny, for
+ example, 'cause it's full of meme and viral videos out there which
+ became funny 'cause maybe, you know, the one I saw on TikTok
+ yesterday was about... Ah, yeah, the joke that an older brother did
+ it to his younger one. He pretend to got cut and to have blood from
+ his hands and the younger one fainted in front of the mom, crossing
+ by, so the older one is keeping up the younger so that he is not
+ scolded by the mommy. You know that, yeah. So these kind of moments
+ may also be funny 'cause the general scope was to make public a
+ trick, but it wasn't thinking of my brother, he will be fainting live
+ on my social media, but that happened and if it's live, he stares,
+ okay? So that may be funny, but then it might be embarrassing or it
+ might be a sort of violence, right? We can move this Irving Goffman's
+ metaphor of front and backstage to cyber crime, thinking that cyber
+ trespass is precisely about this. It's considering your backstage
+ made of your digital assets and you as the owner, as the rights
+ holder, you may decide when to open, to whom, for what, when to
+ close, what to make private, you may decide what to delete and when,
+ what to copy and to duplicate and for what reason. So you have
+ completely control of that, but then something or someone crosses the
+ boundaries, that's the limit that these first category addresses.
+ Trespassing something and making a violation just because you tried
+ or you managed to enter a sphere that have boundaries and you break
+ them to enter. Second category, cyber deception or theft. You want to
+ steal information or valuable items and you do it in different ways.
+ Most of them still take into account trespassing the boundaries, but
+ sometimes you may want, and this is not clear here, but we will see
+ it next lesson. You may apply some sort of mimicking activity. You
+ may pretend to be or to act for something or someone else. And in
+ this case, of course, it's a violation of a boundary, but you are
+ allowed in just as, you know, how many times we hear that all people
+ are scummed by thefts that pretend to be someone else. The very same
+ thing happens online, but in a way that it's getting more and more
+ difficult to tell apart when there is some sort of acting out there
+ and when it's real. Third case, it's mostly the same of the past
+ classification and it's about cyber pornography and obscenity. So it
+ is defined as the use of ICT to access sexually explicit and illegal
+ sexual content. And we will see that with the increasing amount of
+ violations under this aspect, we had to invent new terms. We had to
+ take into consideration something that in the first definitions was
+ missing, like explicit consent, right? So to say that the adjective
+ illegal here, it's not only about violence in the old sense of the
+ term, but it becomes violence. So illegal any act without explicit
+ consent, right? Let me say it 'cause, you know, it's very delicate
+ and I want to treat it with very care, but it is an issue and it's a
+ cyber criminal activity, but revenge porn is cyber crime in this very
+ third category, okay? You may have had the consent to record
+ something into a digital asset, but not to share it. Or you may have
+ been asked to cancel it and you didn't. That's a criminal activity,
+ okay? And then the fourth, cyber violence. It means high speech, it
+ means, for example, suicide instigation or dangerous activities. So
+ you, bullying, harassment, you incite someone to test himself or
+ herself in doing something that may come up in a very severe injury
+ or in death and so on and so forth. Organized crime, sorry, this is a
+ really important. Terrorism, so you use some sort of a video game
+ platform and you use the chat within a video game to make some sort
+ of proselytism to convince people to act as lone wolves, so to kill
+ other people and so on and so forth. It happened. We know very well
+ that some of the most recent terroristic attacks in Europe were made
+ by lone wolves and that chats on video game platforms were also used
+ to try and gather those figures and convince them to move, to be
+ trained and then to act with some sort of terroristic attacks, okay?
+ Are there any doubts, questions you may want to ask? So good news is
+ that if I remember well, we won't be good news for you. I will be
+ missing you. But good news for you is that you have a two weeks break
+ from me. And we will, I guess, if I remember correctly, 'cause my
+ calendar says that next class with me will be Thursday the 28th,
+ correct? So two weeks of purification from sociology and then we will
+ keep going. Anyway, let me thank you very much 'cause I know it's
+ difficult. I know it might be new and novelty can become interesting
+ but can also have some difficult to be accepted. And as far as I'm
+ knowing you, you have been very carefully connected with the lesson
+ and that's something that I really appreciate. So good evening, see
+ you in two weeks and have fun 'cause the weekend is coming, okay?
+ Bye-bye.
