@@ -1,0 +1,442 @@
+ Okay, so today's topic is Secure Signed Electronic Documents. In the
+ sense that secure means a lot of things. In this lecture, we will
+ talk about signed documents, which is a property of secure. For
+ secure electronic document is any election with respect to a digital
+ document, which is a strictly digital representation of the document.
+ And normally we can have different properties, security in the terms
+ of the data, and we need a signature. But in order to have an
+ electronic document, we need also readability. So we should use an
+ open format for which it is possible to construct an interpreter that
+ shows the content and the signature. That is a problem to read the
+ document years ago, I mean 1000 years from now. We have had already
+ problems with the first Apollo. Formats not supported anymore today.
+ And this is just less than 50 years ago. So we are really running the
+ risk of losing our memories going to a digital world, okay? And then
+ possibility to read and verify it after years or even decades. So
+ let's talk about possible formats to add a signature to a digital
+ document. The first kind of signature is the so-called enveloping
+ signature. It means that we create a signature in a format that has a
+ space in data that you are going to sign. This is, for example, the
+ basic format supported by the PKCS, which normally creates a wrap
+ around, adding a signature and an alternative. We can have an
+ enveloped signature, document format, which contains the document and
+ that's got some space reserved for you to put a signature. That is
+ different because the first kind of signature applies to any
+ document. It's just a wrap. Give me a blob, no. It is for specific
+ application formats. If you use PDF, for example, you don't have that
+ option. If you use JPEG, you don't have that option. Second one is a
+ specific application level document format. And finally, you have a
+ third option, which is named the detached signature. Detached
+ signature means that you have the document in some place with the
+ normal cryptographic techniques that we studied, typically hash and
+ some asymmetric key operations, which is stored in another place. So
+ you are completely independent. You can sign whatever document and
+ you can use whatever signature format. But this solution has got one
+ issue. (audio cutting out) How can you correct because of the
+ signature or from the document, you would like to have a point.
+ (audio cutting out) Enter to the signature and vice versa signature
+ is the challenge for that specific format. Now we will discuss these
+ formats. Now for the moment, we concentrate on general documents
+ issues. I talked about one signature, typically perform just one
+ signature. When you are in a workplace, typically there are some
+ document workflows. That is a document must pass different stages
+ before its final state. For example, let's imagine that I need (audio
+ cutting out) for Politecnico and then I create a document in which I
+ request to buy (audio cutting out) a certain kind of document because
+ I claim that (audio cutting out) so I am responsible for the choice
+ of the object. But I'm not authorized to spend the money of
+ Politecnico. So there will be the need for a second signature from
+ the director of the department, which is checking if there is by this
+ professor. And if yes, it will put a second signature on top of that
+ to say, yeah, I approve this thing. Then there will be a third
+ signature, maybe by the director of Politecnico. The distinction is,
+ do we need (audio cutting out) need everything or not? So I made a
+ mistake in this presentation because this is not sign my document
+ because he is not choosing the PC and director will not sign my
+ document. So this is more appropriate, for example, for an exam shown
+ there are three professors and each professor is saying, yes, we
+ perform the exam. And I don't care, which is the first, the second or
+ the third professor to sign because these are independent signatures.
+ I don't care who signed first and who signed last. All the signatures
+ are in place and everybody is signed independent or parallel because
+ you see everybody is signing the document. The example that I was
+ referring to, on the contrary, is the organization of the world. The
+ director is not signing the original document but is countersigning
+ my request. Since Professor Lioy asked for this PC, (audio cutting
+ out) I countersign to say, okay, this is the office of director,
+ director countersigns the document signed by the director to say,
+ okay, this is valid. We can send it outside the Politecnico as he is
+ the only representative. So this is sequential because you need a
+ specific sequence. The director will never sign first unless there is
+ already my signature. (audio cutting out) Hierarchical because
+ hierarchical organization have an easily readable solution. (audio
+ cutting out) One of the documents formats is PDF. PDF has been
+ supporting digital signatures for a long time working. When a
+ document is signed, it's representation is converted in a byte
+ stream. So I don't care what is inside, if there is text, if there is
+ a picture, if there is a movie, which is possible inside the PDF doc.
+ Whatever is inside is converted to a byte stream. In this byte
+ stream, there is a reserved hole. That hole is a reserved for... So
+ basically are split into parts. So one PDF file named byte range from
+ offset one to length one, to offset two, length two. So there are two
+ ranges. Start from here and go up here, start from here and go up.
+ Second part is the signature itself. Now, the digest of these byte
+ ranges, so signature excluded, is compute. For example, by SHA-256,
+ and then it's encrypted with the signer's private key. If you have
+ Adobe Acrobat, you can see that you can create your own keys. And use
+ value that has been computed is encoded as PKCS7, detached. So even
+ if the signature is inside the PDF, so it would like as an enveloped
+ signature, they play a trick. They don't invent a new format. They
+ say, we use PKCS7 in the detached form, the things together. Now the
+ link is very clear, because it is detached, but it is put inside the
+ PDF. So it means this signature is for this file. So in theory it's
+ detached, in reality it's enveloped, and so it's clear the link
+ between the signature and the data. PKCS7 detached signature is
+ inside the signature. Then any leftover space is filled with zeros.
+ And this is the schema. You have a PDF document with the definition
+ of byte range given by this string. Start at byte zero, and you have
+ 840 bytes. So starting at byte 960, and it's long 240. So we are
+ signing this part, and we are signing these parts. And you can see
+ that the left, because PDF is actually a common language for,
+ describing a document, is there is the closing bracket when there is
+ the other part, because this is, the signature value for these bytes,
+ the bytes that are outside of the signature. So it's not that the
+ signature is considered as zero. It's really considered as if the
+ signature does not exist, as these two parts were contiguous, okay?
+ After the signature is computed here, any free space filled with
+ zeros. So here we have that, that will take the first part, the
+ second part, then the encryption with the private key of the signer,
+ encoding according to hexadecimal encoding, because PKCS7 is a binary
+ format. So it is a binary format. Detached is the D2 Acrobat, but
+ Acrobat supports AddyS7 with SHA-1, X519, RST, say SHA-1, or F today.
+ This is supported since Acrobat 10.x, while the other ones are the
+ original since a long time. Acrobat supports also external verifiers.
+ So it keeps a place, and then you declare in the interface that your
+ signature is created by a separate program. So in that way, you can
+ create your own signature format, but the schema is always the same.
+ You have a reserve, well, actually that changes with the Acrobat, and
+ the PDF version. Please note that those are two things. Most people
+ say, "Okay, it's the same." No. PDF is an open ISO, and so you know
+ what is PDF, and there is PDF version one, version two, version
+ three. Acrobat is a program, is an interpreter that can read PDF. So
+ there is no match. It's not that PDF version one is readable by
+ Acrobat, version one. Acrobat, if I'm not wrong, is already at
+ version 12, but yet we have only two or three versions of PDF, okay?
+ So by the PDF format, and what is correctly in... Interpreted, so the
+ verse four and the five are support signatures only with MD5 and so
+ on. Version six dot anything, still the same thing. With the Acrobat
+ version seven, now they have updated to PDF 1.6, that supports in
+ addition SHA-256. Version eight and nine. (audio garbled) Nine,
+ extend support. In bold is the algorithm. (audio garbled) Used by ISO
+ user. Default has moved to SHA-256. And then support the same kind of
+ things. (audio garbled) For the signature part, and not the hash
+ computation, DSA supports only SHA-1 by design, and can be used only
+ in the format Adobe PKCS7-Detached. So remember, the DSA algorithm
+ contains inside it a SHA-1, and you cannot replace. You cannot have
+ DSA SHA-256. In theory, yes, but since the DSA is a standard, the
+ standard is published only with support for itself. You see here that
+ we start with RSA up to 1K, with the version six dot X, PDF 1.5. RSA
+ moved up to 4,000 bits. The same, but now also DSA is permitted, RSA,
+ to support the standard. And then from version 11 and anything later,
+ as I said, nowadays we are at version 12, RSA and DSA still to 4,096.
+ But with the DSA, with the specific curves, and SHA algorithm up to
+ SHA-512. These families are available only when you use detached
+ PKCS7 and detached CADS, because as we will see, it's an extension of
+ PKCS7. PKCS7. Signature, but it's supporting more than, because there
+ is only one slot inside the PDF file. So there must be some trick to
+ permit multiple signature. I don't care if they are hierarchical or
+ sequential. So if you have a first signature and then you add a
+ second one, that would invalidate the first one, because it's a
+ change of the document. So Acrobat supports multiple signature by
+ associating them to incremental updates. That is an interesting
+ feature of PDF. I don't know if a forensics course, by the way, yeah.
+ I don't know if, that is a nice feature of PDF, very interesting for
+ investigation, because when you create a PDF file, as a modification
+ placing the original content, but you are adding, so you have the
+ original document, and it's from this to this are replaced by these
+ new bytes. That means that the key, the PDF is keeping the history of
+ the doc normally. You need a special forensics tool, but that is a
+ really great bonus for investigation, because most of the people use
+ PDF and they don't know that. Here we use that not for investigation,
+ but for achieving here that I have the original version of the file
+ that contains a signature, and that was signed this part and this
+ part. Now you want to add a second signature, text, if you want, but
+ if you don't want, you can leave it empty. You just declare here, but
+ then you need this part for saying PDF is finished. And now the
+ signature, this part has the first byte range, and this will be the
+ second byte range. And then you can continue in the same way. Do you
+ want a third signature? Great. Declare the changes for version three.
+ Now, everything here is the first byte range, and this part, the
+ trailer, is the second byte range. Question, is this a parallel
+ article? It's covering the original signature. So this is very well
+ suited for that. You have no other options. You cannot make a really
+ parallel signatures here. Okay, electronic documents. One important
+ thing is that electronic signatures are such a vital thing for
+ nowadays electronic world that the European Union has decided to
+ standardize the formats and the treatment to perform out them. So in
+ order to achieve interoperability of electronic documents across the
+ European Union, we need to understand what I discussed yesterday when
+ I was talking about ADAS. I told you, we support any kind of
+ challenge response. And here we have the same, because there is no
+ agreement about the fact how a signature should be created. So the
+ signature, which is valid according to the European Union, is that
+ data in electronic form attached to, or logically associated with
+ other electronic data, and serve as a method of authentication. You
+ see, quite a generic definition. Any kind of technology will apply.
+ Your page in the document, that is a valid electronic signature
+ across Europe. You cannot say, no, no, no, this document is not
+ signed. But of course, the strength of this signature is
+ questionable. So you can go to court and challenge, oh no, it was not
+ someone scanned my signature and put it on another document. But you
+ cannot say not valid a priori. So as you see, this is the largest set
+ of signatures. I have seen even very strange instruments. This is,
+ for example, not this, this could be a generator of electronic
+ signature. There is a patent covering the fact that there is a pen
+ recording the movement of your hand, something. One should write in
+ cache of all the movements that you have performed. To create the
+ text document. And there is a program that will permit to analyze the
+ text and see if that text matches that code, which is generated
+ uniquely by this pen, because each pen has a key in span. To me, that
+ is a signature by myself. That is a strange kind. So that's why at
+ European level, we decided to accept any technology. Not to restrict
+ ourselves to a specific technology. If you are good enough to create
+ something which is good, it will be accepted. Then eventually we can
+ describe if this pen is the same number and signatures. Over European
+ level, we have AES, which is not the encryption algorithm.
+ Unfortunately, there is a clash of definitions. This is advanced
+ electronic signature. And this is going closer to our normal digital
+ signature that we discussed in these courses. These requirements.
+ First of all, uniquely linked to the signatory group. Normally we
+ have public and private key, so it's uniquely linked. Capable of
+ identifying the signatory. What is that? How is that generated?
+ Public key certificate. Third, created the use again under his sole
+ control. Can you tell me? It's generic. He's not talking about a key.
+ He's talking about means. Smart card, smartphone. Some device, which
+ is mine and contains my private key. Linked to the data to which it
+ relates in such a manner that any subsequent change of the data is
+ detectable. How is that achieved? With hash. Our signatures contain
+ the hash of the document. So you see that by looking at this
+ definition. If we perform private key, an instrument that is under my
+ sole control, such as a smart card or a smartphone that contains the
+ key, then that is a valid advanced electronic signature. And you
+ could say, OK, that's all. Or no, in order to get to the next step of
+ signature, we need to introduce the thing that I mentioned yesterday
+ for ADAS. I told you that the certificates for the web servers in
+ ADAS should have a qualified TLS certificate. You say, what is that?
+ Here it is. A qualified certificate is a pass also. First of all, a
+ marker, but it is a qualified certificate, which will be identified
+ as such. Provision for a specific attribute to be included, if
+ relevant, depending on the purpose for which the certificate-- you
+ have something more. It's not only the normal certificate that has
+ key usage or extended key usage. It's the purpose. Is this a
+ certificate that permits you to buy something? Is this something that
+ permits you to assign a [INAUDIBLE] inside the document? Limit [AUDIO
+ OUT] --on the value only for [INAUDIBLE] And if you want limits on
+ the buying something, then you can put a limit. No more than 1,000
+ euro, for example. So you see, it's a series of extensions to add
+ more meaning to the certificate and don't permit it to be used in any
+ place. Now, when we have a qualified certificate, we define a
+ qualified electronic signature. But as you see, is the smaller set of
+ possible signatures. NIS is surely an ES. And QAS is surely an AS.
+ Because a qualified electronic signature, AS and B, created by a
+ secure signature created. If I have a certificate, I understand. But
+ it seems to me that it was already for AS. Do you agree or not? If we
+ go back here, create usually means the signature can maintain under
+ sole control. Is not the same thing? [INAUDIBLE] Is not such the fact
+ that if the device is secure or not. But the point, how is the
+ signature created? Involves two steps. Creating the hash, computing
+ the hash. When you use a smart card, which is equivalent, is the
+ document that you are signing inserted inside a smart card or inside
+ of the smartphone? Or rather, there is a computer displaying the
+ document, send it to the smart card, and encrypt this with your
+ private key? That is the issue. Here, you have no requirement. You
+ just say, OK, the private key, I'm maintaining that under my control.
+ Here, we have a more strict requirement. It's not only control, it's
+ the fact it's secure, in which you cannot have an attack. So you
+ receive the document, you generate the signal. It may be by a
+ computer that has been infected with malware, or someone changed the
+ hash in transit, and so on. So using a smart card, for example, but
+ perform autonomous [AUDIO OUT] your signature device. You need
+ something else. If you have really respected these requirements, then
+ this is an evidence in legal procedure with automatic value. So the
+ other points, the electronic signature and the advanced electronic
+ signatures, can be challenged in a trial. No, I don't trust you. I
+ don't trust this to be really your signature. You have to
+ demonstrate. If you have created a qualified electronic signature,
+ that is automatically valid, and it is the responsibility of the
+ attack. [AUDIO OUT] can demonstrate. You see the difference. This is
+ something about the advocates, the trials, lawyers, and so on. In one
+ case, you have, please demonstrate that it's good. In the other case,
+ is the lawyer not trusting you? Oh, no, no, I demonstrate that you
+ have not done the correct thing. So from the point of view of legal
+ effects, member state shall ensure that an electronic signature is
+ not denied legal effect in legal proceedings solely on-- so you
+ cannot say, oh, no, this is electronic. I don't want it. Not based
+ upon a qualified certificate, not based-- [AUDIO OUT] --based upon
+ qualified creditors. It means QES automatically valid, but the others
+ are not invalid. You cannot say, no, not valid because one of these
+ points. But those points can be challenged. Now, let me finish with
+ something from my experience. I started working in 1995 with PKI
+ Electronic Documents-- electronic signatures. And I've seen quite a
+ lot of things. One nice point is the difference in concept between an
+ electronic signature and an electronic document. One day, I [AUDIO
+ OUT] --helped a company [AUDIO OUT] --digital signatures. And he was
+ very happy and told me, oh, come, come, professor. He went to the PC,
+ inserted the smart card, opened a Word file, closed the Word file
+ that was named the document one, inserted the smart card, and signed
+ the document. Then opened another one and signed the file. They
+ asked, sorry, what are you doing? I'm creating pre-signed documents.
+ In the same way as I have paper documents, he showed me that in a
+ drawing, they have a piece of paper with a signature already in
+ place. So when he is away, the secretary can come and add the text,
+ which is automatically signed. No, sorry. With a digital signature,
+ that does not work. Does not work. I cannot change it. My time is not
+ useful. Problem when you want to apply. So we study theory,
+ techniques. But then you have to face real problems when you go to
+ the industry. And one problem is, how is the workflow working? So
+ that problem should be solved, for example, if the president cannot
+ really sign by delegation. You need to have some rules that say, when
+ the president is not present, the digital signature can be put by the
+ administrative delegates. [AUDIO OUT] So explaining here, I'm
+ explaining the parts. Otherwise, you will never be-- [AUDIO OUT]
+ --successful in applying these things. Then, do we have time? Yeah.
+ As I mentioned, the European Union created the definitions for what
+ is legally valid. And then they entrusted ETSI, the European
+ Telecommunication Standardization Institute, to define the standards
+ to implement [AUDIO OUT] --and to find the CADIS, CMS, Advanced
+ Electronic Signatures. And maybe you already know, otherwise I will
+ explain to you next week, that CMS is the standard IETF form of
+ PKCS7, generally by RSA. When it moved to IETF, it [AUDIO OUT] it
+ wasn't in PDF, or PKCS7 detached. So these are the standards, CMS and
+ enhanced security services. This is a raw signature format. So it
+ creates a binary signature to be put over a blob. CMS, CADIS, are
+ enveloping signature. They take a blob and wrap around with a
+ signature. Of course, there was the need also to evolve to
+ application-level formats. So signatures for PDF and signatures for
+ XML, that we will discuss in detail next week. So CADIS format is not
+ only one. The basic CADIS format is for electronic, but this is
+ actually digital. Because you see that what [AUDIO OUT] we put a
+ signature, which may cover also policy identifier. The policy
+ identifier is to decide for which purpose this signature was made.
+ But then we have EST. This is the same digital signature, a secure
+ timestamp, generated by timestamping authority, over the digital
+ signature. This is important, because in case the certificate is
+ revoked, then we know that this signature was created before
+ revocation. And so this is valid. But we need also another thing for
+ long-term archival. If we still get all of the CRL or CSP answers,
+ maybe not. So if you want a long-term archival, then you have [AUDIO
+ OUT] the ESNs of the complete-- not the value. It means that there is
+ a pointer to where you can get the CRL, or you can get a stored OCSP
+ answer. Because OCSP is only for [AUDIO OUT] now, OCSP, and you save
+ your archive along with the signature. And then there are the other
+ formats that are named Sx for extended. If the CA certificates may be
+ compromised, and we have seen in the PKI part that they have been
+ compromised, then the formats extended are suggested. ES6 timestamp
+ type 1 is an ESC. This is useful when OCSP is used, because if the
+ reference for revocation is an OCSP signature, you need-- [AUDIO OUT]
+ --the timestamp demonstrated, but that [AUDIO OUT] or ES6 timestamp
+ type 2 with the ESC, with the timestamp over just the references to
+ the certificates [AUDIO OUT] when the CRL is used. We are at the
+ European level. In order to perform interoperability, the European
+ Union has defined the trust service status list. That is, all the
+ certification authorities, but also other agents, such as OCSP
+ providers, timestamping authorities, be listed [AUDIO OUT] that
+ references national trust service provider. And for each provider, it
+ is mentioned what they [AUDIO OUT] --stamping, and so on. Then there
+ is the state of each ESP. This is a supervised. It means the
+ government of that country is checking normal operation. Suspended,
+ something bad happened, and so now it's no more operational. Revoked,
+ some very bad happened. And the history of the state-- [AUDIO OUT]
+ --because you need to [AUDIO OUT] that was not valid. Or we have the
+ difference between-- [AUDIO OUT] --ESP, but the government naturally
+ valid in a legal dispute. You can use whatever you want, accredited
+ or non-accredited. If you're accredited, it's more easy to make your
+ point in court. If you use non-accredited, you have to demonstrate.
+ The good is an XML list. You can use this TSL browser to visualize
+ that list and see the components. But if you want the raw list, you
+ can just download the list in XML format. After that initial work,
+ Etsy defined other formats. XADES, which is an advanced electronic
+ signature for XML [INAUDIBLE] that we will discuss next week. And
+ PADES, which is a tool with some additional things to add to a normal
+ PKCS7-detached signature to have different things, such as, for
+ example, incorporating XML in PDF or performing long-term validation.
+ Finally, there is also something very peculiar, because it's named
+ ESIC for Associated Signature Container. It's a container based on
+ the ZIP archive format to associate e-documents with detached
+ signatures. The detached signature can be CADES, RAW, or XADES. Can
+ be detached. Why is that important? Because in some cases, for
+ example, of the designer for building a house. It may be some
+ auto-click aid from the file department and so on. Quite a lot of
+ things. And when you submit it for approval by the CTO, ESIC, you put
+ everything that you want to be signed inside the ZIP. And then you
+ create a detached signature for that ZIP. So here, there is a
+ standard for building block and ESIC baseline containers, and the
+ other are other containers. So the ZIP, the ESIC, will contain the
+ ZIP and the signature kept together. One problem with electronic--
+ they can contain-- or if you are aware, but in PDF, you can write a
+ macro in JavaScript. OK, so when you open a document, you should be
+ very careful, because if the creator of the document executed on your
+ computer. So nice try. Now, let's imagine that I give you a document,
+ and I ask you, please, give me 10,000 euro. And tomorrow, I will give
+ it back to you. And in creating the document, I use one macro, which
+ inserts the current date. Because I have a prepared document. Now, I
+ take it, and I create a digital signature, 22, and I don't give you
+ back the money. Even if in the document, it's written that tomorrow,
+ I will give you the money. So you go to court, show the document to
+ the judge, and the judge has to decide. So here, you have a document
+ with May 21st. Now, you go to court tomorrow. The judge will check
+ the signature on May 22. Question-- when the judge will verify the
+ signature, the signature will appear to be valid or invalid? What?
+ Why valid? The date has changed. So it's valid or invalid? Why?
+ [AUDIO OUT] The finisher PDF, you remember, we transform everything
+ in bytecode and sign that, compute the hash. So the bytecode is the
+ JavaScript, for example, not the result of the execution of the
+ JavaScript. So that document will appear to be valid. Saying,
+ tomorrow, tomorrow, we'll give you the money, and the signature will
+ be perfectly valid. Macro is a very bad idea. Programs that compute
+ the value of the macro insert the value and cancel the macro. For
+ example, if I'm not wrong, the famous format PDF/A, which is required
+ when you deposit your thesis in the archive of the Polytechnical, is
+ one of them. If you put macros, those macros are canceled and
+ replaced by the value generated in the moment in which you deposit
+ it. There is a more general problem. And it's named, what you see is
+ what you sign. Because that was the problem, that you see one date,
+ but the document-- what about if I ask you to sign a document? And a
+ part of the document is on white background. Seeing it when you sign,
+ a nice trick, OK, that I can play when asking you to sign something.
+ So this is highly desirable, but it's not intrinsic of the signature.
+ It's a problem of the application developer-- the one that develop a
+ signature is not valid if you cannot demonstrate that you use the
+ data creating a valid, approved by the government, program for
+ creating these signatures. And they are checking the contrast of
+ color. They are checking the font size. Have you inserted some text
+ in font 1PT, for example? It is that this is the good and the bad
+ guys. Some countries say, we don't need it. Compare this to fine
+ prints and paper. And there is a very, very small notes. Well, if you
+ take that contract to court, that contract is not valid. If the text
+ is written too small-- OK, so in some place, from the technical point
+ of view, if you can then go to court to say, OK, it's evident that
+ this was a trick. But those are opinions. Final warning-- we use
+ software to create and verify signatures. But software is usually
+ buggy and no exception. For example, in 2003, Postecom, which is the
+ branch of Poste Italiane that is managing certificates and the
+ signature tool, named the Fierman Chifra 1.0, and the bug was that
+ this application accepted a root certificate that was inside the
+ PKCS7 document. So when I give a signed document, I give you the
+ document, the signature, and my certificate up to the root, I can
+ screw up this software. Because they accept everything up to the
+ root. They are not checking that the root CA is untrusted. They
+ accept it in the document. So I can create whatever I want. The
+ document is Integra-ARSAN, DLP NRS. This is the fiscal code of ARSAN.
+ And so on. The certificate is secure. Oh, sorry, there is no
+ revocation information. Yes, they did not have CRL 150 years ago. And
+ here is more detail. [AUDIO OUT] Country, France, notificator, you
+ see. They faked even the CA of Poste, because they created the CA
+ with the same name, but signed it by their own root authority. So it
+ seems that Postecom created a certificate for ARSAN UPEN. So it's
+ really a black page, OK? [AUDIO OUT] Now, you will get this thing.
+ The signature is valid, but the state-- [AUDIO OUT] --the certificate
+ of this, a valid certificate for-- now you have a break, and then
+ Andrea Zeni is already here, and he will entertain you with something
+ about electronic identity. Have a nice weekend, and see you
+ tomorrow-- [AUDIO OUT] --next week.

@@ -12,7 +12,9 @@ Secure electronic documents must satisfy the following properties:
     \item \textbf{Security:} Ensure data integrity and authenticity
       using a digital signature.
     \item \textbf{Readability:} Use an open format for content and
-      signature interpretation.
+      signature interpretation. This is crucial for long-term 
+      archival: for example, we are having issue reading the data of
+      the first Apollo mission.
     \item \textbf{Long-term Archival:} Ensure readability and
       verifiability over decades.
 \end{itemize}
@@ -41,21 +43,26 @@ Signed documents can take different formats:
 In most case, multiple signatures are needed, for example in an office
 there is typically a specific document workflow: an purchase order 
 may need to be validated and approved by different people, each of 
-which will sign the document.
+which will sign the document in sequence(see figure \ref{fig:parrallel
+signatures}). 
 
 In those scenarios, the signatures can be either parallel or
 sequential. In case of independent signature, each signature is applied
-to the original document, while in case of sequential signature, each 
-signature is applied to the previous signed document.
+to the original document, meaning that the order of the signature is
+irrelevant since each signature is indipendend from one another, while
+in case of sequential signature, each signature is applied to the
+previous signed document.
 \begin{figure}[H]
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{img/paralledl signatures.png}
+    \label{fig:parrallel signatures}
     \caption{Parallel signatures in a single document.}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{img/sequential signatures.png}
+    \label{fig:sequential signatures}
     \caption{Sequential signatures in a single document.}
   \end{subfigure}
 \end{figure}
@@ -64,11 +71,15 @@ signature is applied to the previous signed document.
 
 When a PDF needs to be signed, it is at first converted in a byte
 stream, while also reserving a specific place for the signature.
+This allows to embed any kind of file format (even a movie) in a pdf 
+file.
 
 The data to be signed is identified by two intervals:
 \begin{verbatim}
 /ByteRange[ offset1, length1, offset2, length2 ]
 \end{verbatim}
+This divides the document in two parts, both of which are for the data
+to allow the document to seem \textit{contiguous}.
 
 Then, a digest of the data(signature excluded) is compute, for example
 using sha-256, which is afterward encrypted with the signed private
@@ -76,11 +87,12 @@ key, via RSA-2048 for instance.
 
 The signature value is encoded as a PKCS\#7 detached signature, and
 the hex encoded signature value is inserted in the reserved space,
-along with the necessary padding(made up of zeroes).
+along with the necessary padding(made up of zeroes). This means that
+even if technically the signature is detached from the document, in 
+reality it is enveloped in the document.
 
-Logically, the signature is detached from the document, but in a pdf
-it is actually embedded in the document.
-
+If there's any leftover space in the reserved space, it is filled with 
+zeroes.
 
 \begin{figure}[H]
   \includegraphics[width=.6\textwidth]{img/pdf digital signature.png}
@@ -136,6 +148,12 @@ follows:
 DSA supports only SHA1 (by design) and can only be used in
 \texttt{adbe.pkcs7.detached}.
 
+\subsection{Adobe Acrobat multiple signatures}
+Since embedding another signature in the same document would require
+overwriting the existing signature, Adobe Acrobat supports multiple
+signature by associating them with incremental updates. This is
+intewresting because a PDF usually keeps a history of the changes made 
+to the document.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
   \centering
@@ -147,22 +165,47 @@ DSA supports only SHA1 (by design) and can only be used in
 
 \section{Electronic Signature (ES) and Advanced Electronic Signature
 (AES)}
+Electronic signatures are so important nowadays that the EU has
+decided to standardize their format(not how they are created).
 An ES is defined as:
 \begin{boxH}
     Data in electronic form, attached to or logically associated with
     other electronic data, serving as a method of authentication.
 \end{boxH}
+This definition is quite broad to allow for different implementations 
+and technologies.
 
 On the other hand, an AES satisfies additional requirements:
 \begin{itemize}
-    \item Uniquely linked to the signatory.
-    \item Capable of identifying the signatory.
-    \item Created under the signatory's sole control.
-    \item Detects any subsequent changes to the signed data.
+    \item Uniquely linked to the signatory, typically achieved by a
+      asymmetric key pair.
+    \item Capable of identifying the signatory, by using a public key
+      certificate.
+    \item Created under the signatory's sole control, by using a
+      device in possession of the signatory, like a smart card.
+    \item Detects any subsequent changes to the signed data, achieved
+      by hashing the data.
 \end{itemize}
 
 \section{Qualified Certificate (QC)}
+A Qualified Certificate (QC) is a PKC that certifies the identity of a
+person. It includes specific attributes and information to ensure its
+applicability for intended purposes. The main components of a QC are:
 
+\begin{itemize}
+    \item An explicit indication that it was issued as a Qualified
+      Certificate.
+    \item The name of the signatory or a pseudonym, clearly identified
+      as such.
+    \item Provision for specific attributes of the signatory, relevant
+      to the certificate's intended purpose.
+    \item Any limitations on the scope of the certificate, if
+      applicable.
+    \item Limits on the value of transactions, if applicable.
+\end{itemize}
+
+The QC is defined and profiled in \texttt{RFC-3739} under the
+IETF-PKIX framework.
 
 \subsection{Qualified Electronic Signature (QES)}
 A QES is:
@@ -171,6 +214,9 @@ A QES is:
     \item Created by a secure signature creation device.
     \item Legally equivalent to a handwritten signature.
 \end{itemize}
+
+Furthermore, notice that a QES is surely an AES, but the opposite is 
+not necessarily true.
 
 \begin{figure}[H]
   \centering
@@ -191,10 +237,11 @@ solely on the grounds that it is:
   \item not created by a secure signature-creation device
 \end{itemize}
 
+\section{ETSI Standards for electronic signature}
+The European Union created the definitions for what is legally valid,
+and then entrusted the ETSI to create the technical standards for the
+implementation of those definitions.
 
-\chapter{Standards for Electronic Signatures}
-
-\section{ETSI Standards}
 ETSI standards for electronic signatures include:
 \begin{itemize}
     \item \textbf{CAdES:} CMS Advanced Electronic Signatures.
