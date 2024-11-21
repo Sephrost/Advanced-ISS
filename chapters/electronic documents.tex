@@ -257,15 +257,43 @@ ETSI standards for electronic signatures include:
     \item \textbf{ES-X:} Extends ES-C with additional timestamps for enhanced validation.
 \end{itemize}
 
-\chapter{Trust and Validation}
 
 \section{Trust Service Status List (TSL)}
 TSL is a signed list containing Trust-Service Providers (TSPs) and their services. It tracks the state (e.g., supervised, suspended) and history of each TSP.
 
+\section{The "macro" problem}
+As previously explained, the content of the PDF to be signed is
+converted in a bytestream, and then signed. So if the bytecode is some
+javascript, the code itself will be signed, and not the result of the
+execution. This means that the signature will be valid even if the 
+code is malicious. An this is a problem, because in some case the
+macro will be evaluated and the macro code will be removed.
+
+For exaple the Politecnico thesis archive requires a PDF/A format,
+which is vulnerable to this kind of attack.
+
 \section{WYSIWYS}
-\textbf{What You See Is What You Sign (WYSIWYS)} ensures that the displayed document content is what is actually signed. It is a legal requirement in some jurisdictions, such as Austria.
+\textbf{What You See Is What You Sign (WYSIWYS)} ensures that the
+displayed document content is what is actually signed. 
+Think about very small clauses, or even the ones written with the same
+color of the background. In this situations, this is an highly
+desirable property, and it's not intrinsic to the digital signature 
+itself.
 
-\section{Final Warnings}
-Be cautious of software bugs. For example, an older version of the Postecom signature tool accepted invalid root certificates embedded within the PKCS\#7 signature.
+Since this is not technically achievable by a digital signature alone,
+from a legal standpoint, the signature may be considered invalid.
 
+\section{The magic of Poste Italiane}
+In the end, we use software to create a digital signatures, which is
+usually buggy as a result of the complexity of the task. 
+
+For example, in 2003, Postecom, which is the branch of Poste Italiane
+that is managing certificates and the signature tool, which at the
+time was \textit{Firma\&Cifra 1.0}, had a bug which accepted a root
+certificate that was inside the PKCS\#7 document, with no check about
+the root CA trustworthiness. This behaviour allowed for the creation
+of a valid certificate for \textit{Arsene Lupin}, by even using a fake
+root certificate for Poste Italiane, but at the time that
+didn't have a CRL available so the signature was valid but the
+verification was not.
 \end{document}
