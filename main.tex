@@ -17,6 +17,8 @@
 \usepackage{wrapfig}
 \usepackage{minted}
 \usepackage{tikz}
+\usepackage{enumitem}
+
 \usetikzlibrary{positioning, shapes.multipart, arrows.meta}
 
 \colorlet{LightGray}{White!90!Periwinkle}
@@ -93,6 +95,7 @@
 
 \tableofcontents
 \newpage
+\part{Theory}
 \input{chapters/tls.tex}
 \input{QA1.tex}
 \input{chapters/ssh.tex}
@@ -102,7 +105,8 @@
 \input{chapters/electronic identity.tex}
 \input{chapters/electronic documents.tex}
 \input{chapters/xml.tex}
-
+\part{Security Pills}
+\input{chapters/amd-sev.tex}
 
 
 \end{document}
