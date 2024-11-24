@@ -163,9 +163,28 @@ that is verified by the guest owner by compare the attestation report data again
 
 \subsubsection{Attestation guest measurement}
 
-$$ LD = hash( LD || Page || Metadata) $$
+$$LD = hash( LD || Page || Metadata)$$
 
-From the information we have is described more like a PCR extend then a real running hash
+The guest measurement is done by 3 main commands: \textit{Launch\_start}, \textit{Launch\_update} and \textit{Launch\_finish}. After the \textit{Launch\_finish} the attestation report is produced 
+(with the guest owner that have accept or reject the attestation). \\
+During the update... \textbf{\textit{Impossibile capire oltre, audio registrato male}} \bigskip
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/snp-update.png}
+        \caption{SNP\_LAUNCH\_UPDATE}
+        \label{fig:snp_update}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/snp-finish.png}
+        \caption{SNP\_LAUNCH\_FINISH}
+        \label{fig:snp_finish}
+    \end{minipage}
+\end{figure}
 
 
 \subsection{Att. Report Authenticity}
@@ -173,11 +192,14 @@ From the information we have is described more like a PCR extend then a real run
 The authenticity of the attestation report in the SEV-SNP architecture is ensured through the use of the Versioned Chip Endorsement Key (VCEK), and a new one is derived for each TCB SVN bump. \\
 
 The VCEK is derived from a mix of the TCB versioning and the Chip Unique Secret that is embedded in fuses in the PSP, and then signed by the AMD certificate chain (\textbf{KDS}). 
-To be more precise, VCEK is certificate by the AMD SEC VA, that at the same time is certificate by the AMD Root CA.
-
-\subsection{Att. Report Authenticity}
-
-graph.
+To be more precise, VCEK is certificate by the AMD SEC VA, that at the same time is certificate by the AMD Root CA. \\
+textbf{\textit{Impossibile capire oltre, audio registrato male}} 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/snp-attestation-authenticity.png}
+    \caption{SEV-SNP Attestation Report Authenticity}
+    \label{fig:snp_attestation_authenticity}
+\end{figure}
 
 \section{WeSee: Ahoi Attacks on SEV-SNP}
 
