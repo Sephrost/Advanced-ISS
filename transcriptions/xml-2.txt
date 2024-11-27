@@ -1,0 +1,325 @@
+ Let's now start considering the security requirements.
+ Confidentiality, of course, is not part of the signature standard, so
+ if you want confidentiality for an object protected with XML
+ signature, for example, by using XML, or we will have a look at the
+ XML encryption, but that is a different standard. Message
+ authentication and the creator authentication, because there is a key
+ MAC on there. Beware, be correct, but sign it, and the sender of the
+ object, because I may have created the object and he is sending that
+ on behalf of me. So the signature, the keys being used, is just
+ authenticating the creator and not the sender. If we want the sender
+ receiver authentication, of course, we need, for example, to have
+ Mutual TLS Client Authentication and not the signature, then we have
+ no assurance about the message creator. To guarantee that the signer
+ is also the sender, if you need that guarantee, we may use the same
+ X.509 certificate, which is an old standard, or SOAP TLS. So in
+ general, you should use the same and for signing as imported. In this
+ case, you can omit the key info element the one pointing to the key.
+ If inside the signature there is no explicit reference to the key
+ being used, it means that we are using the same key as the transport
+ level. Receiver may declare to have received the message multiple
+ times, even if it won't send to the message, so that we can easily
+ detect duplicate messages. Or a malicious receiver may forward sign a
+ message to a third party, which may claim the sender. Again, if you
+ want to protect against this kind of pass the message, the sender
+ should include information about the intended receiver for the signed
+ message. This message is for this destination. So these things are
+ useful when you use XML not as a document to be stored, but as part
+ of a network protocol. Countermeasures in general are the timestamp
+ and receiver in the signal. Now, just a bit of example part about XML
+ signature. So this is an example of a detached signature. We have the
+ signed info that is telling us the canonicalization used, let's say
+ SHA-1. The transform, we still use normal canonicalization. The
+ algorithm, SHA-1. And the value, OK? But the important point, this is
+ detached because reference is to an XML document. I may pinpoint here
+ that rather than using plain canonicalization, I could say transform
+ this, and then transform [INAUDIBLE] can use a subset of the
+ information present. Of course, if the external referenced object is
+ Word, JPEG, ZIP, whatever, explicable only when you are pointing to
+ an XML object. And then, of course, you have the signature value. And
+ since this signature was created with DSA, so it's an asymmetric
+ algorithm, we need also to have the key info. And the key info is
+ X.509 data, X.509 certificate, 64 encoding of the DER of the
+ certificate. So this is telling you [INAUDIBLE] is the creator of
+ this [INAUDIBLE] XML signature. Now let's go to XML encryption. We
+ will start [INAUDIBLE] a bit of [INAUDIBLE] is much simpler than
+ signature. XML encryption is a standard to represent encrypted data
+ and also specifies the procedure to encrypt and decrypt those data.
+ The original recommendation is 2002. Nowadays, we should always use
+ the 1.1, which is 2013. The [INAUDIBLE] here is not in computing the
+ signature, but is in deciding which part of [INAUDIBLE].. So we can
+ have four different encryption [INAUDIBLE] element, or a whole XML
+ document, or an encrypted data, or encrypting an encrypted object.
+ And this is named super encryption. The result of any of these
+ operations is always an XML encryption element, which may contain the
+ encrypted data. I would stress this second point. If the object is
+ very big, for example, you have encrypted [INAUDIBLE] and then you
+ have an XML object that declares [INAUDIBLE] so it's not necessary
+ that the data are contained in the encryption. So that is the
+ reference. OK. Now let's see the syntax and then the example.
+ Encrypted type is representing the abstract [AUDIO OUT] type, and
+ maybe [INAUDIBLE] according to it. Of course, for example, encrypted
+ key would be very useful when you have computed [AUDIO OUT] the MAC
+ key for verifying the MAC with one individual. So you can encrypt
+ that key with the public key of the receiver. The algorithm for
+ encryption that you use is the DSKINFO, is information about the key
+ [AUDIO OUT] used for encryption. Concept [AUDIO OUT] is a key for
+ encryption. So it should have [AUDIO OUT] that element for a
+ signature. Let's reuse it. Thanks to the fact that key info [AUDIO
+ OUT] what they call digital signature is notation of any
+ cryptographic key, symmetric or asymmetric. And then we have cipher
+ data that contains the cipher value, encrypted data [AUDIO OUT] is a
+ 64 cipher reference [AUDIO OUT] So in that case, this is a point
+ [AUDIO OUT] to the encrypted data. Encryption properties [AUDIO OUT]
+ of the encrypted type. [AUDIO OUT] ID is just optional if you need to
+ reference this. Type, optional, specification of the document if it
+ is an XML element or the content of an element. And also optional,
+ MIME type [AUDIO OUT] which is the MIME, especially useful for
+ external data. Because you could declare, yes, I've encrypted this
+ data, and I have a MIME type application slash zip. So once you will
+ decrypt, you will get a zip. [AUDIO OUT] 1.0 where this one, triple
+ S, of course, deprecated nowadays, AS in CBC, for key transfer, AEP,
+ for key wrap, triple S, AS in key wrap mode. For the [AUDIO OUT] just
+ also here. And if you want to have authentication, XML desync that we
+ already studied. In version 1.1-- oh, yeah, there is this wrong
+ characters. [AUDIO OUT] Compulsory ones, and optionally, you can have
+ also the intermediate key size. But most important, you may have
+ authenticated encryption. [AUDIO OUT] For key derivation, they do not
+ use one of those standards that we have seen, but they have created a
+ new key derivation for [AUDIO OUT] function, which is named the
+ CONCT, the standard, PBKDF2. For key transporter agreement, either
+ RSA or Elliptic Curve Diffie-Hellman. Key wrap, we have already seen.
+ Preferred, but you may also use longer digest and-- [AUDIO OUT] Even
+ the old-- let's have a look at the encryption with some examples.
+ [AUDIO OUT] XML payment info with a certain namespace. [AUDIO OUT]
+ And that, the credit card with some parameters, meters, the currency,
+ then the number of the credit card, the issuer, the expiration. And
+ now the credit card is detailed, and the payment info is also over.
+ So we can encrypt one element. So for example, the credit card, which
+ is the most sensitive part, I've taken the whole credit card XML
+ object, so number, issuer, and expiration. And I have a name. I have
+ an encrypted data. With encryption type, I've encrypted one element.
+ And then directly, the cipher data. [AUDIO OUT] And the cipher. Of
+ course, algorithm, the keys, and so on. They are not too detailed. So
+ the XML is being encrypted. [AUDIO OUT] Or you can [AUDIO OUT] the
+ credit card. The most sensitive one, the credit card number. And so
+ here, we have name. The credit card is spelled out clearly. [AUDIO
+ OUT] Number, uh-oh. Number, in this case, the type is content. I'm
+ not increment. And so now I have the cipher data. But if you decrypt
+ this part, you will just get the number. All the rest is in-- [AUDIO
+ OUT] --clear, including the issuer, for object. So now you have XML
+ document that contains encrypted data. In this case, you specify the
+ MIME type text XML, because once you will decrypt, you will get an
+ XML object. In this case, the type is just XML encryption. Nothing to
+ say, because it's not an element, a content. Of course, it's a whole
+ document. So there is no specific doc, for example, or document. You
+ just don't put anything. And then you have encrypted data, but in
+ payment info XML object. [AUDIO OUT] Now, let's give this. This is an
+ example for encryption with a symmetric S, just with-- [AUDIO OUT]
+ --the whole document, just with a crypt. It's XML. [AUDIO OUT] It's
+ the whole document. We tell explicitly, algorithm, triple desk, CBC.
+ Key info, there are various ways to specify a key. And in this case,
+ I can use key name. So this is a reference, Alice Bob, to a key
+ management system, KMS, which is external. [AUDIO OUT] And which is
+ protected, which maintains a document handling system that requires
+ signatures or encryption. To have a KMS to store all the keys that
+ are needed for-- [AUDIO OUT] --managing the documents. OK, this is
+ the key that can permit a decryption. And then, of course, you have
+ the cipher data here. And now, we move to something different. [AUDIO
+ OUT] And specifically, the same things, but done on JSON. [AUDIO OUT]
+ So the standard hand encryption for JSON is named COSET, JSON
+ Signature Hand Encryption. So why we are looking at this? Well, you
+ already have the answer. JSON is now the predominant data format in
+ web applications, including smartphone applications, mobile
+ applications. The reason, basically, is that XML is very flexible,
+ but very verbose, and-- [AUDIO OUT] --very heavy to be-- [AUDIO OUT]
+ --and can also be implemented internet of things and other system--
+ [AUDIO OUT] --and mobile ones. So there is a clear need in the
+ standard which uses JSON and provides-- [AUDIO OUT] --security
+ tokens, signatures, encryption, and public keys. And that is the
+ purpose. There are four standards in this family. JSON Web Token--
+ for example, the privacy pass tokens could be in JWT format. But then
+ if you wanted to have a token which is signed, you have JSON Web
+ Signature, JSON Web Encryption, and JSON Web-- [AUDIO OUT] --design
+ philosophy to make complex things possible-- [AUDIO OUT] --although
+ not so simple. This-- [AUDIO OUT] --design. All modern web de--
+ [AUDIO OUT] --more compact-- [AUDIO OUT] --safe representation.
+ Because you should remember that data may be passed between web
+ systems-- [AUDIO OUT] --with the post-- [AUDIO OUT] --the message,
+ and you have no limitation. But they can also pass it through the get
+ with a parameter after the question mark. And in that case, they
+ become part of the URL. But the URLs cannot contain any kind of
+ character. So that is URL safe. Because we don't know if the
+ application using COSE will put them in the body or in the URL. COSE
+ is quite important, because Google, Facebook, American Online--
+ [AUDIO OUT] --and [AUDIO OUT] everybody in JSON nowadays. And they
+ have adopted COSE. This is the list of the RFCs that are-- [AUDIO
+ OUT] --documented with respect to what we described before. We have
+ also JSON Web Algorithm to give the names of the supported
+ algorithms. With some of the best-- [AUDIO OUT] --and practices,
+ because, yes, they are making things simple. But you will see that we
+ have so many options, then interoperability is at risk. And that is
+ why we create-- [AUDIO OUT] --the profiles best to use this standard.
+ And then example using JSON. Also, the fact that you have an-- [AUDIO
+ OUT] --an RFC for showing us if we need examples. Let's start with
+ JSON Web Signature. Sign Arbitrary Representation. And again, also
+ here, Signature is, in the most ample sense, a true digital signature
+ or, for example, an HMAC. Representation of a JSON Web Signature
+ contains three parts-- the header, the actual payload being
+ protected, and the signature itself. [AUDIO OUT] As compact
+ serialization, parts are Base64 URL-- [AUDIO OUT] --encoded and--
+ [AUDIO OUT] Then you have the character dot, the payload in Base64
+ URL, dot, and the signature according to the same Base64 URL encoded.
+ So this is compact, and here is URL safe, including the glue
+ character, the dot. But this has one disadvantage. In this case, if
+ you have this compact serialization, you may have only one signature
+ on the same JSON object. So we need to understand that this Base64
+ URL, because that is not the normal Base64. So the reference is to
+ that RFC-- [AUDIO OUT] --which is the Base64 data encodings. Base64
+ encodes six bits at a time. So they are all uppercase and lowercase
+ digits, and plus and minus, and uses the character equal for padding.
+ So if the input data is not a multiple of six bits, you will put one
+ or two equals to make it a multiple of six bits. This is not URL
+ safe. Why? The slash is surely one, but also the plus. In the text
+ that you pass as a parameter, the blanks are replaced with plus.
+ [AUDIO OUT] So we need Base64 URL, which is-- [AUDIO OUT] --is mostly
+ based-- [AUDIO OUT] --use minus and underline. Instead of-- [AUDIO
+ OUT] --is that we don't do any padding. [AUDIO OUT] So even if the
+ input is a truncate to that, and you understand that there are
+ missing parts, no problem. This is URL safe. [AUDIO OUT] So this is
+ the conversion table for Base64, just if you want to know. And this
+ is an example. Of course, using the OpenSSL ENC command for encoding
+ and decoding, you can have basic-- [AUDIO OUT] So string che, and
+ then you say, knowing encryption algorithm, minus A is Base64, and
+ the output is the following one. Because C has got this hash code,
+ the apostrophe is 27, and the accented E is E8. Then binary. We group
+ by six bits. OK. And the following-- now I encode them. 16, 50, 30
+ label, you will see that 16 is Q, Y, F, O. And this is the basics--
+ [AUDIO OUT] --before encoding. We've got Y, F, O, and we perform
+ decrypt. And then we perform octal dump in-- [AUDIO OUT]
+ --interpreting each character exactly 43, 27, E8. So this is-- [AUDIO
+ OUT] --going back and forth to-- I've got a JSON object. For example,
+ this family name, Lioi, given name, Antonio. And the classical
+ browser JSON object. And I pipe that to OpenSSL and minus A. Please
+ note the echo minus N, because otherwise, echo is always outputting
+ that, followed by a line feed. So the line is completed. We get this
+ result. And you note that here, we are padding. [AUDIO OUT] We want
+ base64 URL. We give the same string. OpenSSL anchor, but-- [AUDIO
+ OUT] Now we need to replace. So we should say, please translate.
+ Delete if-- [AUDIO OUT] --there is any equal character. We don't want
+ padding. And if you find a plus-- [AUDIO OUT] --put a minus, put an
+ undef one. But there is no padding in the end. So which other
+ parameters are possible? ALG, which gives the signature. So it's
+ compulsive. JKU is the URL for JSON web key. So you may point to the
+ key. X5T is the base64 URL encoded. Show one thumbprint of the deck
+ of the x5-- [AUDIO OUT] --for x509. Also compute that, but if you
+ specify sharp S200, which sharp-- [AUDIO OUT] --256. X5C, on the
+ contrary, is directly their encoding of the signature certificate or
+ a JSON array if the certificate chain is provided. X5U is a URL to
+ which you can go to get the PEM-encoded signature certificate or
+ chain in case there is-- [AUDIO OUT] --is a chain, you get this. And
+ then, as usual, that is a key identifier. [AUDIO OUT] Type-- [AUDIO
+ OUT] --strong risk and perform an attack against the DNS and reroute
+ your data to another part. And if it is not integrity protected, I
+ can modify the data in transit. So basically, if you always use HTTPS
+ in any URL in JSON, you satisfy this requirement. Identifiers used
+ for Java-- compact alga identifiers require-- [AUDIO OUT] --to
+ support none, no signature for it to them. H is the-- [AUDIO OUT]
+ --RSA, which is ECDSA-256. You see, these first two are-- [AUDIO OUT]
+ --acquired, everybody. This is a recommended. This is strongly
+ recommended. Recommended plus. Other algorithms and hash size, of
+ course, may also be used. If you want to have a look, go there. And
+ you have this. Because other algorithms and hash size-- [AUDIO OUT]
+ --may be used, but they must be defined, of course, for
+ interoperability. One example-- [AUDIO OUT] --example of a-- [AUDIO
+ OUT] --that the JSON at the end of the-- [AUDIO OUT] --line that is--
+ and that must be considered, for example, when computing a signature.
+ [AUDIO OUT] So an object is a representative just, for example, with
+ backslash n. When you transmit or compute the signature, you must put
+ CRR line feed. So in this-- [AUDIO OUT] --example, there is a CRR
+ line feed here, here, here, but not after the closing bracket. [AUDIO
+ OUT] The closing bracket after that. So the base64 encoded header has
+ got this value. [AUDIO OUT] I would QUN compute if this is-- if this
+ of this. Know how to do that. One example of payload, this is
+ representing a Java web token. Also in this case, CRR line feed at
+ the end of each line, but the last one. So issuer, Politecnico di
+ Torino, expiration in this date and time. And the token is saying
+ that with the reference to the isProfessional attribute, the response
+ is true. And this is the base64 URL encoded payload with a line break
+ here just to-- [AUDIO OUT] --one string, OK? It has 255 characters.
+ This is less than 255. So we can pass this payload as a parameter in
+ the URL. [AUDIO OUT] Again, and try to compute yourself the base64
+ URL. [AUDIO OUT] If we want to generate one WC Java web-- [AUDIO OUT]
+ --signature, both the header and the payload. [AUDIO OUT] The site--
+ [AUDIO OUT] --input to the hash algorithm for the-- [AUDIO OUT]
+ --putation of the payload. You first encode them in base64 URL, but
+ you just put-- [AUDIO OUT] --period among that. Enables-- [AUDIO OUT]
+ The generated signature is binary, of course. [AUDIO OUT] And that--
+ and it is-- [AUDIO OUT] --appended to the signing input after another
+ period. So example of a signing input. Again, line break, only for
+ readability. So this is the header, and this is the payload to be
+ signed, separated by dot. Four lines, but this is just one very long
+ line. [AUDIO OUT] The signature itself is-- [AUDIO OUT] --base64 URL
+ encoded keys. We have a JSON representation for asymmetric private--
+ [AUDIO OUT] --that I'm public keys. Clear that with a key type,
+ strongly recommended. You must support for backward compatibility
+ RSA. You may declare, and you must support, octet string. [AUDIO OUT]
+ So I got P, which I don't remember what is that, and we will have to
+ look. Or you reference a key with a key identifier. Then there are
+ various parameters, depending on the key type and the algorithm. If,
+ for example, you specify RSA, then you must specify the parameters N
+ for the modulus and E for the exponent. For AS, you just specify the
+ parameter key, which is the key value. [AUDIO OUT] The key type,
+ octet-- [AUDIO OUT] --because we are the value of the key. And the
+ key is a RSA public key, so key type, RSA, the modulus. [AUDIO OUT]
+ Base64 is this one. The exponent is this one. And we say, OK, this is
+ the key identifier. This is the public key. This is explicative of
+ this user in the year 2020, for example. For the encryption part, we
+ have encryption of using JSON-- [AUDIO OUT] The representative parts,
+ header, encrypted key, and ciphertext. [AUDIO OUT] With two possible
+ representation to what we have seen for the signature or the JSON
+ serialization. So header algorithm. [AUDIO OUT] In this case,
+ encryption algorithm for content encryption key protection. So there
+ are two keys, one for protecting the content, and it's named C-E-K,
+ content encryption key. And there is another key to encrypt this one
+ for the destination. ANK is the content encryption algorithm. And
+ various key parameters may have a pointer to the URL, the thumbprint,
+ the certificate. [AUDIO OUT] We said compact or JSON serialization.
+ [AUDIO OUT] For compact for URL encoded and concatenated, separated
+ by period. But now we have more pieces. Because we have the header,
+ dot, the encrypted key, base64 URL, dot, the initialization vector,
+ if any needed, the ciphertext encrypted, and an authentication tag in
+ case we get an encryption. So this is compact and URL safe. Only one
+ recipient. We have only one encrypted C-E-K. We cannot have one
+ destination. There are no unprotected headers and no associated data.
+ [AUDIO OUT] In case, then, various members at the top level, which
+ may then have other elements inside. Protected are the headers that
+ are inherently protected. Unprotected are other headers which are not
+ protected. IV, AAD, Additional Authenticated Data, in case you are
+ using AAD. Ciphertext, the content, tag, the authentication tag. And
+ in this case, you may have multiple recipients. Object to identify
+ each recipient encrypted with the public key of the destination.
+ Algorithm, or the most basic definition, is the fact that the first
+ one is for one recipient. Here is an example. Protected, this part.
+ Unprotected, just the declaration of the URL where I can get the
+ keys. Recipients, now we have an array of recipients. First recipient
+ as header, specifying that the key [AUDIO OUT] Key is encrypted with
+ this public key pointed. Here is another one. [AUDIO OUT] We have
+ user, in this case, identifier number 7. And again, the encrypted key
+ is here. The array is finished, so that we have two recipients for
+ this encrypted message. The initialization vector is the following
+ you need. The tag, since we probably use the authenticated
+ encryption, is this one. And the object is finished. And where is
+ that? It's this one. This part is protected. Encryption is performed
+ with the HMAC shot 156. Initialization vector is the following one.
+ Of course, you can decode it directly from here. OK, that's all. We
+ have three cases. [AUDIO OUT] Signature and encryption, we use it on
+ the basis. And the JSON part, which is more for the mobile and
+ embedded systems work. But great. Otherwise, remember, next week, you
+ have a lecture of social engineering afterwards. But in two weeks,
+ I'm away for two weeks. So you will have social engineering for two
+ weeks, a message. On the contrary, you have this week that I will
+ publish on Sunday. It's about trusted execution as a key for you to
+ perform the exercises. OK, have a nice weekend.
+ [AUDIO OUT]
+ [BLANK_AUDIO]
