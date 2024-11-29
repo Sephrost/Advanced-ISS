@@ -1,0 +1,375 @@
+ Okay, so in the last lecture, we talked about electronic documents,
+ secure electronic documents, and we mentioned the fact that the
+ biggest security part is the signature, because confidentiality can
+ always be added, but signature is something very relevant for an
+ electronic document. So today we are studying the most used formats
+ for creating a signature, apart from the PDF1, but we said that the
+ PDF is using PKCS7 signature. So today we will explain also how that
+ signature is created. So row or XML-oriented digital signature,
+ because that is not equivalent. We will see that creating a digital
+ signature for XML data requires some caution. It's not just like
+ signing a binary blob. So let me start first with row signature, and
+ we will talk also a bit about encryption, which originally was PKCS7,
+ and then RSA gave that standard to IETF, and that was renamed to CMS.
+ So CMS nowadays is cryptographic message syntax. Okay, so PKCS is the
+ RSA standard that stopped at point version 1.5. All versions after
+ that are no more named PKCS7, but they are named CMS. This format is
+ for data authentication, data integrity, and optionally, privacy. The
+ important point is that we can use symmetric or asymmetric
+ algorithms. In that sense, I don't call this only a standard for
+ signature, because for me, digital signature is only when you use
+ asymmetric. It supports multiple signatures that can be of type
+ hierarchical or parallel. So this standard supports both models that
+ we studied in the last lecture on the same object, and for archival
+ purposes and verification later in time, it can include the
+ certificates in the signature and also the revocation info, so that
+ you have a self-contained object, because it's, as we will see, it's
+ an enveloping signature that contains the signed object, the
+ signatures, and everything which is needed to verify if the signature
+ is good or not. In any case, this is raw signature, so there is no
+ knowledge about the data. The data is just a binary blob, a binary
+ group of bits, and I'm signing that, or I'm encrypting that, I'm
+ manipulating that, and this is a recursive format. So inside the
+ PKCS7 or CMS object, you can have another CMS object, that is, for
+ example, the way in which we implement a hierarchical signature.
+ Syntax is based on ISN1-BAR basic encoding rule, which is different
+ from DER, which is the encoding for certificates, x509 certificates.
+ DER is used only for signed attributes and authenticated attributes,
+ because those are the same that would appear in a x509 certificate,
+ so for compatibility we use the same encoding. CMS is going a longer
+ way. June '99, this was the first version published compatible with
+ PKCS7 1.5. After that, we went for another path. This added basically
+ to the basic PKCS7 key agreement and the usage of pre-shared keys
+ external to the package itself. August 2002, password-based keys and
+ an extension schema for generic key management. When you apply these
+ formats in a company, you have a big management problem. How do I
+ store the keys? I do remember that this is the key needed for decrypt
+ or verify the signature. So for signature verification, you have the
+ public key certificate, but if you have encryption, you need a key
+ management system external that maps the various encrypted documents
+ with available keys, and so generic key management is important. And
+ algorithms are now specified in a distinct RFC, so you have one RFC
+ that documents the format and another one for the algorithms. July
+ 2004, extension to support generic certificates and not only x509,
+ and September 2009, clarification about multiple signatures.
+ Algorithms, they are defined in RFC 3370. As base algorithm, we have
+ quite classical things. You see, not particularly modern. Of course,
+ we have added a lot of extensions to that and you can see that now we
+ can use actually very good algorithms such as AES. You can note the
+ interest also from the Soviet Union. GOST is the encryption and the
+ hashing algorithm used in Russia. Authenticated encryption has been
+ added. We have something that we don't have the time to speak about,
+ but are an interesting research topic, which is identity-based
+ encryption, in which the private and public key are derived from the
+ identity of an object. It can be a human, can be a network address.
+ It's a wide area, not yet used because it's quite complex. Elliptic
+ curve, chateau, and key transport in various ways. Okay, now for the
+ structure of PKCS7 or CMS. Basically, we have one element, which is a
+ content info, that contains inside it two fields. One is the content
+ type and the other the real content. So, this is how encapsulation
+ works because this content could be another content info object and
+ that you have a recursion. So, the content types that are supported
+ by CMS are plain data, encoding of a generic sequence of bytes. That
+ is, for example, when you want to incorporate a document. You have a
+ word file and you insert inside CMS as a data object. Or you can have
+ signed data, which uses this object data, plus it provides n, minimum
+ one, parallel digital signatures. So, all the signatures are computed
+ over the same data, no specific order for the signatures. You can
+ have enveloped data, in which the data are encrypted with a symmetric
+ algorithm and then the key used for encryption is also stored inside
+ the object, encrypted for all the recipients. So, the key is
+ encrypted with the public key of those persons that are allowed to
+ decrypt. And you can have multiple people that can decrypt the data.
+ You can have authenticated data. The data, a MAC computed with one of
+ the supported algorithms, for example, HMAC SHA-256, and then again
+ the symmetric key needed to verify that MAC, encrypted for the
+ recipients. So, the target is being a self-contained format. You can
+ have digested data, in which you have data plus a digest. But that is
+ plain digest, just a hash value, so not a MAC. You will need some
+ other kind of protection for that. Or you can have encrypted data,
+ which are data encrypted with the symmetric algorithm. And so, again,
+ no specification where the keys are stored. So, this is rather basic.
+ These are more self-contained. Let's start with signed data. The
+ signed data CMS object has a content that is composed by several
+ fields. First of all, version, which is not the CMS version. It's the
+ version of this object. So, across various CMS versions, you can
+ evolve one object without touching the others. Then, since it is
+ signed, here you have the list of the digest algorithm. And here you
+ have the information about the content that has been encapsulated.
+ Then, optional, square bracket, the certificates that are needed to
+ verify the signature can be just one of the signers, can be the whole
+ chain up to a root CA, or excluded the root CA, but everything which
+ is needed according to your preference. And, optionally, the CRLs.
+ Again, you may have one or you may have one CRL for each public key
+ certificate, which is in the same, in the chain. Then, you have
+ multiple signer info block, because, as we said, this is supporting
+ parallel signatures by different individuals. As a minimum, you have
+ one. And each signer info has got its own version. Then, it has got
+ an identifier of a certificate, so it does not have the certificates.
+ The certificates, if present, they are here. Otherwise, you should
+ get them by yourself. And each certificate is identified in the
+ following way. The distinguishing name of the issuer, the CA, and the
+ serial number of the certificate. So, if the certificates are not
+ here, you can use this as a pointer. You need to know where you find
+ the repository for this CA and then query for this specific
+ certificate. And then, here, you have the encrypted digest that you
+ can verify with the public key associated to this certificate. Okay,
+ it's important that the digest algorithm - why plural and not
+ singular? Yeah, there are different individuals. I have created a
+ hash with SHA-256 and he created one with SHA-512. So, I want to have
+ the list. Maybe this is just one. Okay, and it's important that this
+ is here, declared immediately, so that you know what to expect. Of
+ course, after that, you must have the data itself, which are not
+ present here. The enveloped data, on the contrary, provides
+ encryption. Enveloped data has got a content with a version number
+ related to enveloped data, and then an encrypted content info. In
+ this case, the data are placed inside this object. Content type, to
+ give you a hint, encryption algorithm used and encrypted content. You
+ note that there is just one. You cannot encrypt with different
+ algorithms. You can sign with different algorithms, but for
+ encryption, you decide one way of encryption. The thing that can be
+ in multiple cases is recipient info. Recipient info should be
+ decryptor info, because it's not that I'm sending this. This is the
+ information, if you want, to decrypt. Version, public key
+ certificate. This is to identify the person or the actor which can
+ decrypt the data. Encryption algorithm, which is not the encryption
+ algorithm for the content. It's the encryption algorithm for the key.
+ So, this key, which is not mentioned here, this is the encryption
+ key. This is the algorithm to encrypt it that must correspond to the
+ public key present in this certificate. So, you can have several of
+ them to permit different persons to decrypt that data. Of course, you
+ should have at least one. Okay. Okay, I would say that I will not
+ make the break. I will stop 10 minutes before, so that you have a bit
+ of break before Atseni is coming for the second part. So, as you can
+ see, CMS is very basic, okay, but it provides one question. If I want
+ to have a document which is signed and encrypted, I cannot do with
+ CMS, because there is no format for supporting signed and encrypted.
+ Yes, we said it's recursive. You decide the order. You may have first
+ encrypted and then use that as a data, and you place it as a signed
+ data, or vice versa. You first sign and then encrypt, but CMS is
+ recursive. You can place a CMS object inside another CMS object,
+ okay. XML signature. Why are they so peculiar? So, the problem is,
+ okay, my presentation is divided in four parts. Let me start with the
+ introduction. First of all, this is XML signature according to the
+ international standard by the World Wide Web Consortium, jointly with
+ IETF. So, at least we don't have two standards. The web world and the
+ internet world have agreed. The purpose is to protect XML data with a
+ MAC or a digital signature, and that is what I don't like. They call
+ signature something which is not a real digital signature, but it's
+ just a MAC. So, be warned if someone is telling you, oh, this is
+ protected with the XML signature, don't assume to be signed with the
+ public private key. It could just be a MAC. They are doing that for
+ speed, okay. If I don't need a non-repudiation, I can just use a MAC.
+ With respect to the signed data, it provides, of course,
+ authentication and integrity because we have both of them, but we
+ have no repudiation only if the signature is performed with a
+ symmetric crypto and is associated with a sub-public and
+ non-certificate. It is not sufficient to have public and private. You
+ need also recognition of the key, such as given by a certificate. The
+ standard provides format for the signature format itself, but also
+ the procedures to verify and create the signature, because that is
+ quite complex. Anyway, this is independent of the network part, so
+ you can then can transport this with any protocol or any storage
+ techniques, just defining the data format. So, first edition was in
+ 2002 and it's published both as W3C standard or RFC. The most recent
+ edition of version 1 is published only on the World Web Consortium.
+ The second edition, which is much better and is the one that we
+ normally use nowadays, is back to 2015 and has not been changed
+ afterwards, because once there was a lot of hype on XML data, now we
+ are moving a bit away from that and going, for example, to JSON,
+ which is the topic of the next talk that I will give tomorrow. So, in
+ order to define a lot of things that are needed for XML signature, we
+ first of all define typically a namespace. The namespace is named
+ dsig and is providing entries to this base urn. So, for example, if
+ we declare that this is a signature, inside the namespace dsig and
+ the identifier is my signature, so it is a shorthand, otherwise I
+ should put always this string. So, this is just an abbreviation since
+ XML is very verbose. So, the specific identifiers can be found at
+ that page and, as I said, this is an abbreviation. General
+ characteristics. The signed object may be internal, so be there with
+ the signature itself, or can be external. Since this is our standard
+ for the web, external can only be referenced by a URI, but you know
+ that the URI can also be file column, so you can even point to a
+ local disk, even if that is a bit risky if you move it around. And it
+ can be a native object, so something in XML, but XML signature can
+ also be referring to non-XML data. So, in some sense, it's doing
+ something similar to pkcs7, that is incorporating some blob and
+ wrapping around with an XML signature. The main difference with that
+ signature of CMS is that here we have explicit semantics for the
+ signature, and we say that this is just a signed object, and you
+ decide what that does that mean, co-signed multiple parallel
+ signatures, witnessed. So, I'm signing this not because I created,
+ not because I trust, but I'm just a witness that this existed at this
+ point in time when they gave it to me. So, I don't take no
+ responsibility, I'm just a witness. Or notarized, which is much
+ stronger, because a notary is not only saying this document existed
+ at this point of time, but the notary is also checking the identity
+ of the signer, the free will of the signers, and so on. So, there are
+ a lot of legal implications when the document is notarized. The
+ standard does not address in any way key creation and key
+ certification that is external to the standard. So, signature types.
+ We have already seen the general schema, here we just remember that
+ we can have an enveloping signature in which an XML contains inside
+ an XML object, which can also be raw data, binary data. We can create
+ also an enveloped signature, because there is the option for XML to
+ reserve a space for the signature itself, and in that case also the
+ data can be binary, because we have that option. And finally, there
+ is the detached signature, but in this case you have the URI
+ pointing. This is a bit wrong in the sense that compulsory is the
+ pointer from the signature to the object. It's upon the creator of
+ the object to decide if they have also a back pointer from the object
+ to the signature. Okay, it can also be in the MAC. Yes, go back to
+ the slide. It can be created by a MAC or by a digital signature, and
+ only if you create with the digital signature and this 509
+ certificate, you may have no repudiation. Okay, but the structure
+ does not change. That signature, improperly called signature, could
+ be just a MAC here. Okay, the big problem in signing XML is that
+ there are equivalent forms for the same data, and so we need to
+ canonicalize the data before creating the signature, because our
+ purpose is to have the same signature for two documents that are
+ logically equivalent, but they may have different text. For example,
+ if there is an empty tag, is that meaningful? No, it's empty, so I
+ could remove it. Or line delimiters, or hexadecimal values, order of
+ the attributes, structure. There are several things that in the end
+ give you the same result, but the XML text is different. So here we
+ say I don't care about the differences. If logically they are
+ equivalent, they must give the same signature. So these are examples
+ of equivalent XML objects. Person, id, 1, 2, 3, 4, name Antonio, and
+ this is finished. Or just a different order of the attributes. It's
+ equivalent. Or explicit closure tag, rather than implicit. These, for
+ the signature, are all equivalent and they must generate the same
+ signature. So this is a very strong requirement, compared to a
+ signature on a binary object, in which the bytes must be exactly
+ there, in that order. Is that clear? I see faces. No, no, no. If I
+ create a signature for this, the signature must be equal to the
+ signature for this, and must be equal to the signature for this.
+ Okay, that is a very strong requirement, because we are signing the
+ concept, the idea, and not the real text. The point is, if you
+ represent this as a graph, they are all the same graph. There is one
+ object, named the person, that has got two attributes. One is id,
+ with the value 1, 2, 3, 4, and the other is the name attribute with
+ that value Antonio. Same object. Three different text
+ representations, but the idea is the same. And we want the same
+ signature. And that's a problem, because if we compute the hash of
+ these three strings, we get a different hash. Okay? Yes. Yes. Yes.
+ I'm presenting the problem now. So, if you compute directly a normal
+ digital signature on a MAC over that, you will get different results.
+ But the requirement is no. Why? Because when you import XML on a
+ system, each system has their preferences. So, some systems prefer
+ implicit closure tag. Some systems say, no, I want explicit. And when
+ they receive an XML, they transform it to the local format, because
+ they have an XML processor which wants that format. And we don't want
+ to destroy the signature in that case. So, we give freedom that each
+ system can represent that graph as they like, but the signature will
+ be the same. And now we need the thing that you are saying, a
+ canonicalization algorithm. Here it is. So, the algorithm is
+ conceived to go to the physical representation of the XPath node set
+ as an octet sequence. So, there was canonical XML 1.0, which is the
+ default, which may include or exclude the comments. If there are
+ comments inside the XML, should we keep them as part of the signature
+ or not? Normally, if there are comments, I would exclude. But if you
+ are very picky, you can also include comments. The preferred version
+ nowadays is canonical 1.1 2006. So, let's see what is this doing.
+ There is the reference, if you want to read the details. I'm trying
+ to summarize. So, first of all, the document must be encoded in
+ UTF-8. And that is another problem, because each system may use a
+ different character representation. So, we must use the same
+ representation. UTF-8 can represent everything in the world. So,
+ let's go to that. Your local format must be transformed to that. Line
+ breaks, you know, all the problems. Someone is using CR, someone is
+ using line feed, others are using CR line feed. No, when you create
+ the document for signature, you use only line feed as line
+ terminator, which is this value, 10. Normalize attribute values as if
+ they are parsed by a validating processor in XML. So, for example, if
+ it is a number, you can sell the zeros in the beginning of the
+ number, and so on. If there are character and parsed entity
+ references, you must replace that with the actual content. In XML,
+ you may have ampersand and a reference to something. No, place the
+ content for signature computation. In the same way, if there is a
+ cdata section, which is binary data, replace that section with the
+ real content. I don't care about the declaration and the DTD, those
+ are removed in signature computation. And if there are empty
+ elements, then convert them to a start and end tag pairs,
+ person/person. Nothing, I don't care. I want to do those things
+ explicitly. Then, whitespaces outside of the document element and
+ within the start and end tags. Never use multiple spaces, just one.
+ But, in character content, retain the whitespaces. So, if I write
+ Antonio, 10 spaces, Lyoi, and that is quoted, you must keep them,
+ because that is textual. Attribute values can be delimited with
+ single quotes or double quotes. Always use double quotes. Special
+ characters in attribute values and character content, replace them
+ with character references. Superfluous namespace declarations,
+ remove. If there are default attributes, which are not mentioned, you
+ must place them. So, nothing must be implicit, everything must be
+ explicit. And then, impose lexicographic order. So, with that
+ example, in which I had id and name, first id, then name. If you have
+ a vice versa, yeah, you have, please put in this way for computing
+ the signature. So, alphabetical order. Now, the digital signature
+ itself. So, now we have a document and we have transformed that in a
+ canonical way. Let's see the structure of an XML signature. So, we
+ have a signature with optional and identifier of the signature. Then,
+ we have signed info, the method used for canonicalization, the method
+ used for signature, the reference to the object with an optional URI.
+ URI only if it is external, not if it is internal. It transforms,
+ that is, zero to one. In the sense that you may have directly the
+ data or before computing the signature, you may apply a
+ transformation to the data. You should also note that for reference,
+ you have a minimum one minus or up to n. It means that you can have
+ just one signature for n objects or n references when you want to
+ sign a group of documents. And then, the digest method and the digest
+ value for this object, which is either implicit or pointed by the
+ URI. You should note that you say, okay, but digest method and digest
+ value, those are generic terms. Maybe that is hash encrypted with
+ public key or MAC computed with HMAC and a shared symmetric key. So,
+ digest method is just the algorithm used for signature. It can be a
+ MAC, it can be a real digital signature and digest value is the value
+ resulting from the application of that element. This finishes the
+ signed info. This finishes, no, this starts the signature value. No,
+ sorry, I made a mistake. These things are actually only the digest in
+ the sense that the signature is placed here. So, for each object that
+ you are signing, you compute separately a digest, a hash, and then
+ the signature value is a hash not over the documents but over this
+ information. So, in some sense, there is an indirection. You compute
+ the signature over this description and each object which is
+ referenced is identified by a pointer, a hash, and the hash value.
+ Here you may have key information zero to one if needed, otherwise
+ maybe there is implicit, and here is an object identifier in case you
+ want the objects inside and not external. So, signed info must always
+ be the first element of a signature. Canonical estimation, okay, you
+ declare how you have canonicalized your data. Signature method is the
+ algorithm used for signature generation. For a real digital
+ signature, for example, RSA plus SHA-1. Reference is pointer to the
+ actual data that have been signed with optional URI. Transforms, data
+ transformation before signature. Digest method, hash algorithm,
+ digest value, the hash value. You see that transform, for example, is
+ a selection via xpath. I don't know how much you are familiar with
+ XML, but in general, XML represents anything as a tree, okay, and
+ since you have a tree, you may have multiple paths and you can decide
+ that your transform is identity. I sign the whole tree, or you can
+ declare xpath. I don't sign everything inside that XML document, but
+ I sign this, and in order to say I sign this part, you need to
+ specify, I don't know, link 1, link 2.2, for example. That is xpath,
+ is a language that permits you to specify a subset of the whole XML
+ object. Reference URI is a pointer to an element that has been
+ signed, may be omitted at most for one reference or a manifest
+ component, if the signed element is clear given the context. For
+ example, if you are applying this signature to an application level
+ message, okay, you are signing that message, so you can omit the
+ reference. If you put a null URI, so URI quote-unquote, then you
+ generate an enveloped signature. It means there was the XML object,
+ there is the signature, and the signature is for the large object or
+ a self URI in which you put URI sharp id, the id of the signature
+ that was in the first line to say, okay, this is the signature for
+ myself and this is an enveloping signature. Or it can be an external
+ URI in which you put HTTP and whatever or HTTPS as you prefer. In
+ this way you generate a detached signature. We must follow any
+ redirect because in HTTP you may go there and they say, no, the
+ document has moved, so status 300, until reach the body of a positive
+ response, and so until you get a 200 response from the web server. So
+ you see that playing with the reference URI, you may have enveloped,
+ enveloping, and detached. That is the way in which we created these
+ kind of things, okay. I will say that for today we stop here, we will
+ continue tomorrow looking at the various ways in which there are the
+ objects inside the XML signature. Now you have the break and then
+ there will be Andrea Azzeni doing some explanation exercises about TE
+ and secure boot and so on. Thank you. [ Applause ] [BLANK_AUDIO]
