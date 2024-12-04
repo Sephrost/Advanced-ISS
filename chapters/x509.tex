@@ -16,8 +16,8 @@ transaction being protected by the PKC, which are difficult to decide
 a-priori without knowing the context: for example one attribute could
 be an email address associated with the entity, which may not be valid
 for all the transactions.\\
-PKC are most important to achieve \textbf{non-repudiation}, many
-certificates have legal value, and \textbf{digital signature} in a
+PKC are most important to achieve \textbf{non-repudiation} (many
+certificates have legal value) and \textbf{digital signature} in a
 secure way.\\
 \begin{boxH}
   Keep in mind that a PKC is the complement of a corresponding
@@ -25,9 +25,9 @@ secure way.\\
 \end{boxH}
 Which means that if the private key is compromised, the PKC is 
 compromised as well.
-\subsection{Key Generation in Public Key Cryptography (PKC)}
+\subsection{Key Generation in Public Key Cryptography}
 
-Key generation in public key cryptography (PKC) involves complex
+Key generation in public key cryptography involves complex
 algorithms and often relies on random number generators (RNGs) to
 ensure strong, unpredictable keys. Once a key is generated, the
 private key must be securely protected in various contexts:
@@ -35,18 +35,18 @@ private key must be securely protected in various contexts:
 \begin{itemize}
   \item \textbf{Storage}: The private key needs to be securely
     stored to prevent unauthorized access.
-  \item \textbf{Usage}: The private key must also be protected when
-    being used, as it could be exposed during operations in the CPU as
-    it is used in clear text.
+  \item \textbf{Usage}: The private key must also be \textbf{protected
+    when being used}, as it could be exposed during operations in the
+    CPU as it is used in clear text.
   \item \textbf{Software Application}: In software environments
     (e.g., web browsers), the trustworthiness of the computing
     platform must be considered, as it may be vulnerable to malware
     or weak implementations. This is true both for the context of
-    key generation and use.
+    key generation and usage.
   \item \textbf{Dedicated Hardware}: Storing and using keys in
     dedicated hardware, such as a smart card, offers enhanced
     protection but comes with limitations in terms of algorithm
-    updates or vulnerability patching( which may be difficult or
+    updates or vulnerability patching (which may be difficult or
     even impossible). For example many old smart cards use 1024-bit 
     RSA keys, which are considered insecure today.
   \item \textbf{Key Injection}: Keys may be generated in software
@@ -68,18 +68,18 @@ responsible for managing the lifecycle of Public Key Certificates
 
 \begin{itemize}
   \item \textbf{Certification Authority (CA)}: The CA is responsible
-    for generating and revoking PKCs. It also publishes PKCs and
-    maintains information about their status, such as whether they
+    for \textbf{generating and revoking} PKCs. It also publishes them
+    and maintains information about their status, such as whether they
     are valid or revoked, or even suspended.
-  \item \textbf{Registration Authority (RA)}: The RA plays a
-    critical role in verifying the claimed identity and attributes
-    of a certificate requestor. It authorizes the issuance or
-    revocation of PKCs but does not generate them itself.
+  \item \textbf{Registration Authority (RA)}: The RA plays a critical
+    role in \textbf{verifying} the \textbf{claimed identity} and
+    attributes of a certificate requestor. It authorizes the issuance
+    or revocation of PKCs but does not generate them itself.
   \item \textbf{Validation Authority (VA)}: The VA provides services
-    that allow third parties to verify the validity status of a PKC,
-    because some responsibilities or the RA may be delegated to it.
-    This may involve downloading Certificate Revocation Lists (CRLs)
-    or querying an Online Certificate Status Protocol (OCSP)
+    that allow third parties to verify the \textbf{validity status} of
+    a PKC, because some responsibilities of the RA may be delegated to
+    it. This may involve downloading Certificate Revocation Lists
+    (CRLs) or querying an Online Certificate Status Protocol (OCSP)
     responder to check the certificate's status in real-time.
   \item \textbf{Revocation Authority}: Although not an official
     term, this role may be assigned to either the RA or CA. The
@@ -94,26 +94,27 @@ trustworthiness of PKC-based systems by handling key tasks such as
 certificate issuance, verification, and revocation.
 
 \subsection{Certificate generation}
-The general
-When an actor want to generate a certificate, it must first generate a 
-key pair (public and private key). The private key is stored locally
-and protected(encrypted) as good as possible, while the public key 
-is sent to the CA with some attributes that help identify the actor.\\
-The CA requires that the attributes are both correct and are
-associated actually with the entity that is in control of the private
-key, which requires authentication of the actor. For that purpose, if
-the entity is a human it is usually required to go physically to the 
-CA, even if in some cases a video call may be enough, with the 
-requirement of showing a valid ID.\\
+When an actor want to generate a certificate, it must \textbf{first
+generate} a \textbf{key pair} (public and private key). The private
+key is stored locally and protected (encrypted) as good as possible,
+while the \textbf{public key} is \textbf{sent to the CA} with some
+attributes that help identify the actor.\\
+The CA requires that the \textbf{attributes} are \textbf{both correct}
+and are actually \textbf{associated with the entity} that is in
+control of the private key, thus requiring authentication of the
+actor. For that purpose, if the entity is a human it is usually
+required to \textbf{go physically to the CA}, even if in some cases a
+video call may be enough, with the requirement of showing a valid
+ID.\\
 The Registration Authority will verify the attributes and the 
 identity of the actor, and if everything is correct, it will send a 
 message to the CA to generate the certificate.\\
-At this point the CA generates the certificate, signs it with its 
-private key and sends it back to the actor while also storing it in 
-its repository.\\
-As you may noticed, the verification is only on the attributes, and
-not of the possession of the private key, which will be discussed
-later.
+At this point the \textbf{CA generates the certificate}, signs it with
+its private key and sends it back to the actor while also storing it
+in its repository.\\
+As you may noticed, the \textbf{verification} is \textbf{only against
+the attributes}, and on the possession of the private key, so this
+point will be discussed later.
 
 \begin{figure}[h]
   \centering
@@ -129,19 +130,17 @@ certificate generation exist:
 
 \begin{itemize}
   \item \textbf{Key Pair Generation by RA}: In some architectures, the
-    Registration Authority (RA) generates the key pair on behalf of
-    the user, obtains the Public Key Certificate (PKC), and securely
-    distributes the key pair and certificate to the user via a
-    secure device, such as a smart card. This approach is often used
-    in large companies where the employees are already known to the
-    organization.
+    Registration Authority \textbf{generates} the \textbf{key pair on
+    behalf of the user}, obtains the PKC, and securely distributes the
+    key pair and certificate to the user via a secure device, such as
+    a smart card. This approach is often used in large companies where
+    the employees are already known to the organization.
 
   \item \textbf{User Authentication via Code}: Another common method
     involves the user visiting the RA to obtain a code that can be
-    used to authenticate their certificate request to the
-    Certification Authority (CA). The code is typically calculated
-    as a Message Authentication Code (MAC) using the shared secret
-    key between the RA and CA:
+    used to authenticate their certificate request to the CA. The code
+    is typically computed as a MAC using the \textbf{shared secret}
+    key between the \textbf{RA and CA}:
 
     \[
       \text{code} = \text{MAC}(K, ID)
@@ -152,17 +151,13 @@ certificate generation exist:
     the CA to validate the certificate request.
 \end{itemize}
 
-These alternative methods provide flexibility for organizations with
-different security needs, allowing for centralized key generation and
-secure certificate distribution.
-
 \section{X.509 certificates}
 
 X.509 is an ITU-T (international telecommunication unit body) standard
 that defines the format of public key certificates used to verify the
 identity of a key owner in cryptographic systems. X509 was developed
-as a certification technology to protect the x500 directory service,
-and has undergone several versions:
+as a \textbf{certification technology} to protect the x500 directory
+service, and has undergone several versions:
 
 \begin{itemize}
   \item \textbf{v1 (1988)}: The initial version of the standard.
@@ -173,29 +168,28 @@ and has undergone several versions:
     2 of the attribute certificate, which are not used anymore.
 \end{itemize}
 
-X.509 is part of the larger X.500 standard for directory services,
-often referred to as "white pages," which are used for managing
-information about entities in a structured way(directory services).
-X.509 provides a solution to the problem of securely identifying the
-owner of a cryptographic key.
+X.509 is thus part of the X.500 standard , often referred to as "white
+pages," which are used for managing information about entities in a
+structured way (directory services). X.509 provides a solution to the
+problem of securely identifying the owner of a cryptographic key.
 
 The certificates and their structures are defined using \textbf{ASN.1}
-(Abstract Syntax Notation One), a standard interface for defining data
-structures exchanged in networking environments in a neutral and 
-platform-independent way. 
+(Abstract Syntax Notation One), a standard interface for
+\textbf{defining data structures}exchanged in networking environments
+in a \textbf{neutral and platform-independent way}. 
 
 \subsection{PKC Scope}
-A Public Key Certificate (PKC) contains information that uniquely
-associates a cryptographic key with an entity. This binding between
-the key and the entity is ensured by a \textbf{Trusted Third Party
-(TTP)}, typically referred to as a Certification Authority (CA), which
-digitally signs each certificate to guarantee its authenticity.\\
+A PKC contains information that uniquely associates a cryptographic
+key with an entity. This binding between the key and the entity is
+ensured by a \textbf{Trusted Third Party (TTP)}, typically referred to
+as a CA, which digitally signs each certificate to guarantee its
+authenticity.\\
 
-The liability associated with a PKC may be restricted to specific
-applications or purposes, as outlined in the CA's certification
-policy. This policy defines the intended usage and limits the scope of
-the certificate, ensuring it is applied within the proper legal and
-technical contexts.
+The \textbf{liability} associated with a PKC \textbf{may be
+restricted} to \textbf{specific applications} or purposes, as outlined
+in the CA's certification policy. This policy defines the intended
+usage and limits the scope of the certificate, ensuring it is applied
+within the proper legal and technical contexts.
 
 \subsection{Certificate Policy (CP) and Certification Practice
 Statement (CPS)}
@@ -204,24 +198,26 @@ According to RFC-3647, "Internet X.509 Public Key Infrastructure
 Certificate Policy and Certification Practices Framework," both the
 Certificate Policy (CP) and Certification Practice Statement (CPS)
 play key roles in defining the use and management of Public Key
-Certificates (PKCs):
+Certificates:
 
 \begin{itemize}
-  \item \textbf{Certificate Policy (CP)}: A CP is a named set of rules
-    that defines the applicability of a PKC to a specific community
-    or class of applications with common security requirements. It
-    establishes the minimum requirements for the issuance and
-    management of certificates and can be followed by multiple
-    Certification Authorities (CAs). For example, a government CP
-    may apply to all certification providers issuing certificates
-    for official use.
+  \item \textbf{Certificate Policy (CP)}: A CP is a named \textbf{set
+    of rules}
+    that \textbf{defines the applicability} of a PKC to a specific
+    community or \textbf{class of applications} with \textbf{common
+    security requirements}. It establishes the minimum requirements
+    for the issuance and management of certificates and can be
+    followed by multiple CAs. For example, a government CP may apply
+    to all certification providers issuing certificates for official
+    use.
 
-  \item \textbf{Certification Practice Statement (CPS)}: A CPS outlines
-    the specific practices that a CA follows when issuing PKCs.
-    While a CP specifies the general rules, the CPS provides
-    detailed implementation procedures. Each CA develops its own
-    CPS, which is tailored to its operations and describes how it
-    meets the requirements set forth in the CP.
+  \item \textbf{Certification Practice Statement (CPS)}: A CPS
+    outlines the \textbf{specific practices} that a \textbf{followed
+    by a CA when issuing PKCs}. While a CP specifies the general
+    rules, the CPS provides \textbf{detailed implementation
+    procedures}. Each CA develops its own CPS, which is tailored to
+    its operations and describes how it meets the requirements set
+    forth in the CP.
 \end{itemize}
 
 \subsection{X.500 Directory Service}
@@ -232,21 +228,22 @@ in a network. However, this early setup had three big issues:
 
 \begin{itemize}
   \item \textbf{No Guarantees on the CA's Quality}: There weren't
-    clear rules or policies to ensure that Certification Authorities
-    (CAs) were reliable or trustworthy. People just had to trust the
-    CA, which caused concern over the security of the certificates.
+    clear rules or policies to ensure that CAs were reliable or
+    trustworthy. People just had to trust them, which caused concern
+    over the security of the certificates.
 
   \item \textbf{Lack of a proper X.500 Infrastructure}: Even though
     certificates were supposed to be stored in X.500 directories, the
-    infrastructure to do this was never fully implemented worldwide.
-    This made it tough to access certificates when needed.
+    \textbf{infrastructure} to do this was \textbf{never fully
+    implemented world widely}. This made it tough to access
+    certificates when needed.
 
   \item \textbf{Hard to Establish Certification Paths}: It was
-    difficult to connect two users with certificates issued by
-    different CAs because the relationships between CAs weren’t
-    well-defined. With each CA running its own domain, figuring out
-    how to establish a secure connection between users from different
-    domains was tricky.
+    \textbf{difficult} to \textbf{connect two users} with certificates
+    issued by \textbf{different CAs} because the relationships between
+    CAs weren’t well-defined. With each CA running its own domain,
+    figuring out how to establish a secure connection between users
+    from different domains was tricky.
 \end{itemize}
 
 These issues slowed down the adoption of X.500 and made it clear that
@@ -279,15 +276,15 @@ broader adoption of the improved X.509v3 certificates.
 RFC-1422 tried to fix some of the problems with the early X.500
 systems by proposing a worldwide certification hierarchy. The plan was
 to have one main CA at the top: the \textbf{IPRA} (Internet Policy
-Registration Authority). This CA would be responsible for setting the
-rules and policies for all other CAs in the system, ensuring that
-everyone followed the same security practices.\\
+Registration Authority). This CA would be \textbf{responsible} for
+\textbf{defining} the \textbf{rules and policies for all the other
+CAs} in the system, ensuring that everyone followed the same security
+practices.\\
 Instead of directly issuing certificates to lower-level CAs, the IPRA
 would issue certificates to \textbf{Policy Certification Authorities
 (PCAs)}.\\
-The IPRA oversaw the entire structure and laid out specific
-roles for different types of Certification Authorities (CAs) to manage
-and enforce certificate policies:
+The IPRA oversaw the entire structure and laid out specific roles for
+different types of CAs to manage and enforce certificate policies:
 
 \begin{itemize}
   \item \textbf{Policy Certification Authority (PCA)}: PCAs were
@@ -306,9 +303,9 @@ and enforce certificate policies:
 \end{itemize}
 
 
- However, this system wasn’t without flaws—it
-was still based on geographic hierarchies, which didn’t always match
-the needs of modern, global organizations.
+However, this system wasn’t without flaws—it was still based on
+\textbf{geographic hierarchies}, which didn’t always match the needs
+of modern, global organizations.
 
 The IPRA was established, and four PCAs were created under it. One of
 these PCAs was designated as \textbf{high assurance}, meaning it had
@@ -347,41 +344,42 @@ you were, the security of your communication was still guaranteed.
 Unfortunately, this system was a complete failure for several reasons:
 
 \begin{itemize}
-  \item The hierarchical structure severely limited flexibility, much
-    like the issues we saw with X.500. For international companies,
-    this rigid hierarchy simply didn't work.
+  \item The \textbf{hierarchical structure} severely \textbf{limited
+    flexibility}, much like the issues we saw with X.500. For
+    international companies, this rigid hierarchy simply didn't work.
 
-  \item Name subordination imposed additional restrictions. You
-    couldn't just assign any name—you had to follow the strict
+  \item Name subordination imposed \textbf{additional restrictions}.
+    You couldn't just assign any name—you had to follow the strict
     hierarchy, which wasn't always practical.
 
-  \item The use of the PCA concept lacked flexibility, especially in
+  \item The use of the \textbf{PCA lacked flexibility}, especially in
     commercial settings. Instead of automating the process, a human
     operator was needed to check if the requester was following the
     policy. This made the system cumbersome and inefficient for
     businesses.
 
-  \item Lastly, the biggest issue was trust. Where would the IPRA be
-    placed? Naturally, the U.S. wanted it, but other countries, like
-    Russia, China, or even Japan, wanted control as well. No one
-    trusted a single country to sit at the top of the hierarchy,
-    fearing the possibility of a fake hierarchy being created. As a
-    result, the experiment collapsed. It briefly existed, primarily
-    used by the United States, but it never gained global traction.
+  \item Lastly, the biggest issue was \textbf{trust}. Where would the
+    IPRA be placed? Naturally, the U.S. wanted it, but other
+    countries, like Russia, China, or even Japan, wanted control as
+    well. No one trusted a single country to sit at the top of the
+    hierarchy, fearing the possibility of a fake hierarchy being
+    created. As a result, the experiment collapsed. It briefly
+    existed, primarily used by the United States, but it never gained
+    global traction.
 \end{itemize}
 
 \section{X.509 Version 3}
 
 X.509 Version 3 is a standard that was finalized in June 1996 through
 a collaborative effort between ISO, ITU, and the IETF, with the goal
-of making certificates suitable for internet applications. This
-version consolidated all the necessary updates to certificates and
-Certificate Revocation Lists (CRLs) into a single document. Earlier
-versions of X.509 (v1 and v2) relied on external semantics, such as
-the failed attempt with the Internet PEM hierarchy, which proved
-unsuccessful. X.509v3 addressed these shortcomings by ensuring
-certificates would be useful for internet applications, particularly
-as OSI applications became mostly obsolete.\\
+of making \textbf{certificates suitable for internet applications}.
+This version consolidated all the necessary updates to certificates
+and CRLs into a single document. Earlier versions of X.509 (v1 and v2)
+relied on external semantics, such as the failed attempt with the
+Internet PEM hierarchy, which proved unsuccessful. X.509v3 addressed
+these shortcomings by ensuring certificates would be useful for
+internet applications, particularly as OSI applications became mostly
+obsolete.\\
 Key features of X.509 Version 3 include:
 
 \begin{itemize}
@@ -411,12 +409,11 @@ Key features of X.509 Version 3 include:
     extensions tailored for a specific purpose or application,
     ensuring that certificates meet particular requirements. For
     example, RFC 5280, titled "Internet X.509 Public Key
-    Infrastructure Certificate and Certificate Revocation List (CRL)
-    Profile," provides guidelines on how X.509 certificates and CRLs
-    should be structured for protecting internet applications.
-    Certificate profiles are important because they dictate how
-    certificates should be used for different scenarios, ensuring
-    consistency and security.
+    Infrastructure Certificate and CRL Profile," provides guidelines
+    on how X.509 certificates and CRLs should be structured for
+    protecting internet applications. Certificate profiles are
+    important because they dictate how certificates should be used for
+    different scenarios, ensuring consistency and security.
 \end{itemize}
 
 
@@ -452,7 +449,7 @@ This abstract notation outlines the basic structure of the
 certificate. The \texttt{Certificate} is defined as a sequence, which
 is a data structure that includes several fields. The first field,
 \texttt{signatureAlgorithm}, is the algorithm identifier used by the
-Certificate Authority (CA) to sign the certificate. 
+CA to sign the certificate. 
 
 Next, the \texttt{tbsCertificate} (to be signed certificate) is of
 type \texttt{TBSCertificate}, which contains the main information that
