@@ -18,6 +18,8 @@
 \usepackage{minted}
 \usepackage{tikz}
 \usetikzlibrary{positioning, shapes.multipart, arrows.meta}
+\usepackage{tikz}
+\usepackage{enumitem}
 
 \colorlet{LightGray}{White!90!Periwinkle}
 \colorlet{LightOrange}{Orange!15}
@@ -93,6 +95,7 @@
 
 \tableofcontents
 \newpage
+\part{Theory}
 \input{chapters/tls.tex}
 \input{QA1.tex}
 \input{chapters/ssh.tex}
@@ -103,6 +106,9 @@
 \input{chapters/electronic documents.tex}
 \input{chapters/xml.tex}
 \input{chapters/jose.tex}
+
+\part{Security Pills}
+\input{chapters/tdx.tex}
 
 
 
