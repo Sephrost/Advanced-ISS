@@ -1379,14 +1379,13 @@ used to track revoked certificates. It contains:
     in the OCSP response.
 \end{itemize}
 
-CRLs are issued periodically and maintained by the certificate
-issuer (CA), even if no additional revocations have occurred, a
-CRL must be reissued to ensure its "freshness" and prevent replay
-attacks with outdated CRLs.
+CRLs are issued periodically and maintained by the CA, even if no
+additional revocations have occurred, a CRL must be reissued to ensure
+its "freshness" and prevent replay attacks with outdated CRLs.
 
 RLs are digitally signed by:
 \begin{itemize}
-  \item The Certificate Authority (CA) that issued the 
+  \item The Certification Authority that issued the 
     certificates.
   \item A revocation authority delegated by the CA. When 
     signed by the revocation authority, the CRL is referred 
@@ -1481,7 +1480,7 @@ A key issue arises with the \textit{revocation date}(CRLv2) and
 revoked certificates. Although they might seem redundant, they serve
 to solve a problem.\\
 Take a look at figure \ref{fig:certificate revocation timeline}, we
-have a point in time (before the red part) in which everithing works
+have a point in time (before the red part) in which everything works
 fine and the CLR number $n$ has been issued. At a certain point the
 private key has been compromised, meaning that someone can impersonate
 someone else. A certificate revocation in requested after the user
@@ -1489,7 +1488,7 @@ became aware of the issue, which would like to revoke the certificate
 with a prior date or time of the one that would be issued by the CA.
 Now the two dates come into play. The \textit{revocation date} is the 
 date certified by the CA, while the \textit{invalidity date} is the 
-date claimed by the ee.\\
+date claimed by the EE.\\
 The risk is not yet over, because the CA, to issue a new certificate
 needs some time(the one in yellow), meaning that every request made 
 in that time slot will still get the old certificate back. For this
@@ -1517,7 +1516,7 @@ base CRL and, from that one on, only the changes. This solution is
 good for the download time, but still doesn't solve the problem of the 
 storage.\\
 The best solution is probably the \textbf{partitioning of the CRLs}.
-For example, one CA could partiotion them in buch of 1000 certificates 
+For example, one CA could partition them in bunch of 1000 certificates 
 each, and to download one you need to download the whole partition.\\
 In the end, a perfect solution does not exist.
 
@@ -1558,9 +1557,9 @@ continuous availability and security.
 
 \subsubsection{OCSP source of information}
 OSCP, to provide an answer, must have a source of information. This
-data can be aquired in different ways:
+data can be acquired in different ways:
 \begin{itemize}
-  \item \textbf{download i form CRL repositorie}
+  \item \textbf{download i form CRL repositories}
   \item \textbf{querying the CA database}
   \item \textbf{ask another OSCP server(chaining)}
 \end{itemize}
@@ -1648,7 +1647,7 @@ There are two main attacks possible against OCSP.
 
 The first one is obviously a \textbf{replay attack}: one can ask for 
 the validity of a certificate, store the response and replay it when
-its not valid anymore by being faster then the OCSB server or stopping
+its not valid anymore by being faster then the OCSP server or stopping
 the real response via a denial of service. For this reason, optionally
 but encouraged, the client could send a
 \textbf{nonce}(\texttt{id-pkix-ocsp-nonce}) in its request to the
@@ -1656,7 +1655,7 @@ server, which will be included in the response signed by the server.
 
 Another possible attack is a \textbf{denial of service} one,
 accomplished by flooding the OCSP server with many requests. One
-little detail is esclusive of an OCSP dos attack: requests have to be
+little detail is exclusive of an OCSP DOS attack: requests have to be
 digitally signed, which takes a lot of time to verify for the server
 and makes the attack easier. The obvious defence is to remove the
 real-time signature and replace it with a pre-computed responses,
@@ -1700,8 +1699,8 @@ there’s Bob who sends to the same CA the same public key of Alice
 doesn’t perform POP, it will create another certificate with the same
 public key associated to Bob and here’s the problem. When Alice signs
 a document, it may happen that when someone is contesting that
-document, she could claim that Bob signed it, so there is no
-non-repudiation. Another case may be that Alice claims that she signed
+document, she could claim that Bob signed it, so non-repudiation isn't
+achievable. In another case Alice may claim that she signed
 a document, but Bob may say it was him signing it. So, Alice can deny
 a signature or Bob can claim his signature. That means that POP for
 any case of non-repudiation and attribution, especially in legal
@@ -1716,7 +1715,8 @@ matters, is a very important thing.
 \end{figure}
 \subsubsection{Countermeasures}
 \begin{boxH}
-  The best solution to demostrate the POP is at signing time.
+  The best solution to \textbf{demonstrate} the POP is \textbf{at
+  signing time}.
 \end{boxH}
 The signer inserts a reference to the certificate (e.g. a hash) among
 the signed information, thus the signature value is a function of the
@@ -1729,32 +1729,33 @@ Another solution is quite simple: the CA issues a certificate only if
 it has the proof that the certificate requester owns the private key.
 POP with this method can be achieved in two methods:
 \begin{itemize}
-  \item Out-of-Band: the keys are not generated by the user, but are
-    generated by the CA or the array and delivered in a secure token,
-    for example a smart card. (This is what happens at politecnico).
-    The possession of the token is proof enough
-  \item In-Band/Online: the CA will keep a copy of all the private keys, but
-    the problem is how to protect them efficiently. This is better but
-    it requires a secure device or online methods. If the key is used
-    for both signature and encryption, then could be possible to use
-    the self-signed formats like PKCS\#10 or SPKAC.  When a request is
-    performed there must be also a signature (which means using a
-    private key), even if there is no certificate. the CA verifies the
-    signature before creating the certificate. If on the contrary, the
-    key that you are trying to certify is a purely encryption key,
-    then the requester cannot sign anything because that is not a
-    valid usage. In that case, you can use a challenge response
-    protocol. The CA sends a challenge to the requester, sending an
-    encrypted certificate with the public key of the requester. 
+  \item \textbf{Out-of-Band}: the keys are not generated by the user,
+    but are \textbf{generated by the CA} or the array and delivered in
+    a secure token, for example a smart card. (This is what happens at
+    politecnico). The possession of the token is proof enough
+  \item \textbf{In-Band/Online}: the CA will \textbf{keep a copy of
+    all the private keys}, but the problem is how to protect them
+    efficiently. This is better but it requires a secure device or
+    online methods. If the key is used for both signature and
+    encryption, then could be possible to use the self-signed formats
+    like PKCS\#10 or SPKAC.  When a request is performed there must be
+    also a signature (which means using a private key), even if there
+    is no certificate. the CA verifies the signature before creating
+    the certificate. If on the contrary, the key that you are trying
+    to certify is a purely encryption key, then the requester cannot
+    sign anything because that is not a valid usage. In that case, you
+    can use a challenge response protocol. The CA sends a challenge to
+    the requester, sending an encrypted certificate with the public
+    key of the requester. 
 \end{itemize}
 
 \section{PKCS\#10}
 
-Focusing on PKCS10, it represents one of the most commonly used
-formats today. It is specified in two RFCs: one detailing the basic
-syntax, and the other focusing on its application. Despite its status
-as an RFC, the format retains its original numbering and is also
-referred to as a Certificate Signing Request (CSR).
+Focusing on PKCS10, it represents one of the \textbf{most commonly
+used formats} today. It is specified in two RFCs: one detailing the
+basic syntax, and the other focusing on its application. Despite its
+status as an RFC, the format retains its original numbering and is
+also referred to as a Certificate Signing Request (CSR).
 
 A typical request includes:
 \begin{itemize}
