@@ -1,0 +1,278 @@
+\chapter{Quantum technology}
+\label{ch:quantum}
+
+With the word \textbf{quantum} mechanics, we refer to an \textbf{area
+of physics} where classical deterministic rules do not hold any more
+(Schrödinger, Dirac, Heisenberg, \dots).
+
+One of the fundamental principles in quantum mechanics is the
+\textbf{Uncertainty Principle}, also known as Heisenberg's
+Indeterminacy Principle. This principle establishes a fundamental
+limit to the precision with which certain pairs of physical
+properties, such as position and momentum, can be measured
+simultaneously. The more precisely one property is determined, the
+less precisely the other can be known.
+
+Another key concept is \textbf{Quantum Superposition}, which refers to
+the ability of a quantum system to exist in multiple states
+simultaneously. This superposition remains until a measurement is
+performed, at which point the system collapses into a single state.
+This idea is famously illustrated in the thought experiment involving
+Schrödinger's cat, which is simultaneously alive and dead until
+observed.
+
+An experimental demonstration of quantum mechanics is seen in
+\textbf{Young's Double-Slit Experiment}. In this setup, a beam of
+light is directed at a barrier with two vertical slits. When the
+photons are not measured, they exhibit an interference pattern on a
+screen, demonstrating wave-like behavior. However, if individual
+photons are measured as they pass through the slits, the interference
+pattern disappears, and the photons behave like particles,
+highlighting the principle of wave-particle duality in quantum
+mechanics.
+
+\section{Probabilistic interpretation of QM}
+
+In quantum mechanics, particles are described by a \textbf{wave
+function}, denoted as \(\Psi(x,t)\), where \(x\) represents the
+position and \(t\) represents time. Unlike classical physics, which
+defines the exact position and velocity of a particle, quantum
+mechanics introduces a probabilistic framework.
+
+The wave function \(\Psi(x,t)\) provides information about the
+probability of observing a particle at a specific position \(x\) at a
+given time \(t\). However, the wave function itself is not directly
+observable. Instead, the square of the wave function,
+\(|\Psi(x,t)|^2\), represents the \textbf{probability density}
+\(P(x,t)\). This probability density indicates the likelihood of
+finding the particle at position \(x\) at time \(t\).
+
+The probabilistic nature of quantum mechanics highlights a fundamental
+departure from the deterministic approach of classical physics, where
+particle trajectories are precisely defined. In contrast, quantum
+mechanics only provides the probability distribution for where a
+particle may be found.
+
+\section{Quantum Entanglement}
+
+\textbf{Quantum entanglement} occurs when a group of particles (at
+least two) is in a quantum state such that the state of each particle
+cannot be described independently of the states of the others.
+Instead, the entire system is described as a single, \textbf{global
+quantum state} that persists even when the particles are separated by
+large distances.
+
+One of the most famous examples of quantum entanglement involves two
+particles, \(A\) and \(B\), that are entangled in such a way that
+their total spin is zero. If particle \(A\) is measured and found to
+have a \textbf{clockwise spin}, then particle \(B\), when measured,
+will be found to have a \textbf{counterclockwise spin}. This
+correlation persists even if the two particles are separated by vast
+distances, a phenomenon that seems to suggest that information is
+transmitted faster than the speed of light.
+
+However, this phenomenon does not violate the principles of
+relativity. The reason is that, while the measurement of \(A\)
+determines the state of \(B\), it is not possible to use this effect
+to transmit information. The spin of \(A\) cannot be controlled or
+predetermined, meaning no usable signal can be sent via entanglement.
+This subtle distinction ensures that entanglement remains consistent
+with the fundamental limits of information transfer imposed by the
+speed of light.
+
+\subsection{The No-Cloning Theorem}
+
+The \textbf{no-cloning theorem} is a fundamental principle in quantum
+mechanics stating this 
+\begin{boxH}
+  it is \textbf{impossible to create an independent and identical copy
+  of an arbitrary unknown quantum state}.
+\end{boxH}
+This theorem has profound implications for quantum information theory
+and quantum cryptography, as it guarantees the security of quantum
+communication protocols.
+
+It is important to emphasize the role of \textbf{independence} in this
+context. While entanglement allows for correlations between particles,
+it does not enable the independent duplication of a quantum state. The
+inability to clone quantum states arises from the linearity of quantum
+mechanics and the fact that measurement collapses a quantum state,
+making it impossible to perfectly reproduce its original form. This
+principle underpins the security of quantum key distribution (QKD)
+systems, such as those based on the BB84 protocol.
+
+\subsection{Quantum Computing (QC)}
+
+Is it different from classical computing?  The short answer is yes. 
+Quantum computing introduces a fundamentally different approach to
+computation compared to classical computing. While classical computers
+rely on binary bits (0 or 1) to process information, quantum computers
+use \textbf{qubits} that leverage unique quantum properties to achieve
+greater computational power. The key differences are explained through
+the following concepts:
+
+\paragraph{Quantum Superposition}  
+Unlike classical bits, qubits can exist in a \textbf{superposition} of
+0 and 1 simultaneously. This allows a quantum computer to explore
+multiple states at once, effectively processing many possible outcomes
+in parallel. This parallelism provides quantum computers with a
+significant speed advantage for certain types of problems.
+
+\paragraph{Quantum Entanglement}  
+Quantum entanglement allows qubits to be \textbf{correlated} with each
+other, even when they are physically separated. This enables
+coordinated processing and allows the system to perform more complex
+calculations efficiently. Entanglement is a crucial feature that
+enables the development of quantum algorithms like Grover's search
+algorithm and Shor's factoring algorithm.
+
+\paragraph{Quantum Interference}  
+Quantum computers exploit \textbf{constructive and destructive
+interference} to enhance the probabilities of correct answers while
+cancelling out incorrect ones. By carefully designing quantum
+algorithms, the probabilities of "correct paths" are amplified,
+allowing the quantum computer to find the right solution more
+efficiently than classical methods.
+
+These features collectively enable quantum computers to solve certain
+classes of problems exponentially faster than classical computers,
+such as factoring large numbers, optimizing complex systems, and
+searching unstructured databases.
+
+On the other hand, QC are not a general-purpose technology. They only
+works on specific classes of problems, where the quantum effects can
+be exploited (e.g. superposition). 
+
+Currently, one of the most successful applications of quantum
+computing is in \textbf{optimization problems}. In this domain,
+\textbf{Quantum Annealing (QA)} has proven effective. Quantum
+annealers, like those produced by \textbf{D-Wave Systems}, are
+special-purpose quantum devices. They employ \textbf{adiabatic quantum
+computation} and are based on superconducting technology to solve
+large-scale optimization problems. Unlike general quantum computers,
+quantum annealers are tailored to address specific optimization tasks.
+
+Quantum computing faces significant challenges related to
+manufacturing and operational constraints. For instance, the
+\textbf{D-Wave 2X} quantum annealer, released in 2015, was equipped
+with \textbf{1152 qubits}. However, due to \textbf{manufacturing
+variability}, not all qubits are functional, and the exact number of
+usable qubits varies across individual processors. This variability
+highlights the complexity of producing reliable and consistent quantum
+processors. The use of superconducting technology also introduces
+environmental constraints, such as the need for ultra-low temperatures
+for stable operation.
+
+\section{The quantum problem for cryptography}
+The main problem is that the current cryptographic algorithms have an
+expiration data. Think for example about the DES algorithm, which was
+once considered state of the art, but now is considered insecure.
+
+Currently, the Global Risk Institute estimated that in 15-30 years, a
+sufficiently powerful QC will be built, able to decrypt ANY encrypted
+data on the Internet today. This is a huge deal for the future, but
+it's also a problem nowadays, because attackers are harvesting data
+today to decrypt it in the future. This approach assumes that the data
+still holds some value in the future, which is not true for most data,
+but if you think about state secrets, you can see that they a much
+longer expiration date. 
+
+This is something that is happening nowadays, as states are collecting
+data in large data centers, and they are storing it for future use.
+
+\subsection{Security of current cryptography}
+
+The security of modern cryptography is founded on a combination of
+\textbf{mathematically hard problems} and the \textbf{impracticality
+of exhaustive search}. These principles underpin the two main types of
+cryptographic methods: asymmetric cryptography and symmetric
+cryptography.
+
+\paragraph{Mathematically Hard Problems}  
+Asymmetric cryptographic systems, such as those used in
+\textbf{digital signatures} and \textbf{key exchange protocols}, rely
+on computational problems that are considered \textbf{NP-hard}. The
+most common of these problems are:  
+\begin{itemize}
+    \item \textbf{Discrete Logarithm Problem}: Used in cryptographic
+      schemes involving \textbf{integers} or \textbf{elliptic curves}
+      (e.g., ECDSA, ECDH). Solving the discrete logarithm problem
+      efficiently is considered infeasible with current classical
+      computational methods.  
+    \item \textbf{Integer Factorization Problem}: The basis of
+      \textbf{RSA cryptography}, where the security of the system
+      depends on the difficulty of factoring large composite numbers
+      into their prime factors.  
+\end{itemize}
+
+Symmetric cryptographic systems, such as those used for
+\textbf{encryption} (e.g., AES) and \textbf{hashing} (e.g., SHA-256),
+derive their security from the sheer size of the \textbf{key space}.
+Unlike asymmetric systems, these methods rely on the infeasibility of
+performing an exhaustive search over all possible key combinations
+within a reasonable timeframe. For instance, a 128-bit key has
+$2^{128}$ possible combinations, making brute-force attacks
+computationally infeasible.  
+
+By leveraging these two core principles — reliance on NP-hard problems
+and the infeasibility of exhaustive search — modern cryptographic
+systems maintain a high level of security against classical
+computational attacks.
+
+\subsubsection{DH, RSA, and Quantum Computing}
+
+\paragraph{Diffie-Hellman (DH)}  
+The security of the \textbf{Diffie-Hellman (DH) key exchange} is
+rooted in the computational complexity of the \textbf{Discrete
+Logarithm Problem}. Given an equation of the form  
+\[
+A = g^x \mod p
+\]  
+where \(g\) is the generator, \(p\) is a large prime, and \(A\) is a
+known value, the challenge is to find \(x\). This requires solving  
+\[
+x = \log_g A \mod p
+\]  
+which is computationally hard. The simplest attack is to try all
+possible values of \(x\), which takes time linear in \(p\). Since
+\(p\) is often a large prime (e.g., 2048 bits), this time complexity
+is exponential in the bit-length of \(p\).  
+
+\paragraph{Efficient Algorithms for Discrete Logarithm}  
+While a brute-force search for \(x\) is infeasible, more advanced
+algorithms exist that reduce the computational complexity, although
+they still remain non-polynomial. These include:  
+\begin{itemize}
+    \item \textbf{Pohlig-Hellman Algorithm}: Breaks the problem into
+      smaller sub-problems using the factorization of \(p-1\).  
+    \item \textbf{Number Field Sieve (NFS)}: One of the most efficient
+      known methods for solving discrete logarithms in large finite
+      fields.  
+\end{itemize}
+
+\paragraph{RSA and Factorization}  
+The security of \textbf{RSA} encryption and signatures relies on the
+difficulty of \textbf{integer factorization}. Similar to the discrete
+logarithm, factorization is computationally infeasible for large
+integers composed of two large prime factors. The link between DH and
+RSA is that the mathematical techniques used to solve the discrete
+logarithm can often be adapted for integer factorization, and vice
+versa. However, there are also specialized factorization algorithms,
+such as:  
+\begin{itemize}
+    \item \textbf{Elliptic Curve Method (ECM)}: Useful for factoring
+      large numbers with small prime factors.  
+    \item \textbf{General Number Field Sieve (GNFS)}: The most
+      effective classical algorithm for factoring large integers.  
+\end{itemize}
+
+\paragraph{Polynomial-Time Algorithms?}  
+Despite the development of many efficient algorithms, none of the
+currently known classical algorithms for \textbf{discrete logarithm}
+or \textbf{factorization} operate in polynomial time. This is what
+ensures the security of DH and RSA on classical computers. However,
+the advent of quantum computing introduces potential risks. Shor's
+algorithm, in particular, provides a polynomial-time method for both
+discrete logarithm and factorization, which would render both DH and
+RSA insecure if a sufficiently powerful quantum computer were built.
+
