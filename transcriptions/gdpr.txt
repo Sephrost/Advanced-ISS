@@ -1,0 +1,847 @@
+ Okay, so let me finish the discussion that we had yesterday about
+ using quantum key distribution. As we said, we can distribute in this
+ way keys that can be used with traditional algorithm or with one-time
+ pad encryption. What is one-time pad encryption? It's the only
+ demonstrable perfect secret key encryption, but it has a big negative
+ point. It requires the use of a key which is used only once,
+ pre-shared, and it's larger or equal to the size of the message. So
+ if you want to transmit one megabyte of message, you need a key which
+ is one megabyte. The algorithm itself is very simple. The trick is in
+ having such a key because the algorithm just composes each bit, byte,
+ or character, or unit, whatever you want, of the key with the same
+ amount of the data, of the plain text, and typically this is done by
+ using modular addition, that is, a very simple XOR. So with QKD, if
+ we have a good source of random number, we can use QKD to distribute
+ a key on the fly and then to use it. The alternative, since key
+ generation is rather slow, key distribution is rather slow with QKD,
+ we can create a key pool where we've got a lot of bits and we use
+ them as needed. But of course, in that case, we have quite a big
+ danger because we need to protect the key pool from which we will
+ extract the bits. So this is basically the schema. We have one unit
+ of plain text, bit or byte, whatever you like. We take the same
+ amount of the key and we simply compose with XOR and so on until we
+ finish the plain text with the last element. If the key is really
+ random and never be used, then there is no way in which you can
+ decipher the text. So as I said, the key must be at least as long as
+ the plain text. The key must be really random, that is, uniformly
+ distributed in the set of all possible keys and completely
+ independent of the plain text. It's not the usual pseudo-random test
+ that we use to estimate how good our pseudo-random number generators
+ are, but we really need a chaotic source, such as, for example,
+ hardware random number generator that can be quantum based or
+ non-quantum based, but we need some chaotic natural physical system.
+ It must be completely patternless. Not only do we pass a typical
+ statistical randomness test, but we follow the definition of this
+ scientist, which gives additional requirements for a key. Especially
+ the key must have a number of bits of entropy at least equal to the
+ number of bits in the plain text, because if the entropy is less than
+ that of the plain text, the attacker could try to crack the random
+ number generator. The key must never be reused in whole or in part,
+ and of course, this is a general requirement, the key must be
+ completely secret. Practical properties in applying this. First of
+ all, the size of the one-time pad. So how to distribute such big keys
+ and how to store them. The true randomness. So we need a very good
+ source of hardware random number generator. The secure generation,
+ the one-time pad values, being very well aware of the fact that we
+ may have RAM or CPU attacks, or forensic analysis, I don't know if
+ you are aware, but if you cool down the RAM of the system, then you
+ can detect the bits that were stored inside the RAM. So that's really
+ a terrible attack. The secure exchange of the one-time pad values,
+ avoiding men in the middle or men at the end attacks. The secure use,
+ and so again, with attacks in real time against the memory of the
+ CPU. And finally, the secure disposal, how you are assured to delete
+ the one-time pad after it has been used. Among all these things, this
+ is the point where QKD is helping us. That's only that. So QKD is
+ helpful, can be used with the one-time pad, but there are additional
+ requirements. So that is to reinforce the concept that quantum is
+ supporting cyber security, but it's not in itself solving completely
+ the problems of cyber security. Yesterday, we discussed the fact that
+ part of the keys could be discovered by the attacker by having
+ problems. So in general, nowadays, we tend not to use keys that have
+ been generated directly, but to combine several shared secrets
+ through a so-called key combiner. This is, for example, the case that
+ we have seen yesterday of the implementation in Firefox, in which we
+ had an elliptic curve Diffie-Hellman ephemeral plus an ML chem. And
+ in that case, you generate two keys, secret shared number one, secret
+ shared number two, and then you have a function which is a key
+ combiner to generate the final key. So if you want to attack the
+ final key, you need to combine them. There have been several
+ proposals. Of course, the shared secrets may be agreed, distributed,
+ pre-shared, even generated on the fly, and there have been various
+ proposals. Currently, the most promising combiner is named X-Wing,
+ but there is not yet an official standard on how to combine the
+ secrets, but the concept is going on. Finally, since QKD is very much
+ relevant for networking, there is a big effort by Etsy in
+ standardizing all the interfaces and the concept. And so there is a
+ group for quantum safe cryptography in Etsy that has published quite
+ a lot of documents from the threat assessments, case study,
+ algorithmic framework, and so on, but pages and pages. This is a very
+ active group. What I would like to stress-- you see, for example,
+ quantum safe virtual private networks, that is, site-to-site
+ encryption, for example. What I want to stress is the architecture
+ that they are proposing, because again, the architecture is telling
+ us what are the side requirements to use full application of QKD.
+ They imagine to have, as we discussed, the site-to-site distribution
+ with QKD. So we have site A, B, and C, and you see that we got one
+ QKD link between A and B, and another QKD link between B and C, for
+ example. These QKD links are managed by quantum key distribution
+ devices, or endpoints, which are the ones that distribute. So for
+ example, with BB84. But the keys generated or distributed by these
+ devices are managed by a key management entity. And as you can see,
+ this part is in a very protected area, a trusted node. So we need
+ traditional protection for that thing, because if anything is altered
+ here inside, then we got a problem. And then Etsy has standardized a
+ key delivery API, in which an application-- they call it Secure
+ Application Entity, SAE-- can request to have a key stream, which is
+ synchronized with another application running on a corresponding
+ site. So that means that this key management entity will synchronize
+ its work with this other key management entity, and they will provide
+ the same bits to the two applications that then can perform
+ encryption, for example, with a one-time pad, if they want. Or they
+ can use traditional AES, for example. But anyway, the key management
+ entity is something which is acting as that key management pool in
+ which keys are generated, managed, distributed, and so on. So keep an
+ eye on this, because they are starting to implement it in Kubernetes
+ and in other systems as a way to manage security among different data
+ centers. OK, that's all for the quantum and post-quantum part. And
+ now we have another appeal about OCSP. And let me select that. Good
+ morning, everyone. Today I'm going to show you a presentation titled
+ the OCSP Protocol. Now, first of all, let's introduce the protocol.
+ OCSP stands for Online Certificate Status Protocol, and it's
+ specified in RFC6960. And it is used to check the location status of
+ digital certificates in real time. Why OCSP is useful? Because it is
+ a faster alternative to certificate location lists. And in a few
+ words, how it works. The client sends a request about how some
+ certificates are valid, and they have a response. For each chart,
+ they start. OK, as I was saying, the protocol, the client, then sends
+ a request about are these certificates valid now? And the server
+ responds for each certificate, this certificate is good or not, and
+ then sends also a valid signature. Let's go deep with this topic. And
+ now we see the request and the response, the OCSP request and
+ response in details. First of all, let's see the OCSP request. An
+ OCSP request contains two data structures, the TBS request. TBS
+ stands for To Be Signed request, which is mandatory and is the actual
+ query. Optionally, we could have an optional signature, which is used
+ for eventual client authentication, and it has the fields signature
+ and optional certificates that can be used to verify the signature.
+ But I would like to point out that this optional signature is not
+ very used, and there are not so much implementation of the client
+ authentication. Let's see the To Be Signed request. It has a version
+ that is optional, and if it is not specified, it is the version one,
+ the request name, and the request list. That is a sequence, or in
+ other words, a sort of array of single requests. And we could have
+ also request extensions that is optional, where we can have some
+ extension that applies to all requests. How is it composed of a
+ single request? It is composed of these fields. The rig set that
+ contains the certificate identifier, the hash algorithm used in the
+ issuer name hash and the issuer key hash. The issuer name hash is the
+ hash of the certificate issuer's distinguished name, and the issuer
+ key hash is the hash of the certificate issuer's public key. And then
+ we have the serial number of the certificate queried. We could have
+ also the single request extension, where we could find the extension
+ that applies only to the single request, but not to all the queries.
+ Here there is a practical example of OCSP request found with OpenSSL.
+ Here there is also the command, and I would like to point out that
+ there is an extension which is the nonce, and we will see later this
+ extension. Now, let's see the response structure. We have the
+ response status, where the status of the response is provided. We
+ have essentially two types of status. One is successful, then we have
+ a response. Otherwise, there is an error. If all is successful, we
+ have a response byte. The response byte is the actual response. In
+ this bit, we can find the response type, which identifies the type of
+ the response. Usually, it is used at the basic OCSP response, and
+ there are not so many ones. I have not found any other ones, so it is
+ the standard one, we could say. There is the actual OCSP response. A
+ basic OCSP response is composed by the to-be-signed response data,
+ and then the feeds for the signature. To-be-signed response data
+ contains the version, the responder ID, which identifies the OCSP
+ responder, which could be by name, so the responder's distinguished
+ name, or by key, with the SHA-1 of the responder's public key. I
+ would like to point out that usually it is used by key feed, because
+ the responder's distinguished name could be linked to a lot of public
+ keys, so it is better to use it by key feed. Then we have a timestamp
+ to do that, and a sequence of single responses, where we find for
+ each chart requested in the OCSP request the certification status.
+ Then we have a response extension feed, where we can have the option
+ extension that applies to the whole response list. A single response
+ feed contains the certificate set ID, where the hash algorithm is
+ used to hash the issue name hash and the issue key hash, so the issue
+ name hash is the hash of the certificate issuer's distinguished name,
+ and the issue key hash is the hash of the certificate issuer's public
+ key. And then we have the serial number, which is the serial number
+ of the checked certificate. We have obviously the set status, which
+ could be 00, good, 01, revoked, or 02, unknown. Usually "unknown" is
+ not used in practice, because usually those SP responders in practice
+ should provide an error, with 01, 02, 03, 05, 06 response status,
+ instead of sending an unknown response for the certificate. But it is
+ just the standard, the actual implementation could be different. Then
+ we have this update feed, which is the time at which the status being
+ indicated is known to be correct, and the optional next update feed,
+ the time at which new information will be available. If I receive a
+ response with a next update, which is before the actual time, I
+ should reject this response, because it is not valid. And then we
+ have the single extension, that we have additional information that
+ can be included in the response. And here we have also an OCSP
+ response seen in practice with Wireshark, with the OpenSSL command.
+ Now let's see which are the algorithms used in the response
+ signature. The RFC 6960, which is the RFC related to the OCSP
+ protocol, is not very strict. It gives us a lot of freedom. The only
+ argument which is mandatory is RSA with SHA-256. And the RFC also
+ recommends for backward compatibility, to use also RSA with SHA-1 and
+ DSA with SHA-1. Additionally, there could be other algorithms. So it
+ is not very strict. We can see that there are some recommended
+ algorithms, but we don't need to implement that. In fact, I have also
+ checked a real OCSP server, which is the OCSP server of Let's
+ Encrypt. And we can see that the recommended algorithms are present,
+ but not all. In fact, DSA is declared but not used. Usually, I use
+ RSA and elliptical DSA with a lot of hashing algorithms, which is the
+ most common choice to sign a document nowadays. Let's talk about the
+ OCSP extensions. There is the nonce, which I think is the most used
+ and the most important extension of the OCSP, because it has a unique
+ identifier in order to prevent replay attacks. So it is useful in
+ order to prevent this type of attacks. And it is useful to have a
+ fresh OCSP response. There are other extensions, the CRL references,
+ which could specify a reference to a specific CRL with these
+ attributes. And the acceptor response type if we want to have a
+ specific kind of response, but it is not very used. Here there are
+ other extensions. The only one which is, I think, most important is
+ the preferred signature algorithm, because as I said before, the LFC,
+ it is not very strict, and then we could have a lot of freedom in
+ choosing the algorithm. So the client could indicate which algorithm
+ is preferred for the signature of the response. And then we have the
+ extended rework definition, that could provide us additional
+ information if there is a rework status for a certificate. We have
+ some LFC updates for the non-extensions. In the years, there are some
+ updates. The LFC 8954 says that there is at least one octet and up to
+ 32 octets long, and is encouraged to use the 32 octets. And the LFC
+ 9654, it is suggested to use a length of 128. In both LFCs, it is
+ required to use the pseudo random number generator. Now let's talk
+ about the implementations. The OCSP protocol is implemented as binary
+ protocol with the DEL encoding, which is a special type of encoding
+ that allows us to convert from the ASN.1 specification to a binary
+ format. And it is usually, OCSP is encapsulated in various protocols.
+ In this protocol, the most common choice is HTTP or HTTPS, but it can
+ be used also as an extension in other protocols, like in IKEA v2 or
+ in TLS, as we have seen in OCSP stampling. Now let's go a little bit
+ deeper with OCSP or HTTP. We can use both GET and POST methods. In
+ the GET choice, we have GET your authority slash your accounting
+ basics before encoding of the DEL encoding of the OCSP request. In
+ the POST method, we have the HTTP header content application slash
+ OCSP request. As the HTTP body, the DEL encoding of the OCSP request,
+ and the OCSP responses, which are equal for both the methods, we have
+ HTTP header content type application slash OCSP response, and the
+ HTTP body, DEL encoding of OCSP response. Here we have some practical
+ examples with Wireshark, and I would like to point out how I have
+ built the GET string, because I have done some magic with OpenSSL.
+ Firstly, I have used OpenSSL in order to get the OCSP request encoded
+ in DEL format. Then I converted it in base64. Then, in order to add
+ the URL encoding, I have eliminated the \n characters from the OCSP
+ request, and then I used call in order to do the actual request. Now,
+ I would like to say something about the post-quantum cryptography in
+ OCSP. As Professor Lloyd said in the last lectures, there is a
+ problem with Shorheimit that poses significant risk to LSA and
+ elliptical DSA, and so we need to use post-quantum cryptography in
+ order to have a good signature, which is valid and a signature that
+ cannot be compromised. What can we say about OCSP? It is at the state
+ of art. There are no Internet Engineering Task Force documents for
+ OCSP, but there are some papers that are exploring this area. What
+ about hybrid OCSP responses? They are not discussed, even if a
+ signature with hybrid cells is possible. What is a hybrid signature?
+ It is a signature where there is both the post-quantum signature with
+ a post-quantum argument and a traditional signature with a
+ traditional argument signature. The main solution that I have found
+ is the fully post-quantum OCSP response. What about the fully
+ post-quantum OCSP? The OCSP requests do not change because we do not
+ need a signature unless we need the client post-quantum
+ authentication. As I said at the beginning of my presentation, it is
+ not very used. As far as the OCSP response is concerned, the strategy
+ stays the same as I have described, but the signatures and the keys
+ will be different. They will be the quantum ones. I have found some
+ examples from GlobalSign. Here is the link to the GitHub repository.
+ The algorithm used is the Lithium 2. There are some problems using
+ the post-quantum cryptography because the post-quantum argument
+ involves large keys and signatures. It is a problem of latency and
+ performance. This is the first problem. The other problem is a
+ problem of speed. As I said at the beginning of my presentation, what
+ is the purpose of OCSP? The purpose is to be a faster alternative to
+ CLL. The speed is a crucial point in OCSP. The algorithms are not
+ very fast. We can see that ED25519, which is elliptical DSA, is very
+ fast. For example, SLHDSA is a Sphinx+. It is not very fast at
+ signing. But as we can see from the table, the faster one is the
+ Lithium 2, which has a standardized name MLDSA. We can say that the
+ signature could not be important if we do not consider the nouns
+ because in this way we sign one time and then we send always the same
+ response. But it should be better to include the nouns in the
+ response. So signing is a crucial thing, both sign and verification.
+ With this, I have finished my presentation. Now it's time for the
+ Q&A. [PAUSE] Yeah, as I said, we could do that. But there is a
+ problem, the nouns. Because the client sends the nouns, as I showed
+ in the OCSP request. And the response should include the nouns too,
+ so I cannot compute. One thing that we could do is to not include the
+ nouns. In fact, in the implementation, there could be not the nouns,
+ even if it is in the request. But it is not a good practice and we
+ should avoid it. Yeah, it is a possible solution, but the signing
+ task remains crucial. [PAUSE] See? [INAUDIBLE] I think -- I agree
+ with you, but I say that the signature algorithm could be something
+ like LSA with some hash algorithm, so what I written on the slide, I
+ intend it to be something in the signature process. So it is not the
+ hash on the hash. Yeah. [INAUDIBLE] I think it is used to have the
+ history of the certificate, so when it has been expired, eventually.
+ [INAUDIBLE] Okay. [INAUDIBLE] Okay. Working as usual. [INAUDIBLE]
+ [PAUSE] [PAUSE] [PAUSE] [PAUSE] Yes. [INAUDIBLE] [PAUSE] [PAUSE]
+ [INAUDIBLE] Okay, thank you. And now, let's go to our newer topic.
+ [PAUSE] Okay, so this part is related to the technical aspects of
+ privacy protection. You probably either have already had, or you will
+ have also, the legal part about GDPR. So I'm looking at the GDPR by
+ the point of view of what is required by the cybersecurity technical
+ support for GDPR. First of all, these things, probably you already
+ know about them. Let me know if there is something which is not
+ evident from the past law part. The fact that there is a supervisory
+ authority is really important because that is the body that decides,
+ for example, if a security measure is adequate or not. Because in
+ GDPR, there are not compulsory measures. They say that you need to
+ protect. But the devaluation, if the protection is sufficient or not,
+ is delegated to the national authorities. So those are very
+ important, and reading their decisions is important to understand
+ what is the trend that they are having with respect to the protection
+ that we are creating. Another point about applicability, because we
+ are increasingly in an international environment. So any organization
+ subject to GDPR, if they elaborate or control data of European
+ citizens, I don't care if they are big, small, for profit, not for
+ profit, if they are located in Europe or outside Europe. This is a
+ very strong point. We are protecting European citizens. I don't care
+ where the organization managing the data is located or if they are
+ doing for profit or not for profit. And then in comparison, if we
+ consider the kind of protection that we have in California, which is
+ one of the most advanced states, the United States, in privacy
+ protection, they got the CCPA, California Consumer Privacy Act, which
+ has been amended and extended in 2023 by the California Privacy
+ Rights Act, that protects California residents only. And that is of
+ course, but applies only to for profit, so if you are not for profit,
+ you can sell the data as you like, that do business in California and
+ meet any of the following requirements. Either they have a gross
+ revenue of more than $25 million per year, or they buy, sell, or
+ share the personal information of more than 100,000 California
+ residents, or they have at least 50% of their annual revenue from
+ selling California residents' personal information. So the law, this
+ act applies only to big and for profit, which is quite different to
+ the kind of protection that we are giving in Europe. So personal
+ data, some things are typical, and we already think about that, the
+ human resources records, the image of a closed-circuit TV, the
+ photographs, but with respect to ICT, the email, for example, they
+ are considered as part of the GDR protection, and even, I would
+ stress, anonymized monitoring data. That is an important point when
+ you perform, for example, network monitoring, even if you anonymize
+ them, you still have the obligation to protect. And this is valid
+ both for automated and manual filing systems, because many people
+ think that GPR applies only to computer-based systems. No, it applies
+ to everything. If you keep records by hand, then GDPR applies as
+ well. Sensitive personal data are special categories, and that can
+ tell you racial, political, religious, and other kinds of trends. And
+ the data is not just a collection of personal data. It's a collection
+ of data that is used to make decisions. And the data is not just a
+ collection of personal data. It's a collection of data that is used
+ to make decisions. The controller says how and why personal data is
+ processed. The data processor, which is processing the data based on
+ the input from the controllers. And the data processing is any
+ activity, maybe collecting, storing, using, deleting, sharing. I'm
+ listing them because sometimes different actors are performing those
+ actions. Think about deleting. If you have a disk and you dispose of
+ the disk, the company or the individual in charge of disposing the
+ disk must comply with GDPR and be able to demonstrate that the data
+ has been really destroyed. Data properties. Data shall be processed
+ lawfully, fairly, and transparently. Lawful, of course, they must not
+ be in breach of other laws and must be lawful in accordance with
+ Article 6 and 9 that we will discuss. Fair and transparent. We need
+ to make the data subject aware, for example, through privacy notices,
+ and they must feel being treated fairly. And feeling is something
+ different. So if I don't feel treated fairly, I can go to the
+ supervisor authority. Purpose limitation. Data shall be collected for
+ specified, explicit, and legitimate purpose and not further processed
+ in a manner that is incompatible with DOSPART. So when you request
+ the consent for processing some data, it must be for a specific
+ purpose and it's not valid for any other one. So generic statements.
+ We use your data for profiling. It's too generic. You have to tell
+ specifically which kind of profiling, which kind of marketing, which
+ kind of actions. Data minimization. Data shall be adequate, relevant,
+ and limited to what it is necessary in relation to the purpose. So
+ the input here is do not exceed in data collection. If I need to buy
+ a plane ticket, they have no right to ask me if I'm traveling alone
+ or with my fiancée, my wife, or my girlfriend. Because that is not
+ relevant. So you minimize the data. Data accuracy. Accurate data
+ shall be accurate and if necessary, kept up to date. This is one of
+ the most difficult part of real application of GDPR because you
+ collect the data in the moment in which the user is asking for a
+ service. How do you guarantee that the data remain current? So it
+ means, for example, that you need to keep contact with the users and
+ ask, is this still your phone number? Is this still your physical
+ address? And so on. Unless you decide to cancel the data after time,
+ which goes to the next point, storage limitation. Data shall be kept
+ in a form which permits identification of subject for no longer that
+ is necessary for the purposes for which the personal data are
+ processed. That means that you must implement into your system
+ periodic cancellation of all data. There is no possibility to have
+ indefinite storage. That's again really important because typically
+ we put the data in and then we forget. No, you must attach a label,
+ which is the expiration of that data. And you periodically check your
+ database. When the expiration has come, you must cancel that data.
+ The typical thing again is for a plane ticket. I need to know who you
+ are when you are flying. And maybe I will keep that data for one or
+ two or three months after that, just in case of any problem with the
+ flight or for getting the points that you get for every flight. But
+ you cannot keep that forever. At some point, you must cancel that.
+ You must. It's not that the user comes and asks, please cancel my
+ data. You must. That is an obligation. And that must be specified.
+ You must have a document that says, OK, in my storage of data, I do
+ this and that. This kind of data I delete after one week, one day,
+ one month, one year, but not indefinite storage. Breach reporting.
+ Personal data breach is a breach of the security which is leading to
+ the destruction, alteration, unauthorized disclosure of or access to
+ personal data. We need to notify the supervisory authority when it is
+ likely to result in a risk. OK, so it's not always. If after the
+ breach, there is a risk for the rights and the freedoms of the
+ individuals, then you have 72 hours of time. Even if it is Christmas,
+ even if it is a summer vacation, 72 hours. I don't care from the
+ moment in which you become aware to the moment in which you notify
+ the authority. In addition to notify the authority, if the breach is
+ likely to result in a high risk, then you must notify also the
+ individuals. So as a minimum, you notify the authority. If it is
+ really high risk, you notify also the individuals. Remember that
+ there is a fine up to four percent of the annual worldwide turnover.
+ So not only the money that you earn in this country, but your
+ worldwide turnover with the maximum fee that is up to 20 million
+ euro. And there have been already very big fines given to various
+ companies here in Europe. Data transfers. GDPR imposes a restriction
+ on the transfer of personal data outside of the European economic
+ area to third countries or to international organizations. The
+ Commission, the European Commission, may designate non-European
+ countries as adequate level of protection. And in fact, there has
+ been some statements like that, but most likely there are bilateral
+ agreements. For example, in the past, we had the European versus
+ United States privacy shield, which declared that if you process in
+ this way the data, then you are authorized to process the European
+ data. Now that is no more valid because it stopped the validity and a
+ new one is being renegotiated. So companies are using other ways.
+ Since there is no official agreement between the governments, maybe
+ there are other agreements. For example, I don't know if you are
+ aware, I've seen that some of you have products from Apple. Well,
+ Apple is a worldwide company which has got only one accountancy
+ system, which is in California. So I don't care if you buy in Italy,
+ in Japan, India, or UK, your data are going to California. And that
+ is not acceptable for many countries. How is that possible if the UA
+ versus US privacy shield is no more in effect? It is possible because
+ when you sign the contract, so you have not read but you sign when
+ you buy a device, there is one clause which is named standard
+ commercial clauses, SCC, in which it is written that you give
+ permission to Apple to store and manage your data in California as
+ long as they are concerned with the product that you have bought. So
+ you have not read the details but you have given explicit consent,
+ which is one of the ways in which you can go around general
+ processing. There are various requirements around these data share
+ agreements, so you must consider the controller versus controller or
+ controller versus processor cases. From a cybersecurity point of
+ view, we have to protect the information lifecycle management. And in
+ that sense, we have a first step, which is the information asset
+ registers, then a data flow mapping, so where the data are going
+ inside our company, risk assessment, privacy notice, and then system
+ level security policy. These are the things that must be in place, at
+ least for personal data. So that means that inside companies
+ nowadays, you have at least personal data that are managed, or must
+ be managed because some companies forget about that, in a very
+ organized way following these steps. So I think we can stop a moment
+ here before seeing these various articles. Oh, sorry. Yeah, and then
+ 10 minutes break and then we will continue. Article 25, paragraph 1,
+ requires to take into account the state of the art. That is telling
+ an important thing, that even if at some point in time you have
+ created some protection system for your data, you must have a look at
+ how the field is evolving. Because if you are not compliant with the
+ state of the art, then automatically your system is not deemed to be
+ adequately protected. But the article is also talking about the
+ risks. So it means that you cannot say, OK, I decided about this
+ protection. You must first perform a risk analysis and decide that
+ given those risks, that these kinds of protections are adequate. And
+ then you see that you have to take appropriate technical and
+ organizational measures. So we are considering both things, technical
+ solutions, but also training of the personnel, education, monitoring
+ of their behavior, and so on. Of course, these things are for data
+ protection, not in general for everything. But this requires to
+ integrate and not adding, and that is another thing that the national
+ supervisory authorities look at. Have you added that later or is that
+ integral inside the processing system of your data? So with respect
+ to state of the art, we know that there are continuously new attacks.
+ We know, because we started in previous year, about the windows of
+ exposure, in which patching may require months or never happen, such
+ as was the case for Windows XP. So that is calling for periodic
+ review and update. There is a tentative graph, it's not a real graph,
+ but more or less things going this way. At some point in time, you
+ have created some system for protection. So, for example, 90% you
+ achieved, 100% is, of course, unreachable. Then from the day after
+ you implement that, there are new attacks. And if you don't do
+ anything, you have a decrease. And typically you lose 50% of your
+ security every year. It means that more or less in three years, your
+ protection is nearly null. So that's why we're saying state of the
+ art, because periodically you must review your security solutions,
+ new attacks, implement a new security measure to give a boost. And
+ that, again, will go down, and then another boost, and so on, and so
+ on. In the past, the Italian law for privacy protection made
+ compulsory to review the risks and the security solution once a year.
+ And it was compulsory to put the documentation of that process inside
+ the annual statement by the board of the governors of the company.
+ Now that has disappeared, because if there is a big vulnerability,
+ you cannot wait one year before fixing it. So they say, OK, state of
+ the art, it's upon you as a manager of data protection to estimate if
+ something has happened that requires immediate action. I would say
+ that as a minimum, once a year, you must do a review. But most
+ likely, you must do it before that time, when there are very critical
+ vulnerabilities that are emerging. Article 25, paragraph 2, is
+ telling you another thing, that the technical solutions that you
+ implement must not be optional. They must be activated by default,
+ and that is another important requirement that you must demonstrate.
+ Then, what we already discussed briefly, process only the personal
+ data which are necessary. So when you have a database that contains
+ some data, you must verify if each data is really needed for that
+ specific task. So that obligation applies to the amount, so how much
+ data are you collecting, the extent, so which kind of processing are
+ you doing on that data, the time for which the data are being
+ processed, and their accessibility, that is, who has access to that
+ data. That goes back to one principle that we discussed last year,
+ the need to know. And unfortunately, companies, especially in legacy
+ database, have one huge database, and then they perform restriction
+ on the need to know just with a query. Okay, I give you a
+ pre-compiled query, which is only extracting the data that you need.
+ They are not performing a real access control. So if the employee is
+ smart and rewrites the query, that employee can access all the data,
+ and that is bad. So quite often, being compliant with GDPR means that
+ you rewrite the structure of your database, creating separate tables
+ according to the data that are needed for different functions. If not
+ different tables, at least different views of the database, which are
+ enforced by strong access control. Another important thing that we
+ have to consider is when you are going to social media. Because
+ social media potentially has a public, which is unknown, it's all the
+ people in the world. That is not possible. The measures that you put
+ in place shall ensure that, by default, personal data are not made
+ accessible without the individual's intervention to an indefinite
+ number of natural persons. That means that even if the user is giving
+ you permission to publish something, you need special permission to
+ say, "Okay, do you want to publish it on Facebook, on my Facebook
+ page, to everybody?" Because otherwise, that is not valid. Paragraph
+ three, an approved certification mechanism. Maybe in other courses,
+ you have discussed it about security certification. This is
+ certification of the structure of the protection that you have put in
+ place for the data. This certification may be used as an element to
+ demonstrate compliance. So it's not compulsory. You can be GDPR
+ compliant even if you have not been certified for that. The real fact
+ problem is that the certification shall be voluntary and must be done
+ with a transparent process. But the certification does not reduce
+ your responsibility. That's why there are not so many companies that
+ yet have gone through the process of certifying their data
+ processing. It's a two-sided card in the sense that if you perform
+ certification, at least you demonstrate your goodwill when something
+ bad happens. But if something really bad happens, you cannot say,
+ "Oh, I was certified, so it's not my fault." So it's really debatable
+ if it is very useful or just a waste of money. Article 46 says that
+ when you want to transfer data, for example, abroad or from one
+ controller to another, you need to put in place appropriate
+ safeguards with various conditions. Part of them are technical and
+ part of them are legal. And then the big topic of privacy by default.
+ The most restrictive settings must be applied automatically when a
+ customer buys a service or a product. So it means that there must be
+ no need for a user to request privacy of their data. That must be
+ automatic. On the contrary, if the user wants to lower its privacy,
+ then it can request to remove some restrictions. But by default, the
+ most restrictive setting must be applied. That is privacy by default.
+ And as said, the data must be stored only as long as they are needed,
+ and the customer must not make any action to have their data
+ cancelled once the relation with the service provider is over. And
+ then privacy by design. We said that you must demonstrate that the
+ privacy protection is embedded in your system. And the best way to
+ demonstrate that is by demonstrating that you design your system with
+ privacy in mind. That is a requirement. You must do privacy by
+ design. So the data controller or processor must be able to
+ demonstrate that there are adequate security measures, and that can
+ also be a later addition. But also the privacy principle is
+ continuously applied and verified. The IT department must protect
+ personal data during their whole lifetime of data, system, and
+ processes. One, two, three. There are three different things. It's
+ not just data. And for privacy by design, typically privacy and
+ security are not considered in the initial phase of IT projects. They
+ are added later. But there is this guy, Ann Cavoukian. It was the
+ Information and Privacy Commissioner of Ontario Province in Canada.
+ Defined seven principles of privacy by design. And those are the
+ things that the supervising authority is checking if you have
+ respected in implementing your privacy protection. They are just
+ listed here as a table, but now we will go one by one to discuss how
+ to implement them and which requirements they put forward. First of
+ all, proactive, not reactive. So you should try to avoid the risks
+ rather than try to limit the consequence. So it means applying strong
+ and consistent techniques since the conception of your system. And
+ beware that the risk evaluation is different from the normal risk
+ evaluation that you have for cybersecurity. For example, a denial of
+ service is a risk for your IT service. But it is not at all a risk
+ for your personal data. So you should not consider a denial of
+ service in protecting personal data. On the contrary, data
+ confidentiality in an internal network may not be important for
+ security because we want to have an IDS, detective, terrorist
+ intrusion. But it is important for personal data. So that means, for
+ example, that you should perform a selective encryption of data being
+ transmitted internally in your network. So you see two opposite
+ faces. Something which is relevant for normality security, but it is
+ not for privacy and vice versa. That's why you need a specific risk
+ assessment for data privacy. Second point, privacy by default. OK, we
+ have already discussed that. The concept that you should follow is
+ minimize data identifiability, observability, and associability. So
+ can I say that this data belongs to this person? Can I observe the
+ value of this data? Or can I associate this data in a table with
+ names or name and address present in another table? Those are the
+ things that you should try to look. And data should be, of course,
+ automatically protected. No special procedure and no special required
+ from the data subject. Privacy embedded into design, it means that in
+ the design of the architectures, but also of the processes. Because
+ sometimes we restrict ourselves just to the computers and the disk
+ that manage the data. But there is a process in which data, for
+ example, are displayed also. Or maybe they are temporarily stored on
+ a laptop or a smartphone. So you must check what is the process
+ through which the data are flowing. Of course, the technologies used
+ in the design, the design of the operation itself, and everything
+ must be done in a holistic and integrated manner. Not as a last
+ minute addition, which is typically messy and ineffective. But the
+ real problem that companies are facing now is the last point. How to
+ deal with legacy systems? Because we already have them. They are
+ running for a long time. And you hope to not have a data breach with
+ the data protected by them. Because otherwise you are in trouble.
+ Because GDPR initially, when it was entering into force, there was a
+ bit of tolerance. Nowadays, it's several years that it is in effect.
+ And so you add the time if you want to change even your legacy
+ system. But that is one area in which you should pay particular care.
+ False functionality. Sometimes people say, "No, I cannot protect
+ privacy, because otherwise I cannot offer you the functionality that
+ the user is expecting." So let's try to avoid this. Privacy versus
+ security, which is typically in an IDS. And I already mentioned that.
+ Partial encryption is a good solution that permits you to have an IDS
+ which is effective, yet protect the personal data. Of course, that is
+ additional effort in identifying which are the personal data, in
+ encrypting them, and so on. That is what is needed. In general, if
+ you have difficulties in having this modification being accepted in
+ the company in which you work, you should suggest the fact that
+ implementing the privacy control, quite often, is also improving the
+ general security of the system. So maybe there is less need for other
+ security controls. So in some sense, it's a win-win situation, or at
+ least it's producing some positive effect rather than a neutral one.
+ Number five, full lifecycle protection. So there must be no holes in
+ the protection or accountability. Accountability means that when
+ something bad happens, we know who is responsible. Which process,
+ which system, which person is responsible for that problem. It must
+ be protected, the system set up before data are collected. Then
+ during data processing and storage, and also when data are consented.
+ So, of course, security is highly important in all these phases,
+ because we cannot have privacy without solid security. Number six,
+ visibility and transparency. Follow the trust but verify principle.
+ You have created your system, you think to have done it correctly.
+ Okay, let's monitor, let's log, let's perform an audit. So we need to
+ verify that nothing bad is happening, that there is nothing which is
+ not being correctly implemented. And the point here is that the
+ verifier must be external to the verified system. Because you cannot
+ have your own designer or your manager checking if the system is
+ correct or not. So that is important, again, because all this process
+ has got a technical side, but it's also a legal and administrative
+ side. If you want to demonstrate that you put effort, that is a good
+ way. I ask an external, independent advisor to check and come and
+ verify my system. The adopted operations and solutions, I don't care
+ if technical or procedural, must be transparent for the data subject
+ and the service provider. So this is something which is automatic, it
+ does not require to activate things in any stage. And finally, this
+ is more conceptual than practical, respect for user privacy overall.
+ So guiding principle, correct privacy management, strong protection,
+ notification of problems in an appropriate, timely manner, and
+ user-friendly mechanism for information and verification. So
+ user-centric approach. One of the things that are required, not for
+ all data controllers, but for many of them, is the PIA, Privacy
+ Impact Assessment. This is a procedure which is similar, but not
+ identical, to the risk analysis in security. This is explicitly
+ required, so it is not something that is nice to have. You must have,
+ and you must have it written so that an external auditor can come and
+ inspect your PIA. So first, identify personal data and discuss them
+ with stakeholders, what is the relevance of this data. Then, identify
+ risks, keeping into account the stakeholder perception, identify
+ countermeasures, define the rules, implement, and create rules and
+ mechanisms for review, audit, responsibility, especially we Italians
+ are allergic to this word. It's never my responsibility. On the
+ contrary, you write it down. It is a responsibility. And remember
+ that you should not put the name of a person. You must put the role.
+ Because if in the PIA you put the name, for example, Professor Leo is
+ in charge, and Professor Leo next year is away, or has changed his
+ role, he's no more responsible. So you must say, for example, the
+ director of the department, the designer, the manager, so that you
+ identify the virtual person, which is mapped to different
+ individuals, and maybe even there is a share. The system managers,
+ for example, maybe three of them, they are equally responsible,
+ because they are able to perform those actions. Accountability. The
+ data controller must be able to demonstrate. So it's not that someone
+ is coming and telling you you have not done your job well. It's on
+ the contrary. Please demonstrate that you have adopted a complete set
+ of legal, organizational, and technical measures. The burden of
+ demonstration is on you, which is the contrary of what happens in a
+ normal trial. When you go in court, it's the accusation that has to
+ demonstrate that you have done wrong. Here is the contrary. No,
+ please demonstrate that you have done good. So you must demonstrate
+ in an affirmative and proactive manner that data processing is
+ adequate and conformant to the GDPR. So that means that while in the
+ past, before GDPR, there was a more formal approach in which you just
+ write some papers, now we are coming to a very substantial one to
+ demonstrate to have taken any reasonable measure to minimize the
+ risk. And since the risk will change and evolve over time, we have to
+ update continuously this thing. Records of processing activities are
+ required by Article 30 in written form. So again, saying, "Yes, I
+ have implemented." No. The auditor comes and wants to check and
+ inspect what are your rules. So you must write them down, and you
+ must update them when something changes in your processes. So that is
+ for any company which is bigger than 250 employees. It is also
+ applicable to small and medium enterprises, so less than 250
+ employees, if processing is likely to result in a risk to the rights
+ and freedoms of data or the subjects, or the processing is not
+ occasional, or processing includes categories of data, those are
+ Article 10, the one which are criminal offense. So there is some
+ exemption, but only if you are small and not handling those data in
+ that particular way. Specific requests, Article 30, Paragraph 1(f),
+ where possible, the envisaged time limits for erasure of the
+ different categories of data. So you should tell exactly. And where
+ possible, give a general description of the technical and
+ organizational security measures that are referred then in Article
+ 32, Paragraph 1. So here is the Article 32. Again, taking into
+ account the state of the art, risk, likelihood, and severity.
+ Technical and organizational measures, and you assess the appropriate
+ level of security to protect the data against destruction. It means
+ the data do not exist anymore in any form. Loss. Loss is different. I
+ don't have control anymore of them, but the data still exists.
+ Alteration, and you know what we mean. Unauthorized disclosure or
+ access to personal data when transmitted, stored, or otherwise
+ processed. Destruction and loss. So we try to do our best to avoid
+ destruction and loss, but of course, let's make arrangements for the
+ worst case. And the thing is, good backup. And good backup means,
+ check each of these points. Is your backup offline? It must be
+ offline, because otherwise there is the possibility that also the
+ backup is attacked and destroyed. Offsite, not only offline, but not
+ maintained, stored in the same place, because if there is a fire, if
+ there is an earthquake, you lose also the backup. Typically, we say
+ at least 30 kilometers from the data center. Minimal or null manual
+ operations. Every time there is human intervention, there is the
+ possibility of errors. So try to make that as much automatic as
+ possible. Periodic, because we want to be able to reconstruct data
+ when something bad happens up to a certain point in time. Verified
+ immediately after backup creation for verification, but also
+ periodically, because we have the obligation to keep data and be able
+ to read them in 10, 20, or 30 years. It happened to me. When I was
+ 18, I had the surgery at my knee. And then when I was 50, I had again
+ a problem with my knee, and I was in need to get the data about the
+ surgery that I had when I was 18. And in some sense, I was lucky that
+ the report of the surgery was paper-based. So I went to the archive
+ of the hospital underground, and they were able to find that
+ paper-based. But try to think if that would be information-based,
+ IT-based. What is the likelihood that they still have in a readable
+ format the data of 22 years before? That is really different.
+ Technologies have changed. Maybe they had CD-ROM or something like
+ that that works only with Windows. Maybe at that time there was not
+ even Windows when I was 18. So it's really difficult to say, and that
+ is something that you must keep in mind. Technical obsolescence or
+ support wear out. You make a copy on a CD-ROM, but the CD alters over
+ time and may lose data. Article 32, paragraph 1, some suggested
+ technical protection measures. They are not compulsory. They are
+ suggested. Please consider that pseudonymization and encryption of
+ personal data. Ability to ensure ongoing confidentiality, data
+ availability, and resilience. Ability to restore the availability and
+ the access to personal data in a timely manner in the event of
+ physical or technical incident. And the process for regularly
+ testing, assessing, and evaluating the effectiveness. So there are
+ quite a lot of requirements here. That means that you need to have
+ cyber security in place. Business continuity to satisfy point B. So
+ being able to restore access as fast as possible. And also disaster
+ recovery. Because business continuity is just simply when one disk
+ breaks down or one system is not working. But disaster recovery is
+ when there is a fire, there is an earthquake, and you have a copy of
+ those data and those systems in another place. So depending on the
+ importance of the data, you may have to set up all these kind of
+ security measures. In the previous slide, it was mentioned
+ pseudonymization. Is that different from anonymization? So
+ anonymization data that may lead to identification are completely
+ removed. So it's impossible to identify the person. But using
+ statistical techniques. So if I have Alice, Bob, and Charlie, they
+ all become triple X. So you don't have anymore the name. But if
+ beside the name, I store maybe how many times a day they go in a
+ certain place or where do they live or which is their normal travel
+ path. Maybe I can understand which is Alice, Bob, and Charlie. So
+ that is using statistical techniques, habits, or the joining of
+ different data categories. Pseudonymization replaces the real
+ identity with the pseudonym. And then keep another table under strict
+ access control to store the correspondence from the pseudonym to the
+ real identity. If needed, we can disclose the person behind the
+ pseudonym. So Alice, Bob, and Charlie become ABC. And then we have a
+ side table that says A is Alice, B is Bob, C is Charlie, and so on.
+ So it's not compulsory to have anonymization. Pseudonymization is
+ sufficient. But then you have to demonstrate to have well protected
+ the side auxiliary table. For confidentiality, don't think always
+ automatically about data encryption. Yes, that's impossible. And that
+ is some kind of intrinsic protection. But then, you know, you have
+ encrypted data. But then when you need to process them, you need to
+ decrypt. So you may consider also access control. Also that, in some
+ sense, is confidentiality because you protect the access to the data.
+ So that is a procedural protection, which is acceptable. But you
+ should note that any time in which you don't perform intrinsic but
+ you perform procedural, then there is another point. If you do
+ procedural, then you need to have log and audit. Because procedural
+ with access control means, oh, this person cannot read the data. Then
+ please log all the data access and perform an audit to match if the
+ access that took place is conformant with the security policy. So
+ remember, that is valid in general. Intrinsic versus procedural. They
+ are equally valid, but procedural requires also log and audit to
+ verify that things are happening as expected. For integrity, again,
+ verify if the data have been altered. Transmitted data equals
+ received data. Read data equals written or stored data. If not, of
+ course, alarm. And then you should get back to the original correct
+ data. And that is where a backup could be needed. We already know
+ that for integrity, a MAC or a digital signature can be applied. But
+ integrity here in the privacy most often means to avoid alteration.
+ So the author, the legal author of the document, has not intended
+ integrity as we normally intend it in cybersecurity. Detecting if an
+ alteration happens. Integrity, maintaining integrity means access
+ control. Means you have no right to modify the data. So who has the
+ right to create, write, modify, delete the data? Which requires
+ access control. And then since access control, again, is procedural,
+ you need log and audit for that. For availability and resilience,
+ that is especially important for those data in which the owner may
+ need to access them at any time. For example, medical data. So in
+ that case, we need redundancy of the data and also the systems for
+ having access to those data. And we need monitoring, not only for
+ attacks, but also for capacity exhaustion. So in that case, for those
+ specific data, denial of service becomes a risk. When those are data
+ that you may need immediately in case of an emergency. Other privacy
+ problems. Some of you are working at network level, but network level
+ log data may also affect user privacy. So IP addresses that you use
+ regularly may be associated to a user. For example, via a
+ subscription or authentication via captive portal. So the fact that
+ you are storing in a network monitoring system the IP address, they
+ are subject to the GDPR. Or if you are just the manager of a web
+ server, the HTTP log. Pages visited, parameters submitted. The DNS
+ queries is another area which is subject to GDPR. Because based on
+ the query that you make, we know which is the kind of maybe sexual,
+ political orientation that you have. So for that reason, we have DNS
+ over TLS to avoid people spying. But remember, DNS over TLS is only
+ for the first hop. Then when we go around the world, we don't know
+ what's happening. And on the contrary, there are all these people
+ like Cloudflare and Google that are offering open DNS name servers
+ because they do want to alter our privacy. Okay, I think we have
+ finished this part. That is all for my cybersecurity part. Next week,
+ you will have lectures about social engineering. Then Professor
+ Tipaldo has lost one lecture due to a problem in the previous weeks.
+ That lecture will be performed on the last day, so on January 10,
+ which is Friday. And we will split that lecture in two parts. The
+ first part, 2.30 to 4 o'clock, will be exam simulation. There will be
+ two questions by me and two questions by Professor Tipaldo, only for
+ people in class. You will write your answers, and we will evaluate
+ that. So one hour for that and half an hour for evaluating your
+ answers and to show you in which way your work is being graded. Then
+ 4 to 5.30, Professor Tipaldo will finish his part about social
+ engineering. Okay, on the contrary, there will be the laboratory on
+ post-quantum crypto that we have not had last week. But since you are
+ very few people attending the laboratory, you will be able to do all
+ together. Okay, so that's all for the moment. Merry Christmas to
+ everybody.

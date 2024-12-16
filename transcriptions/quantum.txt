@@ -1,0 +1,971 @@
+Which is related to new technology, quantum technology. And if that is
+helping or fighting against cyber security. So friend or foe, and this
+is something that if you wish or not, is coming to your screen very,
+very soon. And this is the kind of movie that we will see, why?
+Because there is a part of quantum, which is good. The quantum key
+distribution. There is a part which is bad. So it is providing room
+for attacks. Shor and Grover are the two most famous ones. And there
+is the ugly part. It is forcing us to perform post-quantum
+cryptography. So to change nearly all our algorithm to make them
+quantum resistant. And so this is the topic of today's talk. So of
+course, if we talk about quantum crypto, we need to understand a bit
+of quantum physics. So this is not a physics course. I will give you
+the minimum information which is needed to understand what are the
+attacks and what are the capabilities. So first of all, we are talking
+about quantum mechanics, which is an area of physics where classical
+deterministic rules do not hold anymore. This is beginning of the 19th
+century, the 20th century, with Schrodinger, Dirac, Heisenberg and
+many other eminent scientists. There are some examples that I can make
+you to let you understand the difference between quantum and classical
+world. One thing is the famous uncertainty principle, also named
+Heisenberg indeterminacy principle. This is an intrinsic limitation
+when you go to microscopic levels that say that there are certain
+quantities that you cannot measure simultaneously with infinite
+precision. For example, the famous point is position and momentum. So
+if you clearly identify where a particle is at a certain point in
+time, you don't know the speed and the direction of its velocity. So
+you cannot predict where it will be in the next instant of time, okay?
+So the more accurately one property is measured, the less accurately
+the other property. And another principle which is relevant for us is
+auantum superposition. Since we are unable to measure with infinite
+precision these things, it means that a quantum system is, in every
+time, in multiple states simultaneously, okay? And that will continue
+to persist until you perform a measurement. We say that the
+measurement of a quantum system is collapsing the system to a specific
+state. But until you perform the measurement, all the states are
+possible with the different probabilities we will discuss. An example
+of this, if you want to go and look around, is the famous Young
+experiment in which we are sending a light beam and against the screen
+where there are two vertical slits, okay? So normally you would say
+that the light either would pass in one or the other, and you would
+expect two lines appear on the back. On the contrary, there are
+interference figures. It means that the photons are taking not only
+the straight line, but they are doing very strange things, moving in
+all possible directions with different probabilities. That happens
+only if you don't measure the photons. On the contrary, if you measure
+the photons, they will go straight. So because you are forcing a state
+with the measurement. So if you just see the final effect, that is
+superposition. If you go into measurement, you are forcing one
+specific behavior. I already mentioned the fact that we can interpret
+this in a probabilistic way. So we don't know where a particle is, but
+there is a certain probability to find it in a place. So that is
+because particles are described by a so-called wave function, C, which
+is telling you the position X at a certain time T of that particle.
+The wave function is related to the probability of finding that
+particle in position X at time T. And the square of the wave function
+is what you can actually measure. And the square of the wave function
+is the probability density of finding the particle at position X. So
+in that sense, this is a probabilistic interpretation, because given
+the function, we have a certain probability of finding. So you've got
+a distribution of probability. This is something that is uncorrelated
+to our experience. The mouse is either here or is not here. It's not
+probable or likely it to be here. But when you go to microscopic
+level, that happens. And not everybody's liking that. There is this
+famous person, Albert Einstein, that once said that God does not play
+dice with the universe. But on the contrary, it seems to play dice in
+the sense that it's a probability. It may happen or may not happen,
+and so on. Another phenomenon that we will use in our discussion is
+quantum entanglement. Entanglement means that a group of particles is
+defined entangled, and minimum, of course, two particles, when the
+quantum state of each particle in the group cannot be described
+independently of the state of the others. Okay, so they are a system.
+You are not, even if there are two different particles, for example,
+you cannot consider them individually. They are entangled, so they are
+a system. An example, so it's a global system state. And the very
+strange thing that defeats our normal understanding is that this state
+persists even when you are moving the two particles very far from one
+to the other. So we have initially two particles entangled here. I
+take one particle and I move it to Japan. Yet the particles are
+entangled, and they behave in this very strange way. Let's make an
+example. I create here on this desk a system of two entangled
+particles, A and B, and the quantity that I'm interested in is the
+spin, so the rotation of the particles that can be up or down. And
+typically, one is plus one, the other is minus one. So the system
+globally has a null total spin. Then I move one particle away, but
+they remain part of the entangled pair. Now I measure particle A, and
+I found it to have clockwise spin. That means that if someone is
+measuring the other particle B, that particle will have
+counterclockwise, because globally they must still have zero, even if
+they have been moved apart. So that seems to achieve communication
+faster than the speed of light, because I'm here, I'm measuring this,
+and there is an immediate effect on the other particle moving in any
+part of the universe, not only in Japan. Okay, so that seems to say
+that we can have communication faster than the light, but that is not
+the case. This cannot be used for transmitting information, because we
+cannot force, okay, we cannot force the spin of A. We can measure, and
+if we measure this, another measurement on the other will give the
+opposite value. But we cannot force this to be zero or one, because in
+that case, we could transmit information. It's just a measurement,
+it's random. I don't know if it will be zero or one. I just measure, I
+find it zero, and I know that the other one will be one, and vice
+versa. This is, of course, really, really strange. Another thing that
+we will use is the so-called no-cloning theorem. This says that it is
+impossible to create an independent, but identical copy of an
+arbitrary unknown quantum state. And you should note and stress
+independent. So I cannot have a particle and make an exact copy. I can
+have entangled particles where the total has a certain value, but I
+cannot make copies. And this is also very important for our
+applications. So having given this brief introduction of some
+principles, let's talk about quantum computing or quantum computer. Is
+that really different from classic computations or not? Yes, if you
+want a short answer. But of course, I'm trying to teach you something,
+so I will give you an explanation why it's different. First of all, we
+can use quantum superposition to perform computation on several cases.
+I said that there is a quantum state in which all the possibilities
+exist. That is equivalent to perform some kind of parallel computation
+on all possible states of that system. So if we create a quantum
+system that has got all the possibilities, then we can perform
+operation simultaneously on all of them. So while a normal bit can
+only be zero or one, a quantum bit can simultaneously be zero and one.
+And when you perform computation, you perform the computation
+simultaneously on the two values, okay? So we can explore multiple
+states at once, processing many cases in parallel. And that is much
+different from a classic computer. Then the entanglement. So that
+means that a quantum computer can coordinate and process complex
+calculations more efficiently because those calculations have an
+effect on another part of the system. And finally, quantum
+interference, the one by the Young experiment in which quantum
+computer can exploit interference that may be constructive or
+destructive to amplify probabilities. This boosts the efficiency of
+solving certain types of problems. And this word certain is coming up
+in a moment because what I want to stress is that a quantum computer
+is not a general purpose computer, okay? Not at all. You cannot
+perform any kind of computation. There are specific computation. A
+quantum computer works only for specific classes of problem where the
+quantum effects can be exploited. For example, the superposition and
+so computation on several states at once. But I don't foresee, for
+example, a quantum computer to be used for word processing because
+that is another matter, okay? Currently, the most successful area
+where a quantum computer has achieved big advantage over regular
+computers is optimization in which a quantum algorithm has been
+defined that the quantum annealing, okay, which is running not on a
+general purpose computer, but on a special purpose quantum computer.
+The one created by the company D-Wave, which is based on
+superconducting technology, which implements adiabatic quantum
+computation. It means that we have a global state that includes all
+possibilities, and then we cool it down slowly until we reach the
+minimum, which is the optimal of the solution of our problem, okay?
+That is not the only possible approach. There is a very fierce
+competition about countries and companies about which is the best
+technology to create a quantum computer, okay? The different
+technologies have advantages and disadvantages in two respect. One
+respect is installation. We are going, we have bought one quantum
+computer here at Polito, it will be installed at the next spring, but
+we need to prepare the environment because if you want
+superconducting, then you need to freeze near the absolute zero, for
+example, or very low anyway. In other cases, you need to exclude all
+the kind of vibrations. I think you don't realize, but we've got a big
+problem here at Polito. We got the trains passing under the street
+here, and that is creating a lot of vibrations. And when you go to
+microscopic level, that is not acceptable. That will move lasers and
+photons, okay? So one problem is, what are the conditions to have the
+quantum computer operational? But the other is, can you really
+manufacture, so create a macroscopic device which maintains those
+microscopic properties? And I take the example of D-Wave, which in
+2015 released the D-Wave 2X computer, which in theory is boasting
+1,152 qubits. But due to the variability in manufacturing, less than
+that number of qubits are available, okay? And not only, but that
+depends on the specific processor. So they create one processor, which
+has that theoretical number, but then only 1,000 bits are working. In
+another processor, the next one produced will be only 800. So it's
+really, really very difficult to bring this to the macroscopic stage,
+okay? Okay, that's the introduction. Now, let's see the bed. I start
+with the bed. The quantum problem for cryptography. The current
+cryptography has an expiration date, which goes beyond the normal
+expiration. We have studied over these two years, the fact, for
+example, that DES had a short key. We had to replace it with AS. Then
+SHA-1 had the short digest. We had to replace it with SHA-2 and then
+SHA-3 and so on. But this is now accelerated by the quantum computers.
+There is this nice document that you can easily find on internet,
+which is estimating when a CRQC, cryptographically relevant quantum
+computer, so we told quantum computers are good for certain problems.
+So what is the probability of creating a quantum computer which can
+solve cryptographic problems? That is a CRQC. And the estimate is that
+between 15 and 30 years, so at most in 30 years, we will have a CRQC,
+okay? So you say, why should I worry now for 30 years? Well, there is
+a problem. The problem is that we are using cryptography everywhere.
+Okay, so we need time. We need time to develop new algorithms, then to
+test and validate them, then to implement them in all those places,
+and finally to mass deploy them. And why we do this effort? The
+attacker can do one thing, then implement the HNDL strategy, harvest
+now, decrypt later. So I copy the data today, and then I wait 10
+years, 15 years, when the quantum computer is available, and I will
+decrypt those data. Of course, this is assuming that the collected
+data are still useful in 10, 15 years. Of course, if the decrypted
+data is, tomorrow we will play tennis, okay, no problem. But if it is
+a state secret, that must remain such for at least 30 years, state
+secrets normally are between 30 and 50 years, that's a big problem.
+Not only that, I've seen one big effort in quantum cryptography in
+Japan, because the Japanese government is computing and storing the
+DNA of all the Japanese citizens. And they want that to remain secret
+and protected for 100 years. So what will be the development in 100
+years? We don't know. So it's much better if we take care of this
+problem. Is there anybody that is really doing copies of our data?
+Yes, this is, for example, one thing that was disclosed by Wikileaks.
+Wikileaks disclosed that there is a global network named X-Keyscore,
+in which there are servers installed in about 150 sites for a total of
+over 700 servers that are continuously copying all the internet data.
+This is from the US, NATO and so on. But of course, think of China,
+think of Russia, they will have for sure similar things. So
+government, military, secret services, they are copying our data, in
+the hope sooner or later to be able to decrypt them. So we really have
+this problem of harvest now, decrypt later. And what is the risk?
+Well, let's consider what are the things that we are using now to
+protect our data. We are using basically two things, mathematically
+hard problems, so non-polynomial problems. For example, the discrete
+logarithm of integers or over an elliptic curve or factorization.
+Okay, those are DSA, Diffie-Hellman, elliptic curve, RSA and so on.
+And this is typically used in asymmetric crypto, which is not only for
+digital signature, but also for key exchange. And key exchange is
+related to confidentiality, of course. Or impossible exhaustive
+search. When we say that AES-256 is strong, we say because it's
+impossible to make all the computations needed. So this is typically
+used in symmetric crypto when we consider encryption, but also when we
+consider hashing, because computing all the possible values of the
+hash would lead to find a collision, if you can make that. So those
+are the two big families of principles that we use in current crypto.
+So let's consider one group. Let me start with the asymmetric.
+Diffie-Hellman and RSA and quantum computing. So Diffie-Hellman has
+got the complexity of the discrete logarithm, because this is the
+formula for computing the public key. And then if you want to compute
+the private key as an attacker, you will see A, you know G and P. You
+must just solve this formula. And so given G and P, we can try to find
+X by successive products. X to the one, two, three, four, five, and so
+on. So this time is linear in P, because P is modulus, no bigger than
+that. Hence, it is exponential in the number of bits of P, okay? This
+is very trivial algorithm. There are other better algorithms to find
+the logarithm. For example, the Pauling-Hellman or the number field
+sieve. They are better than this, but anyway, they are never
+polynomial. This is exponential, okay? With a different grade.
+Algorithms that can compute a discrete logarithm can be adapted also
+for factorization and vice versa. Even if there are other specific
+algorithms for factorization, but again, none of them is polynomial.
+So factorization and discrete logarithm are NP problems, as much as we
+know. But there is one algorithm, Shor's algorithm. That was developed
+in 1994 before quantum computer were implemented. Peter Shor was
+speculating, let's imagine that we can create a quantum computer. Then
+we could implement this kind of algorithm. And that is an algorithm to
+find the prime factors of an integral number, okay? It does not really
+find the factors, but it accelerates finding the order, the
+periodicity during the calculation. And this algorithm is polynomial,
+and it goes as the cube of the logarithm of the N. If you want, the X
+of formulation is this one, but you see, it goes as the cube. So it's
+polynomial, not anymore exponential. This algorithm is not
+deterministic. For each run, you will have a 50% probability you find
+a solution. So you have to run multiple runs of Shor in order to have
+a certain guarantee that you have found the factors. But the problem
+is that quantum computers are not only difficult to manufacture, but
+also to operate. Because if there is any disturbance in temperature,
+in electromagnetic interaction, in vibrations, the quantum computer
+will not work. So for example, running a program on a quantum computer
+for half an hour, you cannot do. The computer will stop working before
+half an hour, okay? And that's a problem because you need to repeat
+the computation here, okay? So if the quantum computer does not
+succumb to quantum noise or decoherence, so the system not working in
+a coherent way anymore, then the algorithm of Shor executed on such a
+computer can break RSA, Diffie-Hellman, elliptic curve Diffie-Hellman,
+elliptic curve DSA, okay? In 2012, a computer with seven qubits
+factored 21. Great. In 2014, an adiabatic computer, so one by D-Wave,
+was able to find those factors, but that is not by using the Shor
+algorithm, but by looking at factorization as an optimization problem.
+And there is no proof that that approach can scale up to the numbers
+that we normally use. The best number factored using Shor up to now is
+21 because the attempt done in 2019 to factor 35 failed due to the
+accumulating errors in the computation, okay? If you go around and try
+to find some literature, you will find the different values. No, no,
+no, this is not true. We have been factoring a number with six digits.
+But if you read carefully, they say we can factor this number if the
+two factors are two prime numbers differing just by four units. So
+they are very, very special cases, okay? There is no way for the
+moment to run Shor on a generic number. If you have a very, very
+special condition on the factors, yes, you can do a bit better, but
+yet we are not able to factor any 2048 RSA key. But progress is going
+on very, very fast, okay? That is another thing that we should say.
+You know that there is the famous Moore's law that says that on the
+average, the power of a normal computer is doubling every 18 months,
+okay? And we have tried to find a similar formula for quantum
+computers. And there is no such formula. But the point is that up to
+now, quantum computers has always performed faster and better than
+expected. That's because there are so many technologies involved that
+you don't know. Maybe if you look at the specific technology, that
+will not be faster next year, but maybe there will be another
+technology that will be, okay? So it's very, very difficult to make a
+forecast when a quantum computer in whatever technology will be
+available. So there is a big risk in this because we don't know how
+the future will go with quantum computers. What's the complexity of
+the Shor algorithm? You have seen that the D-Wave, which is not a
+general purpose computer, so not suitable for Shor, but anyway has got
+more or less 1,000 bit. Well, that's not enough. You need 2,000 qubits
+for factoring 1,024 bits key and then 4,000 and 8,000 for scaling up
+to the complexity of the keys. And this is the number of effective
+qubits. We will talk briefly about that after error correction because
+during computations, some errors are introduced and you need to
+correct this. And typically you get one effective qubit every 10. So
+even if you have 1,000 qubits, the effective qubits usable for
+computation are just 100. Okay. Second, Shor requires a circuit, a
+quantum circuit with a certain depth. Depth means the number of stages
+in which you process the information. That is, you have a qubit here
+and then you have the first operator, the second operator and so on.
+So this is, for example, depth equal three. You have a quantum bit and
+you perform three operations. One thing that you must understand is
+that the connection among the qubits and the qubits are not flexible
+at all because they are microscopic connections. So when you buy a
+quantum computer, there is a fixed combination. For example, one of
+the most famous ones is the one by IBM that has got a structure like
+this. There's six qubits and they are arranged in this way. Those are
+the only possible combinations. You cannot have this one talking
+directly with this one. No, because you must fix the path at a
+macroscopic level. Okay. So this assumes an ideal circuit and you see,
+we need some unit is 10 to the six. Okay. So this is not 900. This is
+900 million as depth. And this is 10 billions depth that is really
+unlikely to be produced any soon. And this is an ideal circuit, but
+mapping to a real quantum computer would multiply this by at least one
+order of magnitude. So sure remains a good algorithm, but for the
+moment, a real implementation on a real quantum computer is still
+quite far. Okay. We mentioned quantum error correction. This is needed
+to eliminate the effect of noise on stored quantum information,
+Q-gates that don't work as expected, faulty quantum preparation and
+faulty measurements. All those operations are not trivial and
+typically there are errors. Okay. Normally, when you have a normal
+computer, you got error correction in that, in the sense that if there
+is an electromagnetic interference, there is a cosmic ray hitting your
+memory. Okay, no problem. I got an error correction code that will
+detect the error and put back the value. But that is mostly based on
+the fact that we are copying the data, but we cannot copy qubits due
+to the no-cloning theorem. So the usual systems for error correction
+do not work for quantum computers. But Shor has discovered a way of
+formulating a quantum error correction code, which is storing the
+information of one qubit in an entangled state of nine qubits. You see
+the reduction by 10. In order to have one qubit working correctly, you
+will need 10 of them, okay? And then some details. So like the
+measurement of those qubits provides information about the error
+happened, but not the value. And so you need to detect if it is a
+value or a sign, a phase. And there are some things that are named
+Pauli matrices that can permit to reverse the effect in the
+computation. Okay, I will say that we can have a first break here, and
+then we will continue discussing this topic. Okay, so let's go on. So
+Shor is one algorithm, but there is something more than Shor. There is
+also the Grover's algorithm that was developed nearly at the same
+time, 1996, just a couple of years later, by Love, Kummer, Grover. And
+it is an algorithm that given a pair of ciphertext, plaintext, it is
+able to find the key of a symmetric algorithm such as AS. So it's...
+But it's more than that. Grover's algorithm is in general an algorithm
+for unstructured search. So you have a bunch of data. You know you
+have a black box function that produces a specific output value, and
+you can compute with Grover's. You can try to find the preimage, so
+the value that we will generate that output value with a certain
+probability, again, 50%. So you have to do multiple rounds. It uses
+just a quantity of operations that are proportional to the square root
+of the number of the size of the function domain, while normal search
+is order of the number. Because if you have n possibilities, on the
+average after n half, you will find the solution. So that's
+proportional to n. On the contrary, Grover's is square root, so it's
+better than normal search. So in this way, you can accelerate brute
+force attacks. For attacking AS128 with Grover, you need only 2 power
+64 and not 2 power 128. And again, similar for AS256. But you can also
+use this to find the collisions in hash functions. But for that
+purpose, there is another algorithm which is named the raw algorithm,
+which is better than Grover's one. But in general, Grover's is for
+unstructured search. So advantages. As I said, useful not only for
+trying to decrypt the data, but also for other kinds of searches. And
+since we are talking about a specialized quantum computer, so creating
+a specialized quantum computer for running Grover's should be much
+easier than building one for short algorithm. So it's likely that in
+the future, we will have dedicated quantum computers in which the
+connection among the qubits, the depth, and all those kind of
+parameters are tailored for that specific problem, which is good and
+bad at the same time. Because those kind of computer costs billions of
+money. And you have just them to solve one problem. As negative points
+for Grover, quantum operations overhead. This is much bigger than for
+traditional non-quantum operations. And it is a serial search. So it
+does not exploit the typical parallelization that we said is given by
+superposition. Anyway, given the fact that Grover's is going like a
+square root, if we want to resist to a potential Grover's attack, we
+have to double the size of the encryption key or of the digest, of the
+hash function. But unfortunately, we know that we don't have anything
+such as an AS512 if we want to resist. There is a variant of Grover's,
+which is named the Brassard's algorithm, described in this paper, and
+solves the collision problem. So it's mostly dedicated to attacking
+hash functions. So Grover's can also be used for attacking hash
+functions. Brassard's variant of Grover is much better. So it solves
+the collision problem for a black box R21 function f. And that is
+typical of the hash functions, in which you have R values that map
+just to one digest. So Brassard's will find those values, x0 and x1,
+that give the same result. So it's a collision. So can be used to
+attack against hash functions. Oh, we should go to look into the
+details. The ways in which it works does not exploit parallelization.
+I don't know. I don't know the algorithm in my mind. So of course, we
+can have a look. But it's not trivial to understand this algorithm,
+because typically, they require quite a lot of knowledge of quantum
+computers. So if you want, I can give you the paper where that is
+described. But then it's upon you. Sorry. Sorry? [AUDIO OUT] I cannot
+hear you. [AUDIO OUT] Yes. So the algorithm is not a parallel one.
+While Shor is using superposition for processing many states
+simultaneously, the Grover's algorithm is not using superposition to
+perform the evaluation. And so it is doing a serial search. So
+Brassals can be used for attacking hash functions. And it is better
+than the Berdai attack. And it's not a completely different algorithm.
+It uses Grover's algorithm in a different way. In practice, it trades
+off space for speed. So comparison in using Grover's and Brassals for
+collision search. With Grover, the time goes as the square root. On
+Brassals, the time goes as the cubic root, not of n, but n divided by
+r, the number of different values mapping to the same output. And the
+space of Grover is log n. But for Brassals, it is the cubic root of n.
+And this is bigger when you go for high values of n. So it is trading
+space. We need more space, so more qubits. For time, it's better
+because it's cubic rather than square root. OK. So you see that with
+this algorithm, we have the potential of attacking current data. And
+that is also expressed in this rule, Moskos rule. Moskos is an expert
+in quantum computing. And he has created this inequality, say, given
+q, which is the time to develop a quantum computer that can run any of
+those algorithms. We don't know how much it is, but let's estimate.
+Then s is the time that our data need to remain secure. And u is the
+time needed to update our systems for classical to quantum resistance.
+Then if the sum of u and s is bigger than q, then we have a problem,
+OK? That is, in the sense that this is the time that we are updating.
+So only after the update is completed, the data that will be created
+after the update will be secure, OK? But what about the data that are
+copied, harvested now, and then when the quantum computer is
+available, will be decrypted, OK? OK. That was for the attacks. Moskos
+rule is telling us, please, update your system as fast as possible.
+But in order to update them, we need some algorithms. We need some
+standards. And several years ago, you see, 2016, the NIST launched an
+international competition for post-quantum cryptographic algorithms,
+something resistant. Sometimes we call them post-quantum. Sometimes we
+call them quantum resistant or quantum safe. From the initial report
+requirements, then end of 2016, there were the nominations. There were
+quite a lot of them. It went through a series of rounds in which the
+algorithms were tested. 2019, a report of the first state. Third round
+in 2020. And in this third round, among them several proposals, the
+following ones were shortlisted. This for public key encryption, or
+nowadays, we tend to call it key encapsulation mechanism because it's
+not anymore the classic public key, OK? So K-E-M, key encapsulation
+mechanism. And on the contrary, digital signatures, we have three. All
+these algorithms are based on a new kind of mathematics, which is
+named the structured lattices scheme. So if you have learned just
+elliptic curve, now you have something more. But if I'm not wrong,
+there is a post-quantum cryptography course that you can select if you
+want to have more details about the mathematical part. But in addition
+to those algorithms that have been shortlisted, there are other that
+has been selected for possible future standardization. You see several
+again for K-E-M. This is the area where we need more because that has
+to do with confidentiality. If we cannot exchange a key in a secure
+way, we don't have confidentiality. And for digital signature, you
+should note this algorithm here. This is the only one not based on
+structured lattices. It is based on hash functions. And this is
+telling you an important thing. We have seen that with classical
+integrals, they were attacked. Then we moved to elliptic curves, and
+they were attacked. If we now pass to yet another kind of mathematics,
+even if we have 20 different algorithms, but they share the same
+mathematical basis, structured lattices, if there is a flow in
+structured lattices, we are again fucked. So there is a strong
+interest in finding algorithms that are using a different approach in
+order to have different strategies for resisting to quantum attacks.
+And finally-- no, not finally. The final selection was this one. For
+public key encryption or key exchange, CrystalsKyber, which has got
+small encryption keys, and it's quite speedy. Actually, this one is
+faster than Diffie-Hellman and elliptic curve Diffie-Hellman. So this
+is a good case in which we are migrating to a new algorithm, and we
+get some benefit rather than having something which is slower. For
+digital signature, a variant of Crystals, which is named
+CrystalsDilithium. Also Falcon, which has the benefit of having
+smaller keys. And then also SphinxPlus, because it's not based on
+lattices. This is larger and slower, so larger signatures and slow
+computation, but it's useful as a backup if attacks to structured
+lattices show up. So this is the selection, and finally-- no, not
+finally. For round four, which has already started, we have this four,
+and we have this note, insecure. So this is the problem nowadays. When
+I explained to you about AS, maybe you remember that I had the
+comparison with the good wine. And I told you, OK, AS was invented
+here, but we waited 10 years before drinking that bottle. We gave time
+to the cryptomathematician to study the attacks. And for SHA-3, it
+happened the same. We invented, and then we gave time. Now we don't
+have time. Now we are creating the standards, and we are already
+implementing them, because we cannot give 10 years. Maybe in 10 years,
+the quantum computers will be a reality. But that's a big problem, OK?
+And that is exemplified by SAIC. SAIC is an algorithm that passed
+three steps of selection, so it was considered nearly closed being
+standardized. And only at the end, we found that it is insecure. Let's
+consider this SAIC. SAIC is using supersingular isogeny, which is yet
+another strange mathematical function. It was proposed by Microsoft
+after a long study. And it's a variant of Diffie-Hellman on this
+specific kind of cures, OK? The security of this algorithm is based on
+how much hard it is to find the specific isogeny between two elliptic
+curves. So it's a different problem, not the usual discrete logarithm,
+but still uses elliptic curves, OK? SAIC was immediately implemented
+by Microsoft and Cloudflare in order to gain experience, they said.
+Let's try. This is an algorithm that already passed the three rounds
+of selection. Let's try to deploy it on the servers and the clients to
+check what's really happening. And they took a lot of care in
+implementing it because one of the side-channel attacks that probably
+you know are the time-based side-channel attacks. You are aware of
+that? You have seen? OK. And so they implemented it as constant time.
+So no time-based side-channel attack is possible. But it has been
+attacked in another very ingenious way, which is named Hertz bleed. So
+what is Hertz bleed? And you can find the documentation there. It's a
+frequency-based side-channel attack, which is based on the fact that
+modern CPUs don't have a constant frequency. But modern CPUs perform
+autoscaling. When there are more operations to be done, they increase
+temporarily their frequency. So if you observe the frequency that the
+CPU is using at a certain moment, you can understand the complexity of
+the operations that they are doing. And depending on various
+conditions, you may even exactly find the cryptographic case. And
+these attacks is affecting all Intel CPUs and at least two families of
+the AMD ones, the Zen 2 and Zen 3. And no patch is possible because
+that is not a software problem. That is a hardware problem. The
+software developer is not controlling the scaling of the frequency.
+It's a function, automatic function of the processor. So they tried to
+avoid this problem by giving guidelines to software developers-- slow
+down, don't make too many operations simultaneously to avoid the
+scaling up, or introduce additional checks that unfortunately will
+create a big penalty then in execution. So there were two libraries--
+one by Microsoft and one by Cloudflare-- that implemented these
+additional checks and controls to avoid the Hertzbleed attack. So they
+released this new version, and also the new version was attacked in
+other different ways. No more Hertzbleed, but other things. So
+finally, the authors decided to withdraw the proposal from the
+competition. But they did it in a very good way. They did a final
+submission in which they documented all the problems. That is very
+useful when you fail in something. Describe your failure in a very
+detailed way to avoid other people do the same mistake. And so that
+remains as a history of a mistake that was done, and hopefully will
+avoid other mistakes such that. Among the algorithms that have not yet
+been standardized, but they are very promising, there is Entrue.
+Entrue comes in two versions, Entrue Encrypt, which was patented, and
+that was one of the reasons for which it was not initially selected.
+But it was released in public domain in 2017. And Entrue Sign,
+patented, but it can be used in software, not in hardware, if you use
+GPL. Entrue is immune to the Shor's algorithm and performs very fast
+private key operations. RSA computation goes as the cube of the key
+size, Entrue as the square. And in 2010, an implementation was only 20
+times slower than running AS256 at equivalent strength. That means
+that for an asymmetric algorithm, just being 20 times slower than
+symmetric is a very good result. There is also a variant named
+Stell-Steinfeld that was evaluated by one European project, the
+Post-Quantum Crypto Project, which demonstrated that this algorithm is
+absolutely secure. But unfortunately, this algorithm is much less
+efficient than the original Entrue. So for the moment, it's not being
+considered. There is also another variant named Entrue Prime, which
+avoids attacks against the algebraic structures that are behind
+Entrue. OK, having said all that, we finally have standards. August
+13, 2024, so just before mid-August, the NIST published the standards.
+They renamed the algorithm. So what was Crystal Skybar now is named
+ML-CAM, FIPS-203, Modulistics Key Encapsulation Mechanism. ML-DSA,
+Module Lattice Digital Signature Algorithm. It was Crystal Steel
+Lithium. And SLH-DSA, Stateless Hash-Based Digital Signature. It is
+what was SphinxPlus. You should keep account of these names, because
+when you will do the laboratory, you will use OpenSSL, which
+unfortunately has not yet migrated to the new names. So depending on
+the operation that you are performing, sometimes you need to say
+Crystal Skybar. In other cases, you need to say ML-CAM. So the terms
+are equivalent. Of course, we tend now to use the official names and
+the official standards. You may not, but you have not, that there were
+four algorithms selected. And here we have only three standards. Why
+there is the fourth one missing? The fourth algorithm that was
+considered was Falcon. And Falcon has got a problem. It's already
+being prepared for standardization. It's draft standard, already
+assigned a number, 206. Will be dubbed DN-DSA, short for Fast Fourier
+Transform over N-True Lattice-Based Digital Signature. But in that
+name lies immediately the problem. Falcon is a signature algorithm,
+which is very good, because it's fast, uses small keys, but it
+requires floating point operations as part of the Fast Fourier
+Transform. And floating point is not something that we are very good
+at to perform in constant time. So Falcon is subject, is heavily
+subject, to time-based side-channel attacks. So currently, everybody,
+NIST and cryptographers, are working in trying to find an
+implementation that does not have exhibited that problem. And this is
+urgent, so we expect to have this algorithm standardized very soon.
+But until that problem is solved, Falcon is not recommended, and is
+not yet standardized. Let's make a bit of comparison to understand
+what's the problem in implementing post-quantum crypto. If we have an
+RSA signature, you should know that the signature is as big as the
+private key, independent of the hash function. Because anyway, the
+private key is bigger than the digest, which is created. So for
+example, RSA 2048, whatever is the digest that you are encrypting,
+yields a 256 bytes signature. If you use elliptic curve, then the
+signature is double the size of the private key, also in this case,
+independent of the hash function. So an ECDSA over curve secp256 is
+yielding a 64 bytes signature, just as a reference. Now, let's go to
+consider the algorithms that have been standardized. One thing that is
+also changing is the evaluation of the security. In the past, we have
+always been used to express security in terms of the key size. We said
+128-bit security, 132, 92, 256. That does not apply anymore to this
+category of algorithms, because typically, they don't have keys. They
+are very complex. And they have parameters, several parameters, that
+affect the way in which the computation is performed. So we cannot say
+this algorithm has got this key. But you can say that this algorithm
+is using a certain set of parameters. So in order to evaluate the
+security level, there is a document, sp857, which defines the security
+levels. And this is the table. Level 1 is something which is
+considered equivalent to AS128. Consider equivalent in which sense,
+that if you want to attack the algorithm, you need to perform an
+exhaustive key search equivalent to the one performed with Grover over
+AS128. So 2 power 64. Level 2 is at least as hard to break as SHA-256
+for collision search. And you say, OK, wait a moment. But we normally
+say that 256 SHA is like AS128. Not really. That is, in theory, if you
+do the birthday attack in which you have someone generating for you.
+But if you have to search, then using the Brassard algorithm, you go
+as 2 power 85. And you see that this number is bigger than 2 power 64.
+So an attack of collision search on SHA-256 is stronger, requires more
+effort than attacking AS128. And we go on in this way. Level 3, AS192.
+Level 4, SHA-384. And level 5, AS256. If you look at this table, you
+should complain. Because here we have two levels, different. But if
+you look at this column, it's the same. It's 2 power 128. But if you
+go back to the explanation of Brassard, you remember that it's not n,
+but it's n divided by r. So this is about 228. But it's a bit less.
+And the less is the number of different inputs that map to the same
+output. So that's why this is level 4 and this is level 5. Now, with
+that in mind, here are the algorithms. MLDSA, quantum resistant
+digital signature, internally uses SHA-256 as digest algorithm. And
+the algorithms are named after the dimension of the A matrix used in
+computations. So we have MLDSA-44, because it uses a matrix which is 4
+by 4, or 65, 6 by 5, or 87, 8 by 7. These are the three algorithms
+that have been defined. You see they don't cover all the possible
+levels. They are level 2, level 3, and level 5. These are the private
+keys in bytes. So this is not equivalent to RSA-4096. It's eight times
+bigger. And this is even more. This is the public key, which is
+normally smaller. And this is the signature size. So you see huge
+signature sizes. It's kilobytes. MLKEM, quantum resistant
+encapsulation of a symmetric secret key. And the algorithms are named
+after a specific parameter set. There is not a single element that we
+are considering. So they are saying MLKEM 512, 768, 1024. These are
+not key sizes. Don't make that error. The suggested default is the
+middle one, which is a layer 3. And this is a table for encapsulating
+a key of 256, so the strongest security for AS, with all sizes in
+bytes. So we don't talk anymore about private and public key. We talk
+about encapsulation key and decapsulation key. So when you want to
+send something to a destination, you need to use the encapsulation key
+for that destination. And when that packet is received, that party
+will need to use the corresponding decapsulation key. And you see that
+even if the key is just 32 bytes, the ciphertext of that key is quite
+huge, because these are bytes. Finally, we have this SLH DSA, so
+quantum resistant digital signature. And this is really, really very,
+very complex, because it uses both a few-time signature schema, which
+is named a forest of random subsets. I want to attract your attention
+to this few time. This is a signature schema in which you cannot
+perform an infinite number of signatures. When you create the schema,
+there is a maximum number. Using this schema with these parameters, I
+can perform at most 100 signatures. After that, you have to throw it
+away, which is quite a strange thing. But it's due to the way in which
+it is constructed. So in order to overcome that limit, that kind of
+signature is then applied to an extended Merkle tree, which on the
+contrary will permit you to perform as many signature as you want. OK?
+It uses inside the algorithm SHA-2 or SHA-3 hash functions. And
+particularly, SHA-256 and SHAKE-128 are acceptable as a choice only
+for level one. For all the other levels, including also level one, if
+you want, you must use SHA-512 or SHAKE-256. And this is the table in
+which we have yet another complex thing. You see that for each
+algorithm with a certain set of parameters, we have two versions, the
+S and the F version. The S is for small, when you want to have a small
+signature. And F is for fast. If you prefer speed, then you can
+implement the algorithm in the fast version. And you see the
+difference. This is the level. This is the N parameter, which is one
+of the most important in the algorithm. The public key is the same,
+but the signature in the first case is smaller. In the second case,
+it's bigger. This is 17 kilobytes. But this is much faster in
+computation. And then we have level three, and then we have level
+five, with signatures increasing in size. These things are being
+standardized, but were already foreseen by the US government in CNSA.
+CNSA is the Commercial National Security Algorithm suite. And version
+two was published in 2022. And they said that for symmetric
+encryption, OK, just use ES256, that should be quantum resistant, with
+counter mode for low bandwidth or GCM for high band. For hash, SHA-384
+or SHA-512. I do remind you that SHA-384 is just a truncation of
+SHA-512. So more or less, it's the same thing. For key agreement,
+crystal SCIBER with level five parameters. And for digital signature,
+crystals DLithium with level five parameters. So ML-CAM and ML-DSA in
+modern terms. But there is one interesting thing. Digital signature of
+firmware and software. Because when you want to sign firmware, you
+need to have an algorithm and the key implemented in hardware. So that
+is very, very urgent. It's the most urgent feature that we must
+perform nowadays, must implement nowadays. Because otherwise, the base
+functions, the one of secure boot, that can be attacked. And so they
+said, OK, this is urgent. And we want to be secure. So they are not
+using lattices. They are using LMS or XMSS, that is Sphinx. LMS is one
+with a limited number of signatures, which is reasonable. Because how
+many updates will you do of your firmware? That is just for the
+lifetime of a computer, 5, 10 years. Maybe 100 updates, not more than
+that. So it is reasonable to create a set of parameters with a limit
+to the number of signatures that you can do. XMSS, on the contrary, is
+then evolved to Sphinx Plus. And so it can be used for signing
+software. And they have given this timeline. You see that here, for
+example, for software firmware and signing, we have time until 2025 to
+add that as an option and test it. But after 2025, it should be the
+default and preferred. And after 2030, nothing else is acceptable. So
+the push is for software firmware signing and traditional networking
+equipment. Because also that is part of our infrastructure. The push
+is try to make our infrastructure quantum resistant as soon as
+possible. For the other things, web browser, operating system, niche
+equipment, we give 3 years more of that, 2033. And this is already
+being implemented. You have computers in front of you. If you visit
+https pqcloudflareresearch.com, that is TLS. But if you click on the
+lock, you will get normal TLS. But behind that, you have post-quantum.
+Look here. Because when you click on the lock, it will say, OK, you
+are using AS-256 GCM. Because in TLS, what is the key exchange?
+Ephemeral Diffie-Hellman, OK? And it is not specified in the string
+because it's by default, OK? So that is the part which is being
+replaced with the post-quantum, which is not evident when you click on
+the lock. But this page is telling you, OK, you have connected to me.
+And you have used this algorithm. Try now. You have a browser. And
+tell me if you get the same string or not. If your browser is
+post-quantum enabled, and the latest version of Chrome and Firefox are
+already post-quantum enabled-- I did this a few days ago with
+Firefox-- you should get that string or a similar one. If you get a
+different string, let me know. Sorry, you have a different one? What?
+OK, so it means that your browser is not supporting post-quantum.
+Which is your browser? OK, so probably it's an old version. [AUDIO
+OUT] OK, you see, so not all the browsers are updating their systems,
+OK? But change is going on. And you have to do nothing. It's not an
+option of Firefox and Chrome. The latest version has already got
+support for that. OK, good. Are you OK with that string? No complaint?
+Is that one of the algorithms that have been standardized? There is
+something more. One part of the string is MLChem768. And that is
+standard. But what is that other string in front? That is our
+insurance policy. We said that we don't trust lattices, because we
+have not given time to cryptographers to study. Yet we are
+implementing. So one possible approach to try to protect ourselves is
+to perform double encryption. This is named hybrid crypto. In hybrid
+crypto, you use classical, the best classical algorithm, and
+post-quantum. And that is what's happening. X25519 is elliptic curve
+Diffie-Hellman on that specific curve, which is the best that we have
+nowadays. And then that result is additionally encrypted with
+MLChem768. So if you want to attack that key, you need to solve both
+problems, which is not a guarantee. But it's much better than having
+just one. And this is an approach that not everybody is agreeing.
+There are some governments that say, no, no, no. Forget about hybrid.
+Just go post-quantum. Other governments say, no, no, no, no. We don't
+trust. Do the double thing. That is also a practical problem. Because
+changing all the algorithms in hardware, in software, in all the
+possible places is a very long procedure. If you do hybrid, and then
+will do in the future post-quantum when the world's stable, you need
+to migrate twice. On the contrary, if you immediately go post-quantum,
+just migrate once. But you run the risk of making the wrong choice of
+the algorithm. So it's not clear what is the path for going in that
+direction. Anyway, practical problems that we are facing, like this
+hybrid, we are seeing big signatures. It means more space on disk and
+more time in networking. These are going inside certificates. And we
+have certificate chains. So these things are exploding. Those things
+are transferred inside the network packets. Whoa. They are becoming
+giant packets. Do we have hardware support? There are instructions in
+almost CPUs that are needed for accelerating various operations. Not
+yet operations for this. You are aware of RISC-V initiatives.
+Currently, there is a working group to add new instructions to RISC-V
+to support the structure of the lattices operations. Because that's
+needed. And this problem of hybrid crypto versus direct migration is
+governed also by another principle, cryptographic agility. You say,
+OK, why are we having a problem now? We are having a problem because
+if you take an application, that application has hard-coded IUS-IS128.
+And if you need to change, you need to go there in the source code,
+change the call, and substitute with something new. That is very bad.
+Since now we are going to change our system, rather than changing from
+one thing to another, why don't we try to perform cryptographic
+agility? Let's make a new kind of interface that says, I just need to
+encrypt this data with level 5 security, and then to have an external
+library that will implement that. And in a company-wise, that thing
+can even be governed by a security policy. If you change all your
+hardware and software to have this agile interface, then you can
+deploy a policy, say, OK, for level 5 we use this, for level 3 we use
+this, and so on. Of course, that is an effort, because that requires
+redefining the API for accessing those operations. But that is much
+better than just substituting, because probably you will need to
+change periodically these things. And so that is another area where we
+are going in that direction. , I have not said we don't want to use
+Lattices. We do use Lattices, because ML is Lattices. But there is
+some risk. So in this moment, Lattices seem to be the most promising
+thing. But we have not waited 10 years. So there is a risk in adopting
+Lattices. But since the standards are there, and if you want to sell
+your products to the US government and the NATO and so on, you must
+implement those standards. Let's try to do some hardware support for
+that. OK, that's the point. And then we got another problem, middle
+boxes. You always tend to think about your client and your server. But
+in between, you have a lot of other devices. You have proxies. You
+have firewalls, IDS, IPS. And they are inspecting the traffic. And if
+you change the algorithms and the size of the dimension of the
+certificates of the signatures, many of them are breaking. That is why
+Cloudflare was so eager to start experimentation. And they have seen
+that even if the client and the server have been updated, the
+connection is impossible, because there is some middle box that is
+saying, oh, no, this is an illegal packet. It's too big. I don't have
+a buffer for that, and so on. OK, so that is a real nightmare. OK. And
+then, of course, legacy systems. Something can be changed. Some other
+things cannot be changed. And for legacy systems, for example, there
+is that thesis that I proposed the post-quantum gateway, in which you
+have a double interface, one side in which you run the normal
+protocol, and the other side in which you run the post-quantum, with
+the hypothesis to have a small area in which you confine, you put all
+your legacy system. And when you need to exit from that area, you go
+through the gateway, and you go to the post-quantum world. OK. That
+means huge work ahead. That's why I've named this part the ugly.
+That's the ugly part, but we need to do that. OK. So let's stop here
+for a second break, and then we will face the last part. So we have
+seen the bad. We have seen the ugly. Now we see, we look at the good.
+So something good that quantum can do for cybersecurity. And this is
+named the quantum key distribution, or QKD. Please don't call that
+quantum crypto. There is no such thing as quantum cryptography. OK.
+That's clear. It's just key distribution. It's a distribution, so
+generation or distribution of a shared key. We have physical channel,
+typically an optical fiber, but other solutions are possible. There
+are QKD system using satellite communications. The interesting point
+here is that given the fact that measurements are collapsing the
+state, if there is an eavesdropper, it's not like with normal bits in
+which you can read the bit, and the bit will pass in altered. You will
+alter the state with your measurement, and that will be detected. So
+that is much safer against eavesdropping. But you have a problem. If
+the eavesdropper in the middle performs the measure, it will change
+the value. So the receiver will receive something that is changed. So
+the strange point is that you can perform quantum key distribution,
+but you need to have a side channel, classical channel, authenticated
+just to tell to the receiver if the bit is good or not, which means
+that you will never have pure QKD. QKD is always goes along hand in
+hand with the classical authenticated channel, OK? Moreover, QKD is a
+limit in distance and speed. Distance, given the technology, so
+typically at most 100 kilometers, because if you go more than that,
+you need repeaters. And they must be trusted repeaters, because they
+will get a key, and they will regenerate on the next step. And also
+speed. We can generate or transmit keys, but at most 1 megabit per
+second, even if we have a gigabit ethernet, because there are many
+errors and many problems in the transmission. And that is another
+important issue. So with QKD, there is no possibility for end-to-end
+security. You cannot have QKD between your laptop and the server in
+Google Server Farm. No way. It's only for protecting some segments. So
+that can be hop-by-hop security, but then you need security in the
+middle boxes. Or, at most, side-to-side security. For example, if you
+have one data center in Torino, one in Milan, OK, the distance is such
+that you can have a QKD link among them. So a QKD protocol requires
+five parts. An encoding system, because you have 0s and 1s, and you
+want to encode them in some quantum state. Then you have a source. We
+call that Alice, that will generate those bits, and then corresponding
+encoding. You have a quantum channel for data transmission, plus a
+classical channel for performing key sifting, so deciding which bits
+are good and which should be discarded. Then you have the receiver,
+Bob. Bob will need to perform post-processing for error correction and
+privacy amplification. So you clearly understand what is error
+correction, but what is privacy amplification we'll discuss in a
+moment. We need also to select the basis as the reference system to
+handle the Q bits. So privacy amplification. Assuming that the
+attacker has gained knowledge of some bits of the key, but only some,
+not all of them, then we can use hash function to obtain a shorter key
+that cannot be obtained by the attacker. Because let's imagine that we
+exchange the 128-bit key, and the attacker was able to identify 100 of
+them, only 28 should be guessed. But if we take a key which is 1,024,
+even if you have detected 500 of them, if we take that key and then we
+use a hash function to go down to 256, your knowledge is useless. That
+is a privacy amplification. OK. In order to explain better, let me
+show you the most famous protocol, the BB4 QKD, BB84. So here, the
+encoding is performed with polarization states. And Alice uses random
+polarizations, and also Bob uses random polarization for detecting.
+This seems two stupid things. If you are using random and using
+random, we will never match. That is the point of the side channel.
+Because on the side channel, Bob will tell to Alice, I have used this
+polarization. Random, but I have used this. And Alice will tell Bob,
+if they were lucky, and they selected by chance the same polarization.
+Those are the bits to keep. So if we use the same polarization, this
+is acceptable. If we use a different polarization, no. We have not
+spoken the same language. Throw away. And that is the procedure of
+sifting. Even after sifting, there may be errors due to imperfection
+in the quantum channel or the attacker. We cannot distinguish among
+these two things. But anyway, it's a problem. So we will need to
+transmit additional bits to correct with error correction codes. In
+this case, it's really error correction codes in traditional sense.
+Because we are transmitting bits here in the end. At the end, we
+evaluate the efficiency of this protocol by measuring the QBER,
+quantum bit error rate. Because the quantity of valid bits is normally
+much less than that of transmitted bits. And that is why we have this
+slowdown in which we can go at most 1 megabit per second. So here is
+the protocol. Have a look. So this is Alice, which is going to send
+either 0 or 1. That depends what they want to transmit. And here is a
+random number generator, which is able to select four different
+positions. Polarization state, rectilinear, so up now, or diagonal. So
+if randomly, it was selected diagonal, and Alice was transmitting 0,
+then we sent a photon polarized in this way. Then randomly, it was
+still selected diagonal, but Alice wanted to transmit 1. So it was
+like this, and so on. When the photons are received, there is another
+random number generator, which in this case is only make a selection
+very simple. Diagonal or rectilinear. And now you measure something.
+So Alice has sent these photons corresponding to these bits. These are
+the detection randomly chosen. So Bob has selected rectilinear. Sorry,
+it was diagonal. So this is not valid. Bob selected diagonal. Oh, I
+also use a diagonal for sending, so the bit that you have detected is
+good. Keep it, and so on. So on the return channel, Bob is telling to
+Alice rectilinear, diagonal, diagonal, rectilinear, diagonal,
+diagonal, diagonal, diagonal. And Alice is sending back this no, yes,
+no, yes, no, yes, yes, no, OK? In this way, they know when they have
+used both in transmission and in detection the correct polarization.
+And they will have the corresponding bits. And you see that in this
+case, we are just having four bits valid out of eight. The actual
+number of bits depends on the random number generator. On the average,
+you get half of them, more or less. Yeah. Yeah, this is a random
+number generator that will generate a 0 or 1 casually. But those are
+not the bits. They are just-- if you select a 0, it means that you
+will interpret the received photon as rectilinear. If you have 1, you
+will interpret that as diagonal. But if you are using the wrong
+detector, so if you are using a rectilinear, but it was polarized the
+diagonal, you will not perform the correct detection. Yeah, yes. It's
+like you have two tools for measuring. And you are using one or the
+other. And Alice is to tell, yes, you did right. No, you did wrong.
+You did. You have another channel here, classical, in which Bob is
+sending this-- Bob tells Alice the basis. So Bob is saying, first,
+rectilinear, second, diagonal, third, diagonal, fourth, rectilinear,
+so on. And then Alice tells Bob which bits to keep. Discard, keep,
+discard, keep, discard, keep, keep, discard. So it's bidirectional
+communication. So Alice is sending. Bob is detecting. And then he's
+sending back. I have used these instruments for detection of the
+first, second, third. And then Alice, final, run, keep, discard, keep,
+discard, keep, discard, and so on. Clear? No. It must be
+authenticated. The only thing is authenticated. No confidentiality. We
+don't need confidentiality. Because if you have been an eavesdropper,
+it means you have measured. And if you have measured, you have altered
+the state. But apart from altering, there is another thing. Quantum
+systems are imperfect. So can we really generate one photon? And
+normally, the answer is no. It's very difficult to create one single
+part. So it means that, for example, the source is generating not one
+photon, but three photons, 10 photons, for carrying the information of
+one. Now, assuming an active attacker and not just passive, they will
+measure one photon and let the other pass if you have more than one.
+If they have only one, if by chance you were so good to transmit only
+one photon, I will block it. Because I cannot make a copy. But it's
+not making a copy. Since you are transmitting photons that are equal,
+because they are the same envoy, then if I can keep one, I will let
+the other pass. Otherwise, not. So if n equals 1, you just sent a
+pulse containing a single photon. I don't let it pass. If n is bigger
+than 1, I store one photon, and I forward the others. That is why
+photon number splitting. I split the number. And now, since the return
+channel is only authenticated and non-confidential, I can perform
+sifting as well. I can perform the same kind of measurements as Bob.
+There are also other solutions. The decoy state protocol is a modified
+version of BB4 that stops the PNS attack. So in this case, we have
+different type of pulses sent. Some, they have the same wavelength,
+duration, and shape, but different intensity. And one type carries
+information, and others are decoys, so not really carrying any kind of
+information. For each pulse, the basis and the type are disclosed.
+Comparing the number of received decoy pulses will permit to detect
+the PNS attacks. Because if you sent 10 and they received only 9, it's
+clearly a problem. Because this one, the intensity, if you sent 10
+photons, there is a certain intensity of the energy. If you take out
+one, energy will be lower. And so that is the way in which I detect
+that some photon has been extracted. There are other types of QKD
+protocols. This is a very active area. This is one in which you have
+already commercial devices performing QKD. The previous protocols,
+like BB4 and the variations, are of type prepare and measure. I
+prepare the data, and then you measure the result. Other protocols
+leverage entanglement, and there are variants to make them measurement
+device independent. And the principle is this one. Rather than having
+Alice to prepare and send and to have Bob measure, we have a source in
+the middle, which is a source of entangled things. Since they are
+entangled, one is sent to Alice and one is sent to Bob, which will
+only perform measurements. So if I measure a certain spin, I know that
+Bob will have the opposite one, for example. And so we are sharing a
+key that has been generated randomly. This is an additional benefit,
+because in the previous one, Alice has the problem of generating a
+good key. Here, the key is generated automatically. This is a sort of
+quantum random number generator, which is very, very good. So once you
+have a key obtained via quantum key distribution, we can use that for
+classic symmetric crypto, so AS256, HMAC, SHA512. Or we can use that
+for a one-time bad encryption, which is the only perfect encryption
+algorithm. Please don't tell me about quantum encryption. There is no
+quantum encryption algorithm. Quantum is only used for exchanging keys
+in a secure way, OK? I think it's a bit late for finish this part. So
+since we have still a lecture tomorrow, I will stop here now. And
+tomorrow, we will finish with this part. And we'll have also one other
+security pill and the last part about GDPR, which is protection of
+privacy, OK? Have a good evening. [AUDIO OUT] [BLANK_AUDIO]
