@@ -9,7 +9,7 @@ session level(4.5), between two parties, to provide some security
 services that neither TCP nor IP provides:
 \begin{itemize}
   \item \textbf{peer authentication} based on asymmetric
-    challenge-response authentication(the challenge for the service is
+    challenge-response authentication(the challenge for the server is
     implicit, while for the client is explicit). Server authentication
     is always compulsory, while client authentication is optional and
     requested by the server.
@@ -78,21 +78,21 @@ the integrity of the data and the authentication of the sender.\\
 Figure \ref{fig:tls-data-protection} shows how the data protection is 
 achieved in TLS using \textbf{authenticate-then-encrypt} approach, but
 also encrypt-then-authenticate is possible.\\
-The MAC is computed over the data(compressed or not), the TLS sequence 
+The MAC is computed over the data (compressed or not), the TLS sequence 
 number and the key used for the MAC computation. The padding is also
 part of the MAC computation to avoid those attacks that change the
 padding.\\
 The MAC is then encrypted with the dedicated symmetric key and a
-suitable initialization vector(IV) 
+suitable initialization vector(IV) .
 
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \includegraphics[width=.5\textwidth]{img/TLS data protection.png}
   \caption{TLS data protection.}
   \label{fig:tls-data-protection}
 \end{figure}
 
-The keys are \textbf{directional}, so there are two keys( one for
+The keys are \textbf{directional}, so there are two keys (one for
 client to server and one for server to client) to protect against
 reuse of the sequence number in the opposite direction.
 
@@ -102,7 +102,7 @@ When a new session is created using the handshake protocol, a new
 cryptography. Then from the session a new connection is created, which
 requires a random number to be generated, and exchanged between the
 client and the server. Those two values are combined via a KDF,
-usually HHKDF( HMAC-based key derivation function) to generate the 
+usually HHKDF (HMAC-based key derivation function) to generate the 
 \textbf{master secret}. This computation is done only once, and the 
 secret is common to several connections.\\
 The pre-master secret is then discarded, and the keys necessary for
@@ -132,13 +132,13 @@ the server has a certificate valid for both signature and encryption.
 In this context, perfect forward secrecy is desirable.
 \begin{boxH}
   \textbf{Perfect Forward Secrecy} is a property of key-agreement
-  protocols ensuring that the compromise of the secret key used for 
-  will compromise only current (and eventually future) traffic but not
-  the past one
+  protocols ensuring that the compromise of the secret key used for
+  encryption will compromise only current (and eventually future)
+  traffic but not the past one
 \end{boxH}
 The most common way to achieve this is to use \textbf{ephemeral keys},
 which are one-time asymmetric keys( used for key exchange). This means
-that the key pair used for key exchange is not a long term key pair,
+that the key pair used for key exchange is not a long-term key pair,
 but a temporary one generated on-the-fly when necessary.\\ 
 The ephemeral key needs to be authenticated, so only for this purpose
 the long-term key is used for signing the ephemeral key. This is done
@@ -246,12 +246,12 @@ one and encrypted with the client private key is sent to the client.
 
 \subsection{Key exchange}
 The key exchange is the most important part of the handshake protocol.
-If the server is using RSA for key exchange, the client generates a
-pre-master secret, encrypts it with the server's public key(which can
-be ephemeral or from its x.509 certificate) and sends it to the
-server. If RSA is no used, DHKE can be used to generate the pre-master
-secret, and in this case the server computes the value independently 
-and the two parts can derive the master secret.\\
+If the server is using RSA for key exchange, the \textbf{client
+generates a pre-master secret}, encrypts it with the server's public
+key (which can be ephemeral or from its x.509 certificate) and sends
+it to the server. If RSA is no used, DHKE can be used to generate the
+pre-master secret, and in this case the server computes the value
+independently and the two parts can derive the master secret.\\
 Another option is to use FORTEZZA, which is a key exchange algorithm
 based on DH.
 
@@ -284,8 +284,7 @@ and the server, because the MAC is computed over different messages.
 This allows to prevent rollback man-in-the-middle attacks (version
 downgrade or ciphersuite downgrade)
 
-% 3 subfig, 2 on top and 1 on bottom
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \begin{subfigure}{.5\textwidth}
     \centering
@@ -371,11 +370,11 @@ which is a widely used implementation of the TLS protocol. It was able
 to exploit the fact that the heartbeat extension keeps the connection
 alive without the need to negotiate the SSL session again. The
 attacker could send a heartbeat request, but the length of the 
-response is much longer( up to 64KB) than the actual data sent by the
+response is much longer (up to 64KB) than the actual data sent by the
 client. This attack could then allow to leak memory contents.
 
 \subsection{Bleichenbacher attack}
-Blackenbacker is a 1998 attack and it's the so-called the million
+Bleichenbacher is a 1998 attack and it's the so-called the million
 message attack because it exploited a vulnerability in the way the RSA
 encryption was done. RSA requires the padding to be done in a certain
 way, because if it is unoptimally done, it could cause some issues.\\
@@ -389,7 +388,7 @@ Later one the RSA implementations moved to RSA-OAEP, which is a
 padding scheme that is provably secure against chosen-ciphertext
 attacks.\\
 In 2017 another variant of this attack was discovered, called
-ROBOT( Return Of Bleichenbacher's Oracle Threat), to which many major
+ROBOT (Return Of Bleichenbacher's Oracle Threat), to which many major
 websites, like Facebook, were vulnerable.
 
 \subsection{Other attacks against SSL/TLS}
@@ -415,20 +414,20 @@ vector for the next encryption is taken from the end of the previous
 encryption. A MITM may decrypt HTTP headers with a blockwise-adaptive
 chosen-plaintext attack, and by doing so, he's able to decrypt HTTPS
 requests and steal information such as session cookies.
-\paragraph{POODLE}, or Padding Oracle On Downgraded Legacy Encryption,
+\paragraph{POODLE} AKA Padding Oracle On Downgraded Legacy Encryption,
 is an attack that exploits the fact that SSL 3.0 uses a padding scheme
 that is vulnerable to a \textbf{padding oracle attack}, by acting as a
 MITM. This is done by exploiting SSL-3 fallbacks to decrypt data. This
 is also the only attack among those that still works today.
-\paragraph{FREAK}, or Factoring RSA Export Keys, is an attack that
+\paragraph{FREAK} AKA Factoring RSA Export Keys, is an attack that
 exploits the downgrades on TLS to export-level RSA keys to a
-factorizable bit length(512 bits). It is also possible to carry this
+factorizable bit length (512 bits). It is also possible to carry this
 out by downgrading the symmetric key too and then perform a brute
-force attack( 40-bit). As you can see from figure
+force attack (40-bit). As you can see from figure
 \ref{fig:freak-attack}, in the first phase the random and the
 supported elliptic curve are not altered by the MITM, but only the
-supported cipher suites are altered( to export level ones). Usually 40
-bits chiper suits should not be configured at all, but some
+supported cipher suites are altered (to export level ones). Usually 40
+bits chiper suites should not be configured at all, but some
 misconfigurations may happen. The third phase is where the magic
 happen: we have theoretically the MAC  in the FINISHED message to
 protect against tampering (recall that the MAC will be computed over
@@ -468,7 +467,7 @@ by the server.
 The extension is inserted in the client hello message, by setting the
 ALPN flag to true and providing a list of supported protocols in the
 client HELLO message. The server will respond with the ALPN flag set
-to true(if it supports the extension) and the selected protocol.\\
+to true (if it supports the extension) and the selected protocol.\\
 This is also useful for those servers that use different certificates
 for the different application protocols.
 
@@ -495,7 +494,7 @@ close the connection, forcing the client to retry with a lower version
 of the protocol. An attacker could exploit this behavior to force the
 client to use an older version of the protocol, by repeatedly closing
 the connection, and then exploit the vulnerabilities of the older
-version of the protocol.\\
+version of the protocol.
 \begin{boxH}
   This means that its not a problem of the protocol itself, but of the
   implementation of the server.
@@ -509,7 +508,7 @@ error.\\
 The \textbf{TLS Fallback SCSV} is a \textbf{special value} that is
 used to prevent the protocol downgrade attacks, not only chiper suite.
 It do so by sending a new (dummy) ciphersuite
-value(TLS\_FALLBACK\_SCSV) which is sent by the client when opening a
+value (TLS\_FALLBACK\_SCSV) which is sent by the client when opening a
 downgraded connection as the last value in the chipersuite list.\\
 If the server receives this value and still supports an higher version
 of the protocol, it will know that the client is trying to downgrade
